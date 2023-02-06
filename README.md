@@ -1,1 +1,1 @@
-# Software-Enginering CS261
+# CS261 Software-Engineering
