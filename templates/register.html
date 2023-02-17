@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" >
+        <link rel="stylesheet" href="../static/css/menu.css">
+        <link rel="stylesheet" href="../static/css/main.css">
+        <link rel="stylesheet" href="../static/css/toggle_switch.css">
+        <title>Register</title>
+    </head>
+    <body>
+        <div class="main">
+            <h2 style="text-align: center;"> Register </h2>
+            <form method="post" action="/registerRedirect">
+                <label>Email</label>
+                <input type='email' name='email'minlength="5"><br>
+                <label>Password</label>
+                <input type='password' name='password' minlength="8"><br>
+                <label>Confirm password</label>
+                <input type='password' name='confpassword' minlength="8"><br>
+                <div style="width:100%; display:flex; align-items:center;">
+                    <label>
+                        Sign up for a manager account.
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="myCheck" onclick="myFunction()">
+                        <span class="slider round"></span>
+                    </label>
+                    <label id="text">OFF</label>
+                    <script type="text/javascript">
+                        function myFunction() {
+                            var checkBox = document.getElementById("myCheck");
+                            var text = document.getElementById("text");
+                            if (checkBox.checked == true){
+                                text.textContent = "ON";
+                            } else {
+                                text.textContent = "OFF";
+                            }
+                          }
+                          
+                    </script>
+                </div><br>
+                <input type='submit' value='Register'>
+            </form>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patua+One&display=swap');
+  body{
+    margin : 0;
+  }
+  
+  h1, h2, h3, h4, h5, h6, legend{
+    color: #134CAE;
+    font-family: 'Patua One', cursive;
+    font-weight: 400;
+  }
+    
+  p {
+    font-family: 'Raleway', Arial, sans-serif;
+    font-weight: 500;
+    font-size: large;
+  }
+
+  input[type=text], [type=password], [type=email]{
+    padding: 12px 20px;
+    border-radius: 5px;
+    border-width: 0;
+    margin: 8px 0;
+    box-sizing: border-box;
+  }
+
+
+  label {
+    font-size: large;
+    font-weight: 700;
+    color: #0b3378;
+    font-family: 'Raleway', Arial, sans-serif;
+  }
+
+  input[placeholder] {
+    font-size: large;
+    font-family: 'Raleway', Arial, sans-serif;
+  }
+
+  legend{
+    font-weight: bold;
+  }
+  
+  .main {
+    font-family: Arial, sans-serif;
+    font-size: large;
+    margin-top: 1cm; 
+    padding: 50px;
+    padding-top: 0%;
+  }
+
+  button {
+    background-color: #0b3378;
+    border: none;
+    border-radius: 8px;
+    font-size: large;
+    font-family: 'Raleway', Arial, sans-serif;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block;
+  }
+  
+  button a{
+    font-size: large;
+    font-family: 'Raleway', Arial, sans-serif;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  button:hover{
+    background-color: #b1ceff;
+    border: none;
+    color: #021537;
+    text-decoration: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    display: inline-block;
+  }
+
+  button:hover a{
+    color: #021537;
+    text-decoration: none;
+  }
+
+  td {
+    text-align: left;
+    vertical-align: top;
+    padding-right: 2cm;
+    width: auto;
+  }
+
+  input[type=button], input[type=submit], input[type=reset]{
+    background-color: #0b3378;
+    min-width:80px;
+    border: none;
+    border-radius: 8px;
+    font-size: large;
+    font-family: 'Raleway', Arial, sans-serif;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    padding: 8px 15px;
+    display: inline-block;
+  }
+
+  input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover{
+    background-color: #134CAE;
+  }
+
+  .contentdiv{
+    display : flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 10px;
+    flex-direction: row;
+    background-color: #6B9BEC;
+    
+  }
+
+  .contentbox{
+    flex-grow: 1;
+    min-height: 3cm;
+    min-width: 3cm;
+    margin: 15px;
+    padding: 0px 15px;
+    border-radius: 10px;
+    text-align: center;
+    background-color: #ffffff;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column ;
+    padding: 15px;
+    background-color: #b1ceff;
+  }
