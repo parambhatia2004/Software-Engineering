@@ -4,6 +4,8 @@
         <meta charset="utf-8" >
         <link rel="stylesheet" href="../static/css/menu.css">
         <link rel="stylesheet" href="../static/css/main.css">
+        <link rel="stylesheet" href="../static/css/formformat.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
         <title>Home</title>
     </head>
     <body>
@@ -13,8 +15,12 @@
             <a href="/logout">Log out</a>
         </div>
         <div class="main">
-            <h1>Test</h1>
+            <h1>Welcome, {% name %}!</h1>
             <p>Test text here</p>
+            <div class="buttondiv">
+                <button><a href="/createProject">Create new project</a></button>
+                <button><a href="/softSkillsPM">Update Soft Skills</a></button>
+            </div>
             <div class="contentdiv">
                 <div class="contentbox">
                     <h3> Green projects </h3>

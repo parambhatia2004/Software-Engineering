@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patua+One&display=swap');
+  form {
+    display: flex;
+    flex-direction: column ;
+    padding: 15px;
+    background-color: #b1ceff;
+  }
+    
+  input[type=text], [type=password], [type=email]{
+    padding: 12px 20px;
+    border-radius: 5px;
+    border-width: 0;
+    margin: 8px 0;
+    box-sizing: border-box;
+  }
+
+
+  label {
+    font-size: large;
+    font-weight: 700;
+    color: #0b3378;
+    font-family: 'Raleway', Arial, sans-serif;
+  }
+
+  input[placeholder] {
+    font-size: large;
+    font-family: 'Raleway', Arial, sans-serif;
+  }
+
+  legend{
+    font-weight: bold;
+  }
+
+  
+  input[type=button], input[type=submit], input[type=reset]{
+    background-color: #0b3378;
+    min-width:80px;
+    border: none;
+    border-radius: 8px;
+    font-size: large;
+    font-family: 'Raleway', Arial, sans-serif;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    padding: 8px 15px;
+    display: inline-block;
+  }
+
+  input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover{
+    background-color: #134CAE;
+  }
+
+  

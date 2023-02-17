@@ -16,31 +16,6 @@
     font-size: large;
   }
 
-  input[type=text], [type=password], [type=email]{
-    padding: 12px 20px;
-    border-radius: 5px;
-    border-width: 0;
-    margin: 8px 0;
-    box-sizing: border-box;
-  }
-
-
-  label {
-    font-size: large;
-    font-weight: 700;
-    color: #0b3378;
-    font-family: 'Raleway', Arial, sans-serif;
-  }
-
-  input[placeholder] {
-    font-size: large;
-    font-family: 'Raleway', Arial, sans-serif;
-  }
-
-  legend{
-    font-weight: bold;
-  }
-  
   .main {
     font-family: Arial, sans-serif;
     font-size: large;
@@ -93,26 +68,7 @@
     padding-right: 2cm;
     width: auto;
   }
-
-  input[type=button], input[type=submit], input[type=reset]{
-    background-color: #0b3378;
-    min-width:80px;
-    border: none;
-    border-radius: 8px;
-    font-size: large;
-    font-family: 'Raleway', Arial, sans-serif;
-    font-weight: 500;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    padding: 8px 15px;
-    display: inline-block;
-  }
-
-  input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover{
-    background-color: #134CAE;
-  }
-
+  
   .contentdiv{
     display : flex;
     justify-content: space-around;
@@ -136,9 +92,27 @@
     background-color: #ffffff;
   }
 
-  form {
-    display: flex;
-    flex-direction: column ;
-    padding: 15px;
-    background-color: #b1ceff;
+  div.buttondiv{
+    display : flex;
+    justify-content: space-around;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    padding: 10px;
+    flex-direction: row;
+    background-color:#6B9BEC;
+    
+  }
+
+  .buttondiv > button{
+    flex-grow: 1;
+    padding: 0px 15px;
+    margin: 10px;
+    border-radius: 10px;
+    min-height: 34px;
+    text-align: center;
+  }
+
+  .buttondiv > button > a{
+   line-height: 20px;
+   font-weight: 600;
   }
