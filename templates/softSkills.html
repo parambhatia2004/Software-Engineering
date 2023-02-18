@@ -8,8 +8,12 @@
     </head>
     <body>
         <div class="menu">
+            {% if isManager%}
             <a href="/managerHome"><img src="../static/images/home.png" alt="Home" height="30px"></a>
-            <a href="#" class="inactiveLink">Soft skills</a>
+            {% else %}
+            <a href="/developerHome"><img src="../static/images/home.png" alt="Home" height="30px"></a>
+            {% endif %}
+            <a href="#" class="inactiveLink">Update soft skills</a>
             <a href="/logout">Log out</a>
         </div>
         <div class="main">
