@@ -180,30 +180,30 @@ def dbinit():
 
 
 
-from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, render_template, jsonify, request, redirect, session, flash
-from werkzeug.security import generate_password_hash, check_password_hash
-app = Flask(__name__)
-app.secret_key = 'test'
+# from flask_sqlalchemy import SQLAlchemy
+# from flask import Flask, render_template, jsonify, request, redirect, session, flash
+# from werkzeug.security import generate_password_hash, check_password_hash
+# app = Flask(__name__)
+# app.secret_key = 'test'
 
-# select the database filename
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../database.sqlite'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# # select the database filename
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../database.sqlite'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# set up a 'model' for the data you want to store
-# !!!!!
+# # set up a 'model' for the data you want to store
+# # !!!!!
 
-from sqlalchemy import text
+# from sqlalchemy import text
 
-# init the database so it can connect with our app
-db.init_app(app)
+# # init the database so it can connect with our app
+# db.init_app(app)
 
-# change this to False to avoid resetting the database every time this app is restarted
-# !!!!!!
-resetdb = True
-if resetdb:
-    with app.app_context():
-        # drop everything, create all the tables, then put some data into the tables
-        db.drop_all()
-        db.create_all()
-        dbinit()
+# # change this to False to avoid resetting the database every time this app is restarted
+# # !!!!!!
+# resetdb = True
+# if resetdb:
+#     with app.app_context():
+#         # drop everything, create all the tables, then put some data into the tables
+#         db.drop_all()
+#         db.create_all()
+#         dbinit()
