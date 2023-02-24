@@ -154,22 +154,56 @@ class Developers(db.Model):
         self.health = health
         self.resilience = resilience
 
-class Developer_Project(db.Model):
-    __tablename__ = 'Developer_Project'
-    developer_id = db.Column(db.Integer, db.ForeignKey('Developers.developer_id'), primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('Projects.project_id'), primary_key=True)
+class DeveloperProject(db.Model):
+    __tablename__ = 'developer_project'
+    developer_id = db.Column(db.Integer, db.ForeignKey('developers.developer_id'), primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id'), primary_key=True)
 
     def __init__(self, developer_id, project_id):
         self.developer_id = developer_id
         self.project_id = project_id
 
-class Developer_Strength(db.Model):
-    __tablename__ = 'Developer_Strength'
+class DeveloperStrength(db.Model):
+    __tablename__ = 'developer_strength'
     strength_id = db.Column(db.Integer, primary_key=True)
-    developer_id = db.Column(db.Integer, db.ForeignKey('Developers.developer_id'))
+    developer_id = db.Column(db.Integer, db.ForeignKey('developers.developer_id'))
     strength = db.Column(db.String(255))
 
     def __init__(self, developer_id, strength):
         self.developer_id = developer_id
         self.strength = strength
 
+def dbinit():
+    db.session.commit()
+
+
+
+
+
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, jsonify, request, redirect, session, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+app = Flask(__name__)
+app.secret_key = 'test'
+
+# select the database filename
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../database.sqlite'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# set up a 'model' for the data you want to store
+# !!!!!
+
+from sqlalchemy import text
+
+# init the database so it can connect with our app
+db.init_app(app)
+
+# change this to False to avoid resetting the database every time this app is restarted
+# !!!!!!
+resetdb = True
+if resetdb:
+    with app.app_context():
+        # drop everything, create all the tables, then put some data into the tables
+        db.drop_all()
+        db.create_all()
+        dbinit()
