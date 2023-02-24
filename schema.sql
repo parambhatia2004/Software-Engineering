@@ -24,8 +24,10 @@ CREATE TABLE Projects (
     budget INT NOT NULL
     CONSTRAINT budget_nonnegative CHECK (budget>=0),
 
-    state VARCHAR(20) NOT NULL
+    project_state VARCHAR(20) NOT NULL
     CONSTRAINT project_state_ok CHECK (state in ('Success','Failure','Ongoing','Cancelled'))
+    
+    description VARCHAR(255)
 );
 
 CREATE TABLE Project_Requirement (
@@ -49,7 +51,7 @@ CREATE TABLE Project_Risk (
 
     monte_carlo_cost INT,
 
-    state NOT NULL
+    project_risk_state NOT NULL
     CONSTRAINT project_risk_state_ok CHECK (state in ('Green','Amber','Red'))
 );
 
