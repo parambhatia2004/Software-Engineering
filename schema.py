@@ -1,0 +1,175 @@
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class Projects(db.Model):
+    __tablename__ = 'projects'
+
+    # Primary and Foreign keys
+    project_id = db.Column(db.Integer, primary_key=True)
+    project_manager_id = db.Column(db.Integer, db.ForeignKey('project_managers.project_manager_id', ondelete='CASCADE'), nullable=False)
+
+    # Fields
+    project_name = db.Column(db.String(255), nullable=False)
+    deadline = db.Column(db.Integer, nullable=False)
+    budget = db.Column(db.Integer, nullable=False)
+    project_state = db.Column(db.Enum('Success', 'Failure', 'Ongoing', 'Cancelled'), nullable=False)
+    description = db.Column(db.String(255))
+
+    def __init__(self, project_manager_id, project_name, deadline, budget, project_state, description):
+        self.project_manager_id = project_manager_id
+        self.project_name = project_name
+        self.deadline = deadline
+        self.budget = budget
+        self.project_state = project_state
+        self.description = description
+
+class ProjectRequirement(db.Model):
+    __tablename__ = 'project_requirement'
+
+    # Primary and Foreign keys
+    requirement_id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id', ondelete='CASCADE'), nullable=False)
+
+    # Fields
+    requirement = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, project_id, requirement):
+        self.project_id = project_id
+        self.requirement = requirement
+
+class ProjectRisk(db.Model):
+    __tablename__ = 'project_risk'
+
+    # Primary and Foreign keys
+    project_risk_id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id', ondelete='CASCADE'), nullable=False)
+
+    # Fields
+    monte_carlo_time = db.Column(db.Integer)
+    monte_carlo_cost = db.Column(db.Integer)
+    project_risk_state = db.Column(db.Enum('Green', 'Amber', 'Red'), nullable=False)
+
+    def __init__(self, project_id, monte_carlo_time, monte_carlo_cost, project_risk_state):
+        self.project_id = project_id
+        self.monte_carlo_time = monte_carlo_time
+        self.monte_carlo_cost = monte_carlo_cost
+        self.project_risk_state = project_risk_state
+
+class TimeComponent(db.Model):
+    __tablename__ = 'time_component'
+
+    # Primary and Foreign keys
+    time_component_id = db.Column(db.Integer, primary_key=True)
+    project_risk_id = db.Column(db.Integer, db.ForeignKey('project_risk.project_risk_id', ondelete='CASCADE'), nullable=False)
+
+    # Fields
+    best = db.Column(db.Integer, nullable=False)
+    worst = db.Column(db.Integer, nullable=False)
+    average = db.Column(db.Integer, nullable=False)
+    absolute_value = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, project_risk_id, best, worst, average, absolute_value):
+        self.project_risk_id = project_risk_id
+        self.best = best
+        self.worst = worst
+        self.average = average
+        self.absolute_value = absolute_value
+
+class CostComponent(db.Model):
+    __tablename__ = 'cost_component'
+
+    # Primary and Foreign keys
+    cost_component_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    project_risk_id = db.Column(db.Integer, db.ForeignKey('project_risk.project_risk_id', ondelete='CASCADE'), nullable=False)
+
+    # Fields
+    best = db.Column(db.Integer, nullable=False)
+    worst = db.Column(db.Integer, nullable=False)
+    average = db.Column(db.Integer, nullable=False)
+    absolute_value = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, project_risk_id, best, worst, average, absolute_value):
+        self.project_risk_id = project_risk_id
+        self.best = best
+        self.worst = worst
+        self.average = average
+        self.absolute_value = absolute_value
+
+
+class ProjectManagers(db.Model):
+    __tablename__ = 'project_managers'
+
+    # Primary key
+    project_manager_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    # Fields
+    first_name = db.Column(db.String(255), nullable=False)
+    last_name = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    enthusiasm = db.Column(db.Integer, nullable=False)
+    purpose = db.Column(db.Integer, nullable=False)
+    challenge = db.Column(db.Integer, nullable=False)
+    health = db.Column(db.Integer, nullable=False)
+    resilience = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, first_name, last_name, email, password_hash, enthusiasm, purpose, challenge, health, resilience):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.password_hash = password_hash
+        self.enthusiasm = enthusiasm
+        self.purpose = purpose
+        self.challenge = challenge
+        self.health = health
+        self.resilience = resilience
+
+
+class Developers(db.Model):
+    __tablename__ = 'developers'
+
+    # Primary key
+    developer_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    # Fields
+    first_name = db.Column(db.String(255), nullable=False)
+    last_name = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    enthusiasm = db.Column(db.Integer, nullable=False)
+    purpose = db.Column(db.Integer, nullable=False)
+    challenge = db.Column(db.Integer, nullable=False)
+    health = db.Column(db.Integer, nullable=False)
+    resilience = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, first_name, last_name, email, password_hash, enthusiasm, purpose, challenge, health, resilience):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.password_hash = password_hash
+        self.enthusiasm = enthusiasm
+        self.purpose = purpose
+        self.challenge = challenge
+        self.health = health
+        self.resilience = resilience
+
+class Developer_Project(db.Model):
+    __tablename__ = 'Developer_Project'
+    developer_id = db.Column(db.Integer, db.ForeignKey('Developers.developer_id'), primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('Projects.project_id'), primary_key=True)
+
+    def __init__(self, developer_id, project_id):
+        self.developer_id = developer_id
+        self.project_id = project_id
+
+class Developer_Strength(db.Model):
+    __tablename__ = 'Developer_Strength'
+    strength_id = db.Column(db.Integer, primary_key=True)
+    developer_id = db.Column(db.Integer, db.ForeignKey('Developers.developer_id'))
+    strength = db.Column(db.String(255))
+
+    def __init__(self, developer_id, strength):
+        self.developer_id = developer_id
+        self.strength = strength
+
