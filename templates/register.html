@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="../static/css/main.css">
         <link rel="stylesheet" href="../static/css/formformat.css">
         <link rel="stylesheet" href="../static/css/toggle_switch.css">
+        <link rel="stylesheet" href="../static/css/alert.css">
         <title>Register</title>
     </head>
     <body>
@@ -55,9 +56,10 @@
             {% block content %}
             <div class="container">
                 {% for message in get_flashed_messages() %}
-                <div class="alert alert-warning">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    {{ message }}
+                <br>
+                <div class="alert" >
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';" style="font-size: 50px;">&times;</span>
+                    {{message}}
                 </div>
                 {% endfor %}
 

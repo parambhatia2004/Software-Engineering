@@ -29,6 +29,8 @@ Will add stuff here as I do the files
 
 ### updateProject.html
 - flask route: `/updateProject`
+- data required:
+    - project id, project name (more to be added)
 
 ### developerHome.html
 - flask route: `/developerHome`
