@@ -69,7 +69,7 @@
     width: auto;
   }
   
-  .contentdiv{
+  .contentdiv, .contentdiv_column{
     display : flex;
     justify-content: space-around;
     flex-wrap: wrap;
@@ -79,6 +79,10 @@
     flex-direction: row;
     background-color: #6B9BEC;
     
+  }
+
+  .contentdiv_column{
+    flex-direction: column;
   }
 
   .contentbox{

@@ -42,6 +42,7 @@ Will add stuff here as I do the files
 - flask route: `/softSkills`
 - data required:
     - an `isManager` global (session) variable in flask (used for redirecting to  the correct home menu from the soft skills page)
+    - a `defaultvalues` array with the 5 soft skill variables that are currently in the database
 
 ### logout.html
 - flask route: /logout
