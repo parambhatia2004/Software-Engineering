@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patua+One&display=swap');
+  
+ .section {
+      background-color: #b1ceff;
+      color: #021537;
+      cursor: pointer;
+      padding: 10px 20px;
+      width: 100%;
+      text-align: left;
+      border: none;
+      border-radius: 0px;
+      outline: none;
+      font-size: large;
+      font-family: 'Raleway', Arial, sans-serif;
+      font-weight: 600;
+  }
+  
+  .active, .section:hover {
+    background-color: #b1ceff;
+    padding: 10px 20px;
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #021537;
+    text-decoration: none;
+    border-radius: 0px;
+  }
+  
+  .panel {
+    padding: 0 20px;
+    background-color: white;
+    display: none;
+    border-style: solid;
+    border-color: #b1ceff;
+    overflow: hidden;
+  }  
+
+  button .section a{
+    font-size: x-large;
+    font-family: 'Raleway', Arial, sans-serif;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  button .section:hover a{
+    color: #021537;
+    text-decoration: none;
+  }
