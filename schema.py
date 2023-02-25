@@ -1,3 +1,4 @@
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -7,7 +8,7 @@ class Projects(db.Model):
 
     # Primary and Foreign keys
     project_id = db.Column(db.Integer, primary_key=True)
-    project_manager_id = db.Column(db.Integer, db.ForeignKey('project_managers.project_manager_id', ondelete='CASCADE'), nullable=False)
+    project_manager_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
     # Fields
     project_name = db.Column(db.String(255), nullable=False)
@@ -97,66 +98,78 @@ class CostComponent(db.Model):
         self.absolute_value = absolute_value
 
 
-class ProjectManagers(db.Model):
-    __tablename__ = 'project_managers'
+class User(UserMixin, db.Model):
+    __tablename__ = 'user'
 
     # Primary key
-    project_manager_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # Fields
+    role = db.Column(db.String(255), nullable=False)
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
     password_hash = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, role, first_name, last_name, email, password_hash):
+        self.role = role
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.password_hash = password_hash
+
+class userSkills(db.Model):
+    __tablename__ = 'user_skills'
+
+    # Primary and Foreign keys
+    user_skill_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+
+    # Fields
     enthusiasm = db.Column(db.Integer, nullable=False)
     purpose = db.Column(db.Integer, nullable=False)
     challenge = db.Column(db.Integer, nullable=False)
     health = db.Column(db.Integer, nullable=False)
     resilience = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, first_name, last_name, email, password_hash, enthusiasm, purpose, challenge, health, resilience):
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.password_hash = password_hash
+    def __init__(self, user_id, enthusiasm, purpose, challenge, health, resilience):
+        self.user_id = user_id
         self.enthusiasm = enthusiasm
         self.purpose = purpose
         self.challenge = challenge
         self.health = health
         self.resilience = resilience
+# class Developers(db.Model):
+#     __tablename__ = 'developers'
 
+#     # Primary key
+#     developer_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-class Developers(db.Model):
-    __tablename__ = 'developers'
+#     # Fields
+#     first_name = db.Column(db.String(255), nullable=False)
+#     last_name = db.Column(db.String(255), nullable=False)
+#     email = db.Column(db.String(255), nullable=False, unique=True)
+#     password_hash = db.Column(db.String(255), nullable=False)
+#     enthusiasm = db.Column(db.Integer, nullable=False)
+#     purpose = db.Column(db.Integer, nullable=False)
+#     challenge = db.Column(db.Integer, nullable=False)
+#     health = db.Column(db.Integer, nullable=False)
+#     resilience = db.Column(db.Integer, nullable=False)
 
-    # Primary key
-    developer_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-
-    # Fields
-    first_name = db.Column(db.String(255), nullable=False)
-    last_name = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(255), nullable=False, unique=True)
-    password_hash = db.Column(db.String(255), nullable=False)
-    enthusiasm = db.Column(db.Integer, nullable=False)
-    purpose = db.Column(db.Integer, nullable=False)
-    challenge = db.Column(db.Integer, nullable=False)
-    health = db.Column(db.Integer, nullable=False)
-    resilience = db.Column(db.Integer, nullable=False)
-
-    def __init__(self, first_name, last_name, email, password_hash, enthusiasm, purpose, challenge, health, resilience):
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.password_hash = password_hash
-        self.enthusiasm = enthusiasm
-        self.purpose = purpose
-        self.challenge = challenge
-        self.health = health
-        self.resilience = resilience
+#     def __init__(self, first_name, last_name, email, password_hash, enthusiasm, purpose, challenge, health, resilience):
+#         self.first_name = first_name
+#         self.last_name = last_name
+#         self.email = email
+#         self.password_hash = password_hash
+#         self.enthusiasm = enthusiasm
+#         self.purpose = purpose
+#         self.challenge = challenge
+#         self.health = health
+#         self.resilience = resilience
 
 class DeveloperProject(db.Model):
     __tablename__ = 'developer_project'
-    developer_id = db.Column(db.Integer, db.ForeignKey('developers.developer_id'), primary_key=True)
+    developer_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id'), primary_key=True)
 
     def __init__(self, developer_id, project_id):
@@ -166,7 +179,7 @@ class DeveloperProject(db.Model):
 class DeveloperStrength(db.Model):
     __tablename__ = 'developer_strength'
     strength_id = db.Column(db.Integer, primary_key=True)
-    developer_id = db.Column(db.Integer, db.ForeignKey('developers.developer_id'))
+    developer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     strength = db.Column(db.String(255))
 
     def __init__(self, developer_id, strength):

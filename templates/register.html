@@ -33,7 +33,7 @@
                         Sign up for a manager account.
                     </label>
                     <label class="switch">
-                        <input type="checkbox" id="myCheck" onclick="myFunction()">
+                        <input type="checkbox" name="myCheck" id="myCheck" onclick="myFunction()">
                         <span class="slider round"></span>
                     </label>
                     <label id="text">OFF</label>
@@ -52,6 +52,18 @@
                 </div><br>
                 <input type='submit' value='Register'>
             </form>
+            {% block content %}
+            <div class="container">
+                {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+                {% endfor %}
+
+                {% block page_content %}{% endblock %}
+            </div>
+            {% endblock %}
         </div>
     </body>
 </html>
