@@ -4,7 +4,9 @@
         <meta charset="utf-8" >
         <link rel="stylesheet" href="../static/css/menu.css">
         <link rel="stylesheet" href="../static/css/main.css">
+        <link rel="stylesheet" href="../static/css/section.css">
         <link rel="stylesheet" href="../static/css/formformat.css">
+        <script src='static/js/section.js'></script>
         <title>Home</title>
     </head>
     <body>
@@ -14,8 +16,20 @@
             <a href="/logout">Log out</a>
         </div>
         <div class="main">
-            <h1>Test</h1>
-            <p>Test text here</p>
+            <h1>Welcome,&nbsp {{ name }}</h1>
+            <div class="buttondiv">
+                <button><a href="/developerSkills">Add skills</a></button>
+                <button><a href="/softSkills">Update personal status</a></button>
+            </div>
+            <div class="contentdiv">
+            {% for project in projects %}
+                <button class="section">{{project.project_name}}</button>
+                <div class="panel">
+                    <p>Deadline: {{project.deadline}}</p><br>
+                    <p>Overview: {{project.description}}</p>
+                </div>
+            {% endfor %}
+            </div>
         </div>
     </body>
 </html>
