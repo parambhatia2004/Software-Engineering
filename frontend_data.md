@@ -19,7 +19,10 @@ Will add stuff here as I do the files
 
 ### createProject.html
 - flask route: `/createProject`
+- I haven't yet done the AJAX and JavaScript
 - transmits all project-specific variables
+- data required: 
+    - a list of all the registered developers, named `allDevelopers`
 
 
 ### projectInfo.html
@@ -29,8 +32,10 @@ Will add stuff here as I do the files
 
 ### updateProject.html
 - flask route: `/updateProject`
+- redirects to `/updateProjectRedirect` (after that just go to the main page?)
 - data required:
-    - project id, project name (more to be added)
+    - a project object with `project_id`, `project_name` 
+    - a `timecomponent` and a `costcomponent` object,each with the `best`, `worst` and `average` attributes
 
 ### developerHome.html
 - flask route: `/developerHome`
@@ -39,6 +44,9 @@ Will add stuff here as I do the files
 
 ### developerSkills.html
 - flask route: `developerSkills`
+- I haven't done the AJAX yet.
+- data required: 
+    - list of skills currently in the database for the developer, named `currentSkills`.
 
 ### softSkills.html
 - flask route: `/softSkills`
