@@ -16,11 +16,17 @@
   }
 
 
-  label {
+  label, select {
     font-size: large;
     font-weight: 700;
     color: #0b3378;
     font-family: 'Raleway', Arial, sans-serif;
+  }
+
+  select{
+    border-radius: 8px;
+    padding: 8px 15px;
+    border-color:#b1ceff;
   }
 
   input[placeholder] {
@@ -29,7 +35,9 @@
   }
 
   legend{
-    font-weight: bold;
+    font-size: large;
+    font-family: 'Raleway', Arial, sans-serif;
+    font-weight: 700;
   }
 
   
@@ -52,6 +60,7 @@
     background-color: #134CAE;
   }
 
+
   div.formgroup{
     flex-grow: 1;
     display: flex;
@@ -64,4 +73,34 @@
     width: 40%;
   }
 
+  div.inputgroup{
+    display: flex;
+    flex-direction: row;
+  }
+
+  div.inputgroup > *{
+    flex-grow:1;
+    margin: 0px 5px;
+  }
+
+  input[type=text], input[type=number],  ::-webkit-datetime-edit{
+    font-size: large;
+    font-weight: 500;
+    color: #0b3378;
+    font-family: 'Raleway', Arial, sans-serif;
+    padding: 5px;
+    border-radius:8px;
+    border-color:#b1ceff;
+    border-width: 0;
+  }
+  
+  #developersFormSection, #requirementsFormSection{
+    flex-grow:1;
+    width:40%;
+    background-color:white;
+    border-width:0px;
+    border-radius:8px;
+    margin-right:10px;
+    padding:5px 15px;
+  }
   

@@ -15,15 +15,30 @@
         </div>
         <div class="main">
             <h1>Your skills</h1>
-            <div class="contentdiv_column">
-                <div class="contentbox">
-                    <h2> Current skills </h2>
-                    <p> </p>
-                </div>
-                <div class="contentbox">
-                    <h2> Update skills </h2>
-                    <p> insert project overview here </p>
-                </div>
+            {% set skills =  ['Assembly', 'Bash', 'C', 'C++', 'C#' , 'CSS','F#' , 'Fortran', 'Go', 
+                'Haskell', 'HTML', 'Java', 'JavaScript', 'JSON', 'Kotlin', 'Lisp', 'MATLAB' , 'OCaml', 'Pascal', 'Perl', 'PHP',
+                'PowerShell', 'Prolog', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'SQL', 'Swift', 'TeX', 'XML'] %}
+            
+            <div class="skilldiv"> 
+                <p>Add a programming language to your skillset:</p>
+                <select name="skillset">
+                {% for skill in skills%}
+                    {% if skill not in currentSkills %}
+                    <option value="{{skill}}">{{skill}}</option>
+                    {% endif %}
+                {% endfor %}
+                </select>
+                <button onclick="addSkill()">Add a new skill</button>
+                <br> 
+                <p> Your currently listed skills are:</p>
+                <ul id="currentskills">
+                    {% for csk in currentSkills %}
+                    <li>
+                        {{csk}}
+                        <button onclick="removeSkill()" id="{{csk}}" style="font-size:30px;font-weight:500;">&times;</button>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </body>
