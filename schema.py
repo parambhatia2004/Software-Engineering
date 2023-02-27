@@ -1,5 +1,8 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import CheckConstraint
+
+from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 
@@ -14,7 +17,7 @@ class Projects(db.Model):
     project_name = db.Column(db.String(255), nullable=False)
     deadline = db.Column(db.Integer, nullable=False)
     budget = db.Column(db.Integer, nullable=False)
-    project_state = db.Column(db.Enum('Success', 'Failure', 'Ongoing', 'Cancelled'), nullable=False)
+    project_state = db.Column(db.String(20), CheckConstraint("project_state IN ('Success', 'Failure', 'Ongoing', 'Cancelled')"), nullable=False)
     description = db.Column(db.String(255))
 
     def __init__(self, project_manager_id, project_name, deadline, budget, project_state, description):
@@ -49,7 +52,7 @@ class ProjectRisk(db.Model):
     # Fields
     monte_carlo_time = db.Column(db.Integer)
     monte_carlo_cost = db.Column(db.Integer)
-    project_risk_state = db.Column(db.Enum('Green', 'Amber', 'Red'), nullable=False)
+    project_risk_state = db.Column(db.String(20), CheckConstraint("project_risk_state IN ('Green', 'Amber', 'Red')"), nullable=False)
 
     def __init__(self, project_id, monte_carlo_time, monte_carlo_cost, project_risk_state):
         self.project_id = project_id
@@ -105,7 +108,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     # Fields
-    role = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), CheckConstraint("role IN ('Developer', 'Project Manager')"), nullable=False)
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
@@ -118,7 +121,7 @@ class User(UserMixin, db.Model):
         self.email = email
         self.password_hash = password_hash
 
-class userSkills(db.Model):
+class UserSkills(db.Model):
     __tablename__ = 'user_skills'
 
     # Primary and Foreign keys
@@ -187,6 +190,14 @@ class DeveloperStrength(db.Model):
         self.strength = strength
 
 def dbinit():
+    db.session.add(User('Developer','Matt', 'Jk', 'Matt@gmail', generate_password_hash("asdf")))
+    db.session.add(User('Project Manager', 'Oscar', 'Jk', 'Oscar@gmail', generate_password_hash("qwerty")))
+
+    db.session.add(UserSkills('1','1','2','3','4','5'))
+
+    db.session.add(Projects(2,'Test Project', 100, 200, 'Ongoing', 'This is a test project'))
+
+
     db.session.commit()
 
 
