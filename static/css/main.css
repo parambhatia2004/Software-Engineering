@@ -2,10 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Patua+One&display=swap');
   body{
     margin : 0;
+    margin-top: 80px;
   }
   
   h1, h2, h3, h4, h5, h6, legend{
-    color: #134CAE;
+    color: #0b3378;
     font-family: 'Patua One', cursive;
     font-weight: 400;
   }
@@ -90,7 +91,8 @@
     min-height: 3cm;
     min-width: 3cm;
     margin: 15px;
-    padding: 0px 15px;
+    padding: 10px 15px;
+    padding-bottom:15px;
     border-radius: 10px;
     text-align: center;
     background-color: #ffffff;
