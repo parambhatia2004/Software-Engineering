@@ -36,7 +36,7 @@
                                 <h4>{{green_proj.project_name}}</h4>
                                 <p>{{green_proj.description}}</p>
                                 <p>Looks like this project is low-risk!<p>
-                                <form method="POST" action="/projectInfo">
+                                <form method="POST" action="/projectInfoRedirect">
                                     <input type="hidden"  name="{{green_proj.project_id}}" id="{{green_proj.project_id}}">
                                     <input type="submit" value="See more information">
                                 </form>
@@ -74,7 +74,7 @@
                                     <li>{{risk}}</li>
                                 {% endfor %}
                                 </ul>
-                                <form method="POST" action="/projectInfo">
+                                <form method="POST" action="/projectInfoRedirect">
                                     <input type="hidden"  name="{{amber_proj.project_id}}" id="{{amber_proj.project_id}}">
                                     <input type="submit" value="See more information">
                                 </form>
@@ -112,7 +112,7 @@
                                     <li>{{risk}}</li>
                                 {% endfor %}
                                 </ul>
-                                <form method="POST" action="/projectInfo">
+                                <form method="POST" action="/projectInfoRedirect">
                                     <input type="hidden"  name="{{red_proj.project_id}}" id="{{red_proj.project_id}}">
                                     <input type="submit" value="See more information">
                                 </form>

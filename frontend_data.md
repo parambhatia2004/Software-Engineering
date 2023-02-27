@@ -15,7 +15,11 @@ Will add stuff here as I do the files
 - flask route: `/managerHome`
 - data required:
     - `manager.name`
-    - a list `projects` that includes the `name`, `id`, and a `riskinformation` string for each one
+    - 3 lists of projects - one for green projects, one for amber and one for red;
+    - the green list should contain for each project the name, id and description;
+    - the amber and red lists should include everything the green one does, plus - for each project - a list of top risks (`project.toprisks`).
+- data transmitted:
+    - each project has a form (appears as just a button) attached that tracks the project id in a hidden variable; the form redirect to the `/projectInfoRedirect` route, and then the projectInfo page, getting the information for the correct project.
 
 ### createProject.html
 - flask route: `/createProject`
