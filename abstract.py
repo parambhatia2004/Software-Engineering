@@ -11,7 +11,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-
+# abstract user class
 class UserClass(ABC):
 
     def __init__(self, email):
@@ -24,12 +24,13 @@ class UserClass(ABC):
         with app.app_context():
             actor = User.query.filter_by(email = email).first()
         
-        # if match return true
+        # if match return the type of user
         if actor and check_password_hash(actor.password_hash, password):
             return actor.role
 
         return False
 
+    # confirms old password and then updates the database with new password hash
     def changePassword(self, oldPassword, newPassword):
         if check_password_hash(self.user.password_hash, oldPassword):
             with app.app_context():
@@ -43,6 +44,7 @@ class UserClass(ABC):
             return True
         return False
 
+    # takes in a 5 length int array and updates the soft skills to these values
     def updateSoftSkills(self, softSkills):
 
         if len(softSkills) == 5:
@@ -73,7 +75,7 @@ class UserClass(ABC):
     def updateProjects(projectID, action):
         pass
 
-
+# Abstract class for risk components (time and cost)
 class RiskComponentClass(ABC):
 
     def __init__(self,componentID,type):
@@ -84,5 +86,5 @@ class RiskComponentClass(ABC):
             with app.app_context():
                 self.component = CostComponent.query.filter_by(cost_component_id = componentID).first()
     
-    
+
 
