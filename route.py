@@ -37,6 +37,35 @@ def index():
 def reg():
     return render_template('/register.html')
 
+
+@app.route('/developerSkills')
+def developerSkills():
+    return render_template('/developerSkills.html')
+
+@app.route('/softSkills')
+def softSkills():
+    isManager = False
+    if current_user.role == "manager":
+        isManager = True
+    return render_template('/softSkills.html', isManager=isManager)
+
+@app.route('/createProject')
+def proj():
+    allDevelopers = User.query.filter_by(role="developer").all()
+    return render_template('/createProject.html', allDevelopers=allDevelopers)
+
+@app.route('/managerHome')
+def managerHome():
+    return render_template('/managerHome.html', name=current_user.first_name)
+
+@app.route('/developerHome')
+def developerHome():
+    return render_template('/developerHome.html', name=current_user.first_name)
+
+@app.route('/createProjectRedirect')
+def newProj():
+    return render_template('/managerHome.html')
+
 @app.route('/loginRedirect', methods = ['POST'])
 def checkLogin():
     email = request.form['email']
@@ -52,7 +81,7 @@ def checkLogin():
             return render_template('/managerHome.html', name=current_user.first_name)
         else:
             return render_template('/developerHome.html', name=current_user.first_name)
-    if security.check_password_hash(user.password, password):
+    if security.check_password_hash(user.password_hash, password):
         login_user(user)
 
         if user.role == "manager":
@@ -109,3 +138,8 @@ def newUser():
     else:
         flash("Passwords do not match.")
         return redirect('/register')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return render_template('/login.html')
