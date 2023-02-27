@@ -34,8 +34,9 @@
                 <br> 
                 <p> Your currently listed skills are:</p>
                 <ul id="currentskills">
+                    <!-- currentSkills is a list of developer strength objects -->
                     {% for csk in currentSkills %}
-                    <li id="{{csk}}">
+                    <li id="{{csk.strength}}">
                         {{csk}}
                     </li>
                     {% endfor %}

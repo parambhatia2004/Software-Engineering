@@ -19,8 +19,14 @@ Will add stuff here as I do the files
 
 ### createProject.html
 - flask route: `/createProject`
-- I haven't yet done the AJAX and JavaScript
+- because we can't add a list of requirements or developers at once, whenever one is added in the form, use AJAX to add them to a (python) global list of developers/ requirements that should be attached to the project, and add the database associations when the submit button of the form is clicked
 - transmits all project-specific variables
+- form redirects to `/createProjectRedirect`
+- ajax routes redirect to :
+    - `/addDevToProjectList`
+    - `/removeDevFromProjectList`
+    - `/addReqToProjectList`
+    - `/removeReqFromProjectList`
 - data required: 
     - a list of all the registered developers, named `allDevelopers`
 
@@ -44,7 +50,8 @@ Will add stuff here as I do the files
 
 ### developerSkills.html
 - flask route: `developerSkills`
-- I haven't done the AJAX yet.
+- data should be directly added to the database through ajax + flask
+- redirection routes: `/addDeveloperSkill`, `/removeDeveloperSkill`
 - data required: 
     - list of skills currently in the database for the developer, named `currentSkills`.
 
