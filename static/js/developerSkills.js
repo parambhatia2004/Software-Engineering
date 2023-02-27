@@ -14,6 +14,7 @@ $(document).ready( function(){
             success:function(response){
                 // add the skill to the list of current skills
                 const node = document.createElement("li");
+                node.id = selectedName;
                 const textnode = document.createTextNode(selectedName);
                 node.appendChild(textnode);
                 currentSkillList.appendChild(node);
