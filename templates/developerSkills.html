@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="../static/css/menu.css">
         <link rel="stylesheet" href="../static/css/main.css">
         <link rel="stylesheet" href="../static/css/formformat.css">
+        <script type="text/javascript" src="../static/js/developerSkills.js"></script>
         <title>Skills</title>
     </head>
     <body>
@@ -21,21 +22,22 @@
             
             <div class="skilldiv"> 
                 <p>Add a programming language to your skillset:</p>
-                <select name="skillset">
+                <select id="skillSelect" name="skillset">
                 {% for skill in skills%}
                     {% if skill not in currentSkills %}
                     <option value="{{skill}}">{{skill}}</option>
                     {% endif %}
                 {% endfor %}
                 </select>
-                <button onclick="addSkill()">Add a new skill</button>
+                <button class="add_skill">Add a new skill</button>
+                <button class="remove_skill">Remove the selected skill</button>
                 <br> 
                 <p> Your currently listed skills are:</p>
                 <ul id="currentskills">
+                    <!-- currentSkills is a list of developer strength objects -->
                     {% for csk in currentSkills %}
-                    <li>
+                    <li id="{{csk.strength}}">
                         {{csk}}
-                        <button onclick="removeSkill()" id="{{csk}}" style="font-size:30px;font-weight:500;">&times;</button>
                     </li>
                     {% endfor %}
                 </ul>
