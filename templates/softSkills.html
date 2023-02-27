@@ -20,8 +20,8 @@
         <div class="main">
             <h1>Personal status questionnaire</h1>
             <form method="post" action="/updateSoftSkills">
-                {% if defaultvalues is none %}
-                {% set defaultvalues = {'enthusiasm': 4, 'purpose': 4,'challenge': 4, 'health': 4, 'resilience': 4} %}
+                {% if defaultvalues is not defined %}
+                    {% set defaultvalues = {'enthusiasm': 4, 'purpose': 4,'challenge': 4, 'health': 4, 'resilience': 4} %}
                 {% endif %}
                 <div class='formgroup'>
                     <label>Enthusiasm</label>
