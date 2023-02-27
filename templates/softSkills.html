@@ -22,7 +22,7 @@
             <form method="post" action="/updateSoftSkills">
                 {% if defaultvalues is none %}
                 {% set defaultvalues = {'enthusiasm': 4, 'purpose': 4,'challenge': 4, 'health': 4, 'resilience': 4} %}
-            
+                {% endif %}
                 <div class='formgroup'>
                     <label>Enthusiasm</label>
                     <input type='range' name='enthusiasm' id='enthusiasm' min='1' max='5' step='1' value='{{defaultvalues.enthusiasm}}'>
@@ -43,7 +43,7 @@
                     <label>Resilience</label>
                     <input type='range' name='resilience' id='resilience' min='1' max='5' step='1' value='{{defaultvalues.resilience}}'>
                 </div> <br>
-                {% endif %}
+              
                 <input type='submit' value='Update information'>
             </form>
         </div>
