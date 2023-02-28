@@ -47,7 +47,7 @@ class ProjectRisk(db.Model):
 
     # Primary and Foreign keys
     project_risk_id = db.Column(db.Integer, primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id', ondelete='CASCADE'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id', ondelete='CASCADE'), unique=True, nullable=False)
 
     # Fields
     monte_carlo_time = db.Column(db.Integer)
