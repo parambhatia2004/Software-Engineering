@@ -50,7 +50,24 @@ def addDeveloperSkill():
         print("not logged in")
         return redirect('/login')
     skillName = request.form['skillName']
-    db.session.add(DeveloperStrength(current_user.id, skillName))
+    # check if the skill already exists in the db
+    temp = DeveloperStrength.query.filter((DeveloperStrength.developer_id == current_user.id) & (DeveloperStrength.strength == skillName)).first()
+    # new skill
+    if temp is None:
+        db.session.add(DeveloperStrength(current_user.id, skillName))
+        db.session.commit()
+        results=DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=current_user.id).all()
+        results = [r[0] for r in results]
+        return render_template('/developerSkills.html', currentSkills=results)
+    # else, the function is not "succesfull", and so the js does not add the skill either
+
+@app.route('/removeDeveloperSkill', methods = ['POST'])
+def removeDeveloperSkill():
+    if not current_user.is_authenticated:
+        print("not logged in")
+        return redirect('/login')
+    skillName = request.form['skillName']
+    temp = DeveloperStrength.query.filter((DeveloperStrength.developer_id == current_user.id) & (DeveloperStrength.strength == skillName)).delete()
     db.session.commit()
     results=DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=current_user.id).all()
     results = [r[0] for r in results]

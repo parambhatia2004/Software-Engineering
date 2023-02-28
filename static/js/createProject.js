@@ -8,7 +8,7 @@ $(document).ready( function(){
 
         let selectedId = $('#developers').find(":selected").value();
         let selectedName = $('#developers').find(":selected").text();
-        let currentDevList = document.getElementById('#currentDev')
+        let currentDevList = document.getElementById('currentDev')
     
         $.ajax({
             url: '/addDevToProjectList',
@@ -49,7 +49,7 @@ $(document).ready( function(){
     $('.add_requirement').click(function(){
 
         let selectedName = $('#skillset').find(":selected").text();
-        let currentReqList = document.getElementById('#currentreq')
+        let currentReqList = document.getElementById('currentreq')
     
         $.ajax({
             url: '/addReqToProjectList',
