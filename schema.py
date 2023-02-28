@@ -60,45 +60,67 @@ class ProjectRisk(db.Model):
         self.monte_carlo_cost = monte_carlo_cost
         self.project_risk_state = project_risk_state
 
-class TimeComponent(db.Model):
-    __tablename__ = 'time_component'
+# class TimeComponent(db.Model):
+#     __tablename__ = 'time_component'
+
+#     # Primary and Foreign keys
+#     time_component_id = db.Column(db.Integer, primary_key=True)
+#     project_risk_id = db.Column(db.Integer, db.ForeignKey('project_risk.project_risk_id', ondelete='CASCADE'), nullable=False)
+
+#     # Fields
+#     best = db.Column(db.Integer, nullable=False)
+#     worst = db.Column(db.Integer, nullable=False)
+#     average = db.Column(db.Integer, nullable=False)
+#     absolute_value = db.Column(db.Integer, nullable=False)
+
+#     def __init__(self, project_risk_id, best, worst, average, absolute_value):
+#         self.project_risk_id = project_risk_id
+#         self.best = best
+#         self.worst = worst
+#         self.average = average
+#         self.absolute_value = absolute_value
+
+# class CostComponent(db.Model):
+#     __tablename__ = 'cost_component'
+
+#     # Primary and Foreign keys
+#     cost_component_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     project_risk_id = db.Column(db.Integer, db.ForeignKey('project_risk.project_risk_id', ondelete='CASCADE'), nullable=False)
+
+#     # Fields
+#     best = db.Column(db.Integer, nullable=False)
+#     worst = db.Column(db.Integer, nullable=False)
+#     average = db.Column(db.Integer, nullable=False)
+#     absolute_value = db.Column(db.Integer, nullable=False)
+
+    # def __init__(self, project_risk_id, best, worst, average, absolute_value):
+    #     self.project_risk_id = project_risk_id
+    #     self.best = best
+    #     self.worst = worst
+    #     self.average = average
+    #     self.absolute_value = absolute_value
+
+class RiskComponent(db.Model):
+    __tablename__ = 'risk_component'
 
     # Primary and Foreign keys
-    time_component_id = db.Column(db.Integer, primary_key=True)
+    risk_component_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     project_risk_id = db.Column(db.Integer, db.ForeignKey('project_risk.project_risk_id', ondelete='CASCADE'), nullable=False)
 
     # Fields
-    best = db.Column(db.Integer, nullable=False)
-    worst = db.Column(db.Integer, nullable=False)
-    average = db.Column(db.Integer, nullable=False)
-    absolute_value = db.Column(db.Integer, nullable=False)
+    best = db.Column(db.Integer, nullable=True)
+    worst = db.Column(db.Integer, nullable=True)
+    average = db.Column(db.Integer, nullable=True)
+    absolute_value = db.Column(db.Integer, nullable=True)
+    risk_type = db.Column(db.String(20),CheckConstraint("risk_type IN ('Time', 'Cost')"))
 
-    def __init__(self, project_risk_id, best, worst, average, absolute_value):
+    def __init__(self, project_risk_id, best, worst, average, absolute_value, risk_type):
         self.project_risk_id = project_risk_id
         self.best = best
         self.worst = worst
         self.average = average
         self.absolute_value = absolute_value
-
-class CostComponent(db.Model):
-    __tablename__ = 'cost_component'
-
-    # Primary and Foreign keys
-    cost_component_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    project_risk_id = db.Column(db.Integer, db.ForeignKey('project_risk.project_risk_id', ondelete='CASCADE'), nullable=False)
-
-    # Fields
-    best = db.Column(db.Integer, nullable=False)
-    worst = db.Column(db.Integer, nullable=False)
-    average = db.Column(db.Integer, nullable=False)
-    absolute_value = db.Column(db.Integer, nullable=False)
-
-    def __init__(self, project_risk_id, best, worst, average, absolute_value):
-        self.project_risk_id = project_risk_id
-        self.best = best
-        self.worst = worst
-        self.average = average
-        self.absolute_value = absolute_value
+        self.risk_type = risk_type
 
 
 class User(UserMixin, db.Model):
