@@ -22,8 +22,16 @@
         <div class="main">
             <h1>Welcome,&nbsp {{ name }}!</h1>
             <div class="buttondiv">
-                <button><a href="/createProject">Create new project</a></button>
-                <button><a href="/softSkills">Update Soft Skills</a></button>
+                <form method="post" id="createProjectID" action="/createProject">
+                    <input type="submit" value="Create new project" >
+                </form>
+
+                <form method="post" id="softSkillsButton" action="/softSkills">
+                    <input type="submit" value="Update Soft Skills" >
+                </form>
+
+                <!-- <button><a href="/createProject">Create new project</a></button>
+                <button><a href="/softSkills">Update Soft Skills</a></button> -->
             </div>
             <div class="contentdiv">
                 {% if greenProjects %}

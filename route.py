@@ -75,14 +75,14 @@ def updateSoftSkills():
     else:
         return render_template('/developerHome.html', name=current_user.first_name)
 
-@app.route('/softSkills')
+@app.route('/softSkills', methods = ['GET', 'POST'])
 def softSkills():
     isManager = False
     if current_user.role == "manager":
         isManager = True
     return render_template('/softSkills.html', isManager=isManager)
 
-@app.route('/createProject')
+@app.route('/createProject', methods = ['GET', 'POST'])
 def proj():
     allDevelopers = User.query.filter_by(role="developer").all()
     return render_template('/createProject.html', allDevelopers=allDevelopers)
