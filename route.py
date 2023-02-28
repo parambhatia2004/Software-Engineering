@@ -10,7 +10,7 @@ app.secret_key = 'SecRetKeyHighLyConFiDENtIal'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///RiskTracker.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-from schema import db, User, dbinit
+from schema import db, User, UserSkills, dbinit
 db.init_app(app)
 
 login_manager = LoginManager()
@@ -41,6 +41,25 @@ def reg():
 @app.route('/developerSkills')
 def developerSkills():
     return render_template('/developerSkills.html')
+
+@app.route('/updateSoftSkills', methods = ['POST'])
+def updateSoftSkills():
+    enthusiasm = request.form['enthusiasm']
+    purpose = request.form['purpose']
+    challenge = request.form['challenge']
+    health = request.form['health']
+    resilience = request.form['resilience']
+    print(enthusiasm)
+    print(purpose)
+    print(challenge)
+    print(health)
+    print(resilience)
+    db.session.add(UserSkills(current_user.id, enthusiasm, purpose, challenge, health, resilience))
+    db.session.commit()
+    if current_user.role == "manager":
+        return render_template('/managerHome.html', name=current_user.first_name)
+    else:
+        return render_template('/developerHome.html', name=current_user.first_name)
 
 @app.route('/softSkills')
 def softSkills():

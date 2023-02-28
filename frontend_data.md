@@ -3,11 +3,11 @@ Data required and transmitted for frontend implementation
 
 Will add stuff here as I do the files
 
-### login.html
+### login.html (DONE)
 - flask route: `/login`, `/`
 - redirects to `/loginRedirect`
 
-### register.html
+### register.html (DONE)
 - flask route: `/register`
 - redirects to `/registerRedirect`
 
@@ -59,11 +59,11 @@ Will add stuff here as I do the files
 - data required: 
     - list of skills currently in the database for the developer, named `currentSkills`.
 
-### softSkills.html
+### softSkills.html (DONE)
 - flask route: `/softSkills`
 - data required:
     - an `isManager` global (session) variable in flask (used for redirecting to  the correct home menu from the soft skills page)
     - a `defaultvalues` array with the 5 soft skill variables that are currently in the database
 
-### logout.html
+### logout.html (DONE)
 - flask route: /logout

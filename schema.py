@@ -126,7 +126,7 @@ class UserSkills(db.Model):
 
     # Primary and Foreign keys
     user_skill_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), unique=True, nullable=False)
 
     # Fields
     enthusiasm = db.Column(db.Integer, nullable=False)
