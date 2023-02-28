@@ -25,9 +25,7 @@
                 <p>Add a programming language to your skillset:</p>
                 <select id="skillSelect" name="skillset">
                 {% for skill in skills%}
-                    {% if skill not in currentSkills %}
                     <option value="{{skill}}">{{skill}}</option>
-                    {% endif %}
                 {% endfor %}
                 </select>
                 <button class="add_skill">Add a new skill</button>
@@ -37,7 +35,7 @@
                 <ul id="currentskills">
                     <!-- currentSkills is a list of developer strength objects -->
                     {% for csk in currentSkills %}
-                    <li id="{{csk.strength}}">
+                    <li id="{{csk}}">
                         {{csk}}
                     </li>
                     {% endfor %}
