@@ -59,13 +59,17 @@
                 <div id="dynamicdata" class="inputgroup">
                     <div id="developersFormSection">
                         <p>Add a developer to the project:</p>
-                        <select name="developers" id="developers">
-                        {% for dev in allDevelopers%}
-                            <option value="{{dev.developer_id}}">{{dev}}</option>
-                        {% endfor %}
-                        </select>
-                        <button class="add_developer">Add a requirement</button>
-                        <button class="remove_developer">Remove the selected requirement</button>
+                        <div class="inputgroup">
+                            <select name="developers" id="developers">
+                            {% for dev in allDevelopers%}
+                                <option value="{{dev.developer_id}}">{{dev.first_name}} {{dev.last_name}}</option>
+                            {% endfor %}
+                            </select>
+                            <div class="inputgroup">
+                                <button class="add_developer">Add a developer</button>
+                                <button class="remove_developer">Remove the selected developer</button>
+                            </div>
+                        </div>
                         <br> 
                         <p> The current developers are:</p>
                         <!-- Developers should be added here in JS -->
@@ -74,13 +78,17 @@
                     </div>
                     <div id="requirementsFormSection">
                         <p>Add a programming language to the project requirements:</p>
-                        <select name="skillset" id="skillset">
-                        {% for skill in skills%}
-                            <option value="{{skill}}">{{skill}}</option>
-                        {% endfor %}
-                        </select>
-                        <button class="add_requirement">Add a requirement</button>
-                        <button class="remove_requirement">Remove the selected requirement</button>
+                        <div class="inputgroup">
+                            <select name="skillset" id="skillset">
+                            {% for skill in skills%}
+                                <option value="{{skill}}">{{skill}}</option>
+                            {% endfor %}
+                            </select>
+                            <div class="inputgroup">
+                                <button class="add_requirement">Add a requirement</button>
+                                <button class="remove_requirement">Remove the selected requirement</button>
+                            </div>
+                        </div>
                         <br> 
                         <p> The current project requirements are:</p>
                         <!-- Requirements should be added here in JS -->

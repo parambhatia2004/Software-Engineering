@@ -5,17 +5,6 @@ $(document).ready( function(){
 
         let selectedName = $('#skillSelect').find(":selected").text()
         let currentSkillList = document.getElementById('currentskills')
-        if(currentSkillList == null){
-            console.log('current skill list is null')
-            const newList = document.createElement("ul");
-            li = document.createElement("li");
-            newList.id = 'currentskills';
-            li.id = selectedName;
-            const textnode = document.createTextNode(selectedName);
-            li.appendChild(textnode);
-            newList.appendChild(li);
-        }
-        currentSkillList = document.getElementById('currentskills')
     
         $.ajax({
             url: '/addDeveloperSkill',
