@@ -10,7 +10,7 @@ app.secret_key = 'SecRetKeyHighLyConFiDENtIal'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///RiskTracker.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-from schema import db, User, UserSkills, dbinit
+from schema import db, User, DeveloperStrength, UserSkills, dbinit
 db.init_app(app)
 
 login_manager = LoginManager()
@@ -40,7 +40,21 @@ def reg():
 
 @app.route('/developerSkills')
 def developerSkills():
-    return render_template('/developerSkills.html')
+    results=DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=current_user.id).all()
+    results = [r[0] for r in results]
+    return render_template('/developerSkills.html', currentSkills=results)
+
+@app.route('/addDeveloperSkill', methods = ['POST'])
+def addDeveloperSkill():
+    if not current_user.is_authenticated:
+        print("not logged in")
+        return redirect('/login')
+    skillName = request.form['skillName']
+    db.session.add(DeveloperStrength(current_user.id, skillName))
+    db.session.commit()
+    results=DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=current_user.id).all()
+    results = [r[0] for r in results]
+    return render_template('/developerSkills.html', currentSkills=results)
 
 @app.route('/updateSoftSkills', methods = ['POST'])
 def updateSoftSkills():
