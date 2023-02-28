@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask
 
 from abstract import UserClass, RiskComponentClass
-from schema import db, Projects, ProjectRisk, DeveloperProject, ProjectRequirement, DeveloperStrength
+from schema import db, Projects, ProjectRisk, DeveloperProject, ProjectRequirement, DeveloperStrength, RiskComponent
 
 app = Flask(__name__)
 app.secret_key = 'SecRetKeyHighLyConFiDENtIal'
@@ -13,7 +13,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 # Project manager concrete class, uses the user abstract class for most of its functions
-# NEEDS WORK
 class ProjectManager(UserClass):
 
     # !!!
@@ -21,16 +20,16 @@ class ProjectManager(UserClass):
         pass
 
 
+
 # Developer concrete class
-# NEEDS WORK
 class Developer(UserClass):
     
-    # need new init with strengths!!!
     def __init__(self, email):
         super(Developer,self).__init__(email)
 
         self.strengths = []
-        strengths = DeveloperStrength.query.filter_by(developer_id = self.user.id).all()
+        with app.app_context():
+            strengths = DeveloperStrength.query.filter_by(developer_id = self.user.id).all()
         for item in strengths:
             self.strengths.append(item.strength)
 
@@ -40,7 +39,6 @@ class Developer(UserClass):
     
 
 # Project concrete class
-# NEEDS WORK
 class ProjectsClass():
 
     def __init__(self,projectID):
@@ -61,7 +59,18 @@ class ProjectsClass():
                 self.requirements.append(item.requirement)
 
             # Project risk linked to this projectID
-            self.riskEstimate = ProjectRisk.query.filter_by(project_id = self.project.project_id).first()
+            self.riskEstimate = RiskEstimateClass(self.project.project_id)
+
+    # insert project AND create a project risk row for it in the database
+    @staticmethod
+    def insertProject(project_manager_id, project_name, deadline, budget, project_state, description):
+        with app.app_context():
+            db.session.add(Projects(project_manager_id,project_name,deadline,budget,project_state,description))
+            db.session.commit()
+
+            thisProject = Projects.query.order_by(Projects.project_id.desc()).first()
+            db.session.add(ProjectRisk(thisProject.project_id,None,None,None))
+            db.session.commit()
 
     # Setters - changes both the object that calls it and the SQL database info
     def setProjectName(self, newName):
@@ -107,22 +116,26 @@ class ProjectsClass():
 
             self.project.description = newDescription
 
+# currently unused
 # Time component class
 class TimeComponentClass(RiskComponentClass):
     def __init__(self, ID):
-        super(TimeComponentClass, self).__init__(ID, "Time")
+        super(TimeComponentClass, self).__init__(ID)
 
+# currently unused
 # Cost component class
 class CostComponentClass(RiskComponentClass):
     def __init__(self,ID):
-        super(CostComponentClass,self).__init__(ID, "Cost")
+        super(CostComponentClass,self).__init__(ID)
 
 
 # COST FUNCTION HERE NEEDS WORK
 class RiskEstimateClass():
-    def __init__(self, projectRiskID):
+    def __init__(self, projectID):
         with app.app_context():
-            self.risk = ProjectRisk.query.filter_by(project_risk_id = projectRiskID).first()
+            self.risk = ProjectRisk.query.filter_by(project_id = projectID).first()
+            self.timeComponents = RiskComponent.query.filter_by(project_risk_id = self.risk.project_risk_id, risk_type = "Time").all()
+            self.riskComponents = RiskComponent.query.filter_by(project_risk_id = self.risk.project_risk_id, risk_type = "Cost").all()
 
     # !!!
     def applySoftSkillWeighting(softSkills):
@@ -146,6 +159,8 @@ if actor == "Developer":
     matt.updateSoftSkills([10,11,12,13,14])
     print("Enthusiasm after change: ",matt.softSkills.enthusiasm)
     print("Developer Strengths: ", matt.strengths)
+    print("Developer current projects: ", matt.currentProjects)
+    print("Developer past projects: ", matt.pastProjects)
 elif actor == "Project Manager":
     print("Project Manager authentication successful")
     matt = Developer("test123")
@@ -154,7 +169,10 @@ else:
     print("authentication unsuccessful")
 
 
+
 testProject = ProjectsClass(1)
 print("Original name: ", testProject.project.project_name)
 testProject.setProjectName('Ham Sandwich')
 print("Name after change: ", testProject.project.project_name)
+
+Developer.insertUser("Developer","Insert","Method","@123","test")

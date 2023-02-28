@@ -52,7 +52,7 @@ class ProjectRisk(db.Model):
     # Fields
     monte_carlo_time = db.Column(db.Integer)
     monte_carlo_cost = db.Column(db.Integer)
-    project_risk_state = db.Column(db.String(20), CheckConstraint("project_risk_state IN ('Green', 'Amber', 'Red')"), nullable=False)
+    project_risk_state = db.Column(db.String(20), CheckConstraint("project_risk_state IN ('Green', 'Amber', 'Red')"))
 
     def __init__(self, project_id, monte_carlo_time, monte_carlo_cost, project_risk_state):
         self.project_id = project_id
@@ -151,11 +151,11 @@ class UserSkills(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), unique=True, nullable=False)
 
     # Fields
-    enthusiasm = db.Column(db.Integer, nullable=False)
-    purpose = db.Column(db.Integer, nullable=False)
-    challenge = db.Column(db.Integer, nullable=False)
-    health = db.Column(db.Integer, nullable=False)
-    resilience = db.Column(db.Integer, nullable=False)
+    enthusiasm = db.Column(db.Integer)
+    purpose = db.Column(db.Integer)
+    challenge = db.Column(db.Integer)
+    health = db.Column(db.Integer)
+    resilience = db.Column(db.Integer)
 
     def __init__(self, user_id, enthusiasm, purpose, challenge, health, resilience):
         self.user_id = user_id
@@ -218,7 +218,14 @@ def dbinit():
     db.session.add(UserSkills('1','1','2','3','4','5'))
 
     db.session.add(Projects(2,'Test Project', 100, 200, 'Ongoing', 'This is a test project'))
+    db.session.add(Projects(2,"Failed projects",1,30,'Failure','This project failed'))
+    db.session.add(Projects(2,"Another Project",300,7000,'Ongoing','This is a project'))
 
+    db.session.add(DeveloperProject(1,1))
+    db.session.add(DeveloperProject(1,2))
+    db.session.add(DeveloperProject(1,3))
+
+    db.session.add(ProjectRisk(1,None,None,None))
 
     db.session.commit()
 
