@@ -2,8 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Patua+One&display=swap');
   form {
     display: flex;
-    flex-direction: column ;
+    flex-direction: column;
     padding: 15px;
+    border-radius:10px;
+    border-width: 3px;
+    border-color: #6B9BEC;
+    border-style: solid;
     background-color: #b1ceff;
   }
     
@@ -73,6 +77,10 @@
     width: 40%;
   }
 
+  div.formgroup > input[type="range"]{
+    padding:0px;
+  }
+
   div.inputgroup{
     display: flex;
     flex-direction: row;
@@ -94,6 +102,7 @@
     border-color:#b1ceff;
     border-width: 0;
   }
+
   
   #developersFormSection, #requirementsFormSection{
     flex-grow:1;
@@ -105,3 +114,6 @@
     padding:5px 15px;
   }
   
+  form > input[type="button"]{
+    margin: 5px 5px;
+  }

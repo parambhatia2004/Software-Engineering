@@ -15,6 +15,12 @@
             <a href="/developerHome"><img src="../static/images/home.png" alt="Home" height="30px"></a>
             {% endif %}
             <a href="#" class="inactiveLink">Update status</a>
+            {% if isManager%}
+            <a href="/createProject">Create new project</a>
+            {% else %}
+            <a href="/developerSkills">Add skills</a>
+            {% endif %}
+            <a href="/softSkills">Update personal status</a>
             <a href="/logout">Log out</a>
         </div>
         <div class="main">
