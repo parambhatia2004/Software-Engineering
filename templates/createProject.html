@@ -13,6 +13,8 @@
         <div class="menu">
             <a href="/managerHome"><img src="../static/images/home.png" alt="Home" height="30px"></a>
             <a href="#" class="inactiveLink">Create a project</a>
+            <a href="/createProject">Create new project</a>
+            <a href="/softSkills">Update personal status</a>
             <a href="/logout">Log out</a>
         </div>
         <div class="main">
@@ -65,10 +67,8 @@
                                 <option value="{{dev.developer_id}}">{{dev.first_name}} {{dev.last_name}}</option>
                             {% endfor %}
                             </select>
-                            <div class="inputgroup">
-                                <button class="add_developer">Add a developer</button>
-                                <button class="remove_developer">Remove the selected developer</button>
-                            </div>
+                            <button class="add_developer">Add a developer</button>
+                            <button class="remove_developer">Remove the selected developer</button>
                         </div>
                         <br> 
                         <p> The current developers are:</p>
@@ -84,10 +84,8 @@
                                 <option value="{{skill}}">{{skill}}</option>
                             {% endfor %}
                             </select>
-                            <div class="inputgroup">
-                                <button class="add_requirement">Add a requirement</button>
-                                <button class="remove_requirement">Remove the selected requirement</button>
-                            </div>
+                            <button class="add_requirement">Add a requirement</button>
+                            <button class="remove_requirement">Remove the selected requirement</button>
                         </div>
                         <br> 
                         <p> The current project requirements are:</p>

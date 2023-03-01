@@ -14,14 +14,12 @@
         <div class="menu">
             <a href="/developerHome"><img src="../static/images/home.png" alt="Home" height="30px"></a>
             <a href="#" class="inactiveLink">Home</a>
+            <a href="/developerSkills">Add skills</a>
+            <a href="/softSkills">Update personal status</a>
             <a href="/logout">Log out</a>
         </div>
         <div class="main">
-            <h1>Welcome,&nbsp {{ name }}</h1>
-            <div class="buttondiv">
-                <button><a href="/developerSkills">Add skills</a></button>
-                <button><a href="/softSkills">Update personal status</a></button>
-            </div>
+            <h1>Welcome, {{name}}</h1>
             <div class="contentdiv">
             {% for project in projects %}
                 <button class="section">{{project.project_name}}</button>
@@ -31,6 +29,9 @@
                 </div>
             {% endfor %}
             </div>
+            {% if projects is not defined or projects is none %}
+            <h3 style="color:#777;">You haven't been assigned to any projects yet!</h3>
+            {% endif %}
         </div>
     </body>
 </html>
