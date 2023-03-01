@@ -1,3 +1,4 @@
+from trackGit import get_open_issues_count
 from werkzeug import security
 from flask import Flask, flash, render_template, request, redirect, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -39,6 +40,8 @@ def calculateRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, wors
     timeMC = monte_carlo(avgCost, bestCost, worstCost)
     #Thread close
     memberRisk = teamMemberRisk(proj_id)
+    currentIssuesOpen = get_open_issues_count('calculator', 'microsoft')
+    return currentIssuesOpen
 
 
 @login_manager.user_loader
@@ -122,7 +125,8 @@ def proj():
 
 @app.route('/managerHome')
 def managerHome():
-    id = calculateRisk(current_user.id)
+    id = calculateRisk(current_user.id,1,1,1,1,1,1)
+    print("Open Issues:")
     print(id)
     return render_template('/managerHome.html', name=current_user.first_name)
 
