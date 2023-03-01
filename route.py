@@ -25,6 +25,22 @@ if resetdb:
         db.create_all()
         dbinit()
 
+def teamMemberRisk(proj_id):
+    return 0
+
+def monte_carlo(avg, best, worst):
+    return 0
+
+def calculateRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, worstCost):
+    proj_manager_id = current_user.id
+    pm = User.query.filter_by(id=proj_manager_id).first().email
+    #Thread open
+    costMC = monte_carlo(avgTime, bestTime, worstTime)
+    timeMC = monte_carlo(avgCost, bestCost, worstCost)
+    #Thread close
+    memberRisk = teamMemberRisk(proj_id)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -106,6 +122,8 @@ def proj():
 
 @app.route('/managerHome')
 def managerHome():
+    id = calculateRisk(current_user.id)
+    print(id)
     return render_template('/managerHome.html', name=current_user.first_name)
 
 @app.route('/developerHome')
