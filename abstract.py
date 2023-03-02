@@ -20,20 +20,6 @@ class UserClass(ABC):
             self.user = User.query.filter_by(email=email).first()
             self.softSkills = UserSkills.query.filter_by(user_id = self.user.id).first()
 
-            # obtain current project IDs
-            currentProjects = DeveloperProject.query.join(Projects).filter(DeveloperProject.developer_id==self.user.id, 
-            Projects.project_state == "Ongoing").with_entities(DeveloperProject.project_id).all()
-            self.currentProjects = []
-            for project in currentProjects:
-                self.currentProjects.append(project[0])
-
-            # obtain past project IDs
-            pastProjects = DeveloperProject.query.join(Projects).filter(DeveloperProject.developer_id==self.user.id,
-            or_(Projects.project_state == "Success",Projects.project_state == "Failure",
-            Projects.project_state == "Cancelled")).with_entities(DeveloperProject.project_id).all()
-            self.pastProjects = []
-            for project in pastProjects:
-                self.pastProjects.append(project[0])
 
     # Static
     @staticmethod
