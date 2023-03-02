@@ -100,6 +100,27 @@ class ProjectRisk(db.Model):
     #     self.average = average
     #     self.absolute_value = absolute_value
 
+class ProjectGitHub(db.Model):
+    __tablename__ = 'project_git_hub'
+
+    # Primary and Foreign keys
+    repo_id = db.Column(db.Integer, primary_key=True)
+    project_id =  db.Column(db.Integer, db.ForeignKey('projects.project_id', ondelete='CASCADE'), unique=True, nullable=False)
+
+    # Fields
+    repo_name = db.Column(db.String(255))
+    issues_24 = db.Column(db.Integer)
+    issues_7 = db.Column(db.Integer)
+    time_of_day = db.Column(db.Time)
+
+    def __init__(self, project_id,repo_name,issues_24,issues_7,time_of_day):
+        self.project_id = project_id
+        self.repo_name = repo_name
+        self.issues_24 = issues_24
+        self.issues_7 = issues_7
+        self.time_of_day = time_of_day
+
+
 class RiskComponent(db.Model):
     __tablename__ = 'risk_component'
 

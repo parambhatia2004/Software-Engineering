@@ -3,7 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask
 
 from abstract import UserClass, RiskComponentClass
-from schema import db, Projects, ProjectRisk, DeveloperProject, ProjectRequirement, DeveloperStrength, RiskComponent
+from schema import db, Projects, ProjectRisk, DeveloperProject, ProjectRequirement, DeveloperStrength, RiskComponent, ProjectGitHub
+
+import datetime
 
 app = Flask(__name__)
 app.secret_key = 'SecRetKeyHighLyConFiDENtIal'
@@ -61,6 +63,8 @@ class ProjectsClass():
             # Project risk linked to this projectID
             self.riskEstimate = RiskEstimateClass(self.project.project_id)
 
+            self.gitHub = ProjectGitHub.query.filter_by(project_id = self.project.project_id).first()
+
     # insert project AND create a project risk row for it in the database
     @staticmethod
     def insertProject(project_manager_id, project_name, deadline, budget, project_state, description):
@@ -70,6 +74,7 @@ class ProjectsClass():
 
             thisProject = Projects.query.order_by(Projects.project_id.desc()).first()
             db.session.add(ProjectRisk(thisProject.project_id,None,None,None))
+            db.session.add(ProjectGitHub(thisProject.project_id,None,None,None,None))
             db.session.commit()
 
     # Setters - changes both the object that calls it and the SQL database info
@@ -115,6 +120,26 @@ class ProjectsClass():
             db.session.commit()
 
             self.project.description = newDescription
+    
+    def updateGitHub(self, repoData):
+        if len(repoData) == 4:
+            with app.app_context():
+                changeRepo = ProjectGitHub.query.filter_by(project_id = self.project.project_id).first()
+                changeRepo.repo_name = repoData[0]
+                changeRepo.issues_24 = repoData[1]
+                changeRepo.issues_7 = repoData[2]
+                changeRepo.time_of_day = repoData[3]
+
+                db.session.commit()
+
+                self.gitHub.repo_name = repoData[0]
+                self.gitHub.issues_24 = repoData[1]
+                self.gitHub.issues_7 = repoData[2]
+                self.gitHub.time_of_day = repoData[3]
+
+            return True
+
+        return False
 
 # currently unused
 # Time component class
@@ -176,3 +201,7 @@ testProject.setProjectName('Ham Sandwich')
 print("Name after change: ", testProject.project.project_name)
 
 Developer.insertUser("Developer","Insert","Method","@123","test")
+ProjectsClass.insertProject(2,"insertProject",23,45,"Ongoing","This was inserted with method")
+
+project4 = ProjectsClass(4)
+project4.updateGitHub(["Changed",32,54,datetime.time(10,29)])
