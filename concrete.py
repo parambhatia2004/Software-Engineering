@@ -111,6 +111,7 @@ class ProjectsClass():
             db.session.add(ProjectGitHub(thisProject.project_id,None,None,None,None))
             db.session.commit()
 
+
     # Setters - changes both the object that calls it and the SQL database info
     def setProjectName(self, newName):
         with app.app_context():
@@ -174,6 +175,7 @@ class ProjectsClass():
             return True
 
         return False
+    
 
 # currently unused
 # Time component class
@@ -243,3 +245,13 @@ project4.updateGitHub(["Changed",32,54,datetime.time(10,29)])
 oscar = ProjectManager("Oscar@gmail")
 print("Oscars current projecs:", oscar.currentProjects)
 print("Oscars past projects:", oscar.pastProjects)
+
+oscarsProjects = oscar.createUserProjects()
+print("Oscars projects: ", oscarsProjects)
+
+mattsProjects = matt.createUserProjects()
+print("Matts projects:", mattsProjects)
+
+print("Matts Projects by name:")
+for project in mattsProjects:
+    print("Project Name:", project.project_name)

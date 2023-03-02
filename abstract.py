@@ -87,6 +87,10 @@ class UserClass(ABC):
 
         return False
     
+    def createUserProjects(self):
+        with app.app_context():
+            return Projects.query.filter(Projects.project_id.in_(self.currentProjects)).all()
+    
     # decorator
     @abstractmethod
     def updateProjects(projectID, action):
