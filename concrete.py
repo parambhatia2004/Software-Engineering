@@ -4,6 +4,7 @@ from flask import Flask
 
 from abstract import UserClass, RiskComponentClass
 from schema import db, Projects, ProjectRisk, DeveloperProject, ProjectRequirement, DeveloperStrength, RiskComponent, ProjectGitHub
+from sqlalchemy import or_
 
 import datetime
 
@@ -17,6 +18,23 @@ db.init_app(app)
 # Project manager concrete class, uses the user abstract class for most of its functions
 class ProjectManager(UserClass):
 
+    def __init__(self, email):
+        super(ProjectManager,self).__init__(email)
+
+        with app.app_context():
+            # obtain current project IDs
+            currentProjects = Projects.query.filter_by(project_manager_id = self.user.id, project_state = "Ongoing").all()
+            self.currentProjects = []
+            for project in currentProjects:
+                self.currentProjects.append(project.project_id)
+
+            # obtain past project IDs
+            pastProjects = Projects.query.filter(Projects.project_manager_id == self.user.id, or_(Projects.project_state == "Success",Projects.project_state == "Failure",
+            Projects.project_state == "Cancelled")).all()
+            self.pastProjects = []
+            for project in pastProjects:
+                self.pastProjects.append(project.project_id)
+
     # !!!
     def updateProjects(projectID, action):
         pass
@@ -28,12 +46,28 @@ class Developer(UserClass):
     
     def __init__(self, email):
         super(Developer,self).__init__(email)
-
-        self.strengths = []
+        
         with app.app_context():
+            # obtain current project IDs
+            currentProjects = DeveloperProject.query.join(Projects).filter(DeveloperProject.developer_id==self.user.id, 
+            Projects.project_state == "Ongoing").with_entities(DeveloperProject.project_id).all()
+            self.currentProjects = []
+            for project in currentProjects:
+                self.currentProjects.append(project[0])
+
+            # obtain past project IDs
+            pastProjects = DeveloperProject.query.join(Projects).filter(DeveloperProject.developer_id==self.user.id,
+            or_(Projects.project_state == "Success",Projects.project_state == "Failure",
+            Projects.project_state == "Cancelled")).with_entities(DeveloperProject.project_id).all()
+            self.pastProjects = []
+            for project in pastProjects:
+                self.pastProjects.append(project[0])
+
+
+            self.strengths = []
             strengths = DeveloperStrength.query.filter_by(developer_id = self.user.id).all()
-        for item in strengths:
-            self.strengths.append(item.strength)
+            for item in strengths:
+                self.strengths.append(item.strength)
 
     # !!!
     def updateProjects(projectID, action):
@@ -205,3 +239,7 @@ ProjectsClass.insertProject(2,"insertProject",23,45,"Ongoing","This was inserted
 
 project4 = ProjectsClass(4)
 project4.updateGitHub(["Changed",32,54,datetime.time(10,29)])
+
+oscar = ProjectManager("Oscar@gmail")
+print("Oscars current projecs:", oscar.currentProjects)
+print("Oscars past projects:", oscar.pastProjects)
