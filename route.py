@@ -25,7 +25,8 @@ if resetdb:
         db.drop_all()
         db.create_all()
         dbinit()
-
+def softSkillRisk(proj_id):
+    return 0
 def teamMemberRisk(proj_id):
     return 0
 
