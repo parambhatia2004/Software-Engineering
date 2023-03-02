@@ -6,7 +6,7 @@ $(document).ready( function(){
 
     $('.add_developer').click(function(){
 
-        let selectedId = $('#developers').find(":selected").value();
+        let selectedId = $('#developers').find(":selected").val();
         let selectedName = $('#developers').find(":selected").text();
         let currentDevList = document.getElementById('currentDev')
     
@@ -29,7 +29,7 @@ $(document).ready( function(){
 
     $('.remove_developer').click(function(){
 
-        let selectedId = $('#developers').find(":selected").value();
+        let selectedId = $('#developers').find(":selected").val();
         let selectedName = $('#developers').find(":selected").text();
         let listElem = document.getElementById(selectedName)
         
