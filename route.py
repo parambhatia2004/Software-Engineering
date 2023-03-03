@@ -6,6 +6,8 @@ from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 import sqlite3
 
+from concrete import *
+
 app = Flask(__name__)
 app.secret_key = 'SecRetKeyHighLyConFiDENtIal'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///RiskTracker.sqlite3'
@@ -171,46 +173,74 @@ def newUser():
     email = request.form['email']
     password = request.form['password']
     confpassword = request.form['confpassword']
-    if request.form.get("myCheck"):
-        manager = True
-    else:
-        manager = False
-    print(manager)
-    if manager:
-        role = "manager"
-    else:
-        role = "developer"
-    if not email:
-        flash("Enter email.")
-        return redirect('/register')
-    if not password:
-        flash("Enter password.")
-        return redirect('/register')
-    if not confpassword:
-        flash("Confirm password.")
-        return redirect('/register')
-    if not password == confpassword:
-        flash("Passwords do not match.")
-        return redirect('/register')
+    
+    # print(manager)
+    # if manager:
+    #     role = "manager"
+    # else:
+    #     role = "developer"
+    # if not email:
+    #     flash("Enter email.")
+    #     return redirect('/register')
+    # if not password:
+    #     flash("Enter password.")
+    #     return redirect('/register')
+    # if not confpassword:
+    #     flash("Confirm password.")
+    #     return redirect('/register')
+    # if not password == confpassword:
+    #     flash("Passwords do not match.")
+        # return redirect('/register')
+    # return redirect
 
     if((User.query.filter_by(email=email).first()) is not None):
         flash("Username already taken")
         return redirect('/register')
-    hashed_password = security.generate_password_hash(password)
-
-    if security.check_password_hash(hashed_password, confpassword):
-        db.session.add(User(role, firstname, lastname, email, hashed_password))
-        db.session.commit()
-        user = User.query.filter_by(email=email).first()
-        login_user(user)
-        if manager:
-            return render_template('/managerHome.html', name=firstname)
-        else:
-            return render_template('/developerHome.html')
-
+    
+    if request.form.get("myCheck"):
+        manager = True
+        ProjectManager.insertUser("Project Manager", firstname, lastname, email, password)
     else:
-        flash("Passwords do not match.")
-        return redirect('/register')
+        manager = False
+        Developer.insertUser("Developer", firstname, lastname, email, password)
+
+    # hashed_password = security.generate_password_hash(password)
+
+    # if security.check_password_hash(hashed_password, confpassword):
+        # db.session.add(User(role, firstname, lastname, email, hashed_password))
+        # db.session.commit()
+        # user = User.query.filter_by(email=email).first()
+        # login_user(user)
+        # if manager:
+        #     return render_template('/managerHome.html', name=firstname)
+        # else:
+        #     return render_template('/developerHome.html')
+    
+    if manager:
+        user = ProjectManager(email)
+        login_user(user)
+        # add colour risk estimates once cost function is done
+        currentProjectGreen = []
+        currentProjectAmber = []
+        currentProjectRed = []
+        for project in user.currentProjects:
+            currentProjectGreen.append(ProjectsClass(project.project_id))
+
+        return render_template('/managerHome.html', name=user.user.first_name, currentProjectGreen = currentProjectGreen)
+    else:
+        user = Developer(email)
+        login_user(user)
+
+        currentProjectObjects = []
+        for project in user.currentProjects:
+            currentProjectObjects.append(ProjectsClass(project.project_id))
+        
+        return render_template('/developerHome.html', name=user.user.first_name, projects = currentProjectObjects)
+
+
+    # else:
+    #     flash("Passwords do not match.")
+    #     return redirect('/register')
 
 @app.route('/logout')
 def logout():
