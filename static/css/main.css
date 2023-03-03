@@ -23,7 +23,7 @@
   .main {
     font-family: Arial, sans-serif;
     font-size: large;
-    margin-top: 1cm; 
+    margin-top: 1cm;
     padding: 50px;
     padding-top: 0%;
   }
@@ -40,6 +40,7 @@
     text-decoration: none;
     padding: 10px 20px;
     display: inline-block;
+    margin: 5px;
   }
   
   button a{

@@ -25,6 +25,7 @@
     font-weight: 700;
     color: #0b3378;
     font-family: 'Raleway', Arial, sans-serif;
+    max-width: fit-content;
   }
 
   select{
@@ -84,12 +85,14 @@
   div.inputgroup{
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
   }
 
   div.inputgroup > *{
     flex-grow:1;
-    margin: 0px 5px;
+    margin: 5px;
     padding:5px;
+    /* max-width: 90%; */
   }
 
   input[type=text], input[type=number],  ::-webkit-datetime-edit{
