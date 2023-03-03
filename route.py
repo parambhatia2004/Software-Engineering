@@ -1,10 +1,12 @@
 from trackGit import get_open_issues_count
 from werkzeug import security
-from flask import Flask, flash, render_template, request, redirect, url_for
+from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 import sqlite3
+import json
+from concrete import *
 
 app = Flask(__name__)
 app.secret_key = 'SecRetKeyHighLyConFiDENtIal'
@@ -25,6 +27,10 @@ if resetdb:
         db.drop_all()
         db.create_all()
         dbinit()
+
+def as_dict(self):
+    return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 def softSkillRisk(proj_id):
     return 0
 def teamMemberRisk(proj_id):
@@ -171,46 +177,57 @@ def newUser():
     email = request.form['email']
     password = request.form['password']
     confpassword = request.form['confpassword']
-    if request.form.get("myCheck"):
-        manager = True
-    else:
-        manager = False
-    print(manager)
-    if manager:
-        role = "manager"
-    else:
-        role = "developer"
-    if not email:
-        flash("Enter email.")
-        return redirect('/register')
-    if not password:
-        flash("Enter password.")
-        return redirect('/register')
-    if not confpassword:
-        flash("Confirm password.")
-        return redirect('/register')
-    if not password == confpassword:
-        flash("Passwords do not match.")
-        return redirect('/register')
 
     if((User.query.filter_by(email=email).first()) is not None):
         flash("Username already taken")
         return redirect('/register')
-    hashed_password = security.generate_password_hash(password)
-
-    if security.check_password_hash(hashed_password, confpassword):
-        db.session.add(User(role, firstname, lastname, email, hashed_password))
-        db.session.commit()
-        user = User.query.filter_by(email=email).first()
-        login_user(user)
-        if manager:
-            return render_template('/managerHome.html', name=firstname)
-        else:
-            return render_template('/developerHome.html')
-
+    
+    if request.form.get("myCheck"):
+        manager = True
+        ProjectManager.insertUser("Project Manager", firstname, lastname, email, password)
     else:
-        flash("Passwords do not match.")
-        return redirect('/register')
+        manager = False
+        Developer.insertUser("Developer", firstname, lastname, email, password)
+    
+    if manager:
+        user = ProjectManager(email)
+
+        session['user'] = as_dict(user.user)
+        session['softSkills'] = as_dict(user.softSkills)
+        session['currentProjects'] = user.currentProjects
+        session['pastProjects'] = user.pastProjects
+
+        print(session['user']['first_name'])
+
+        # add colour risk estimates once cost function is done
+        currentProjectGreen = []
+        currentProjectAmber = []
+        currentProjectRed = []
+        # for project in session['currentProjects']:
+        #     currentProjectGreen.append(ProjectsClass(project.project_id))
+
+        return render_template('/managerHome.html')
+    else:
+        user = Developer(email)
+        
+        session['user'] = as_dict(user.user)
+        session['softSkills'] = as_dict(user.softSkills)
+        session['currentProjects'] = user.currentProjects
+        session['pastProjects'] = user.pastProjects
+
+        print(session['user']['first_name'])
+        # add colour risk estimates once cost function is done
+        currentProjectGreen = []
+        currentProjectAmber = []
+        currentProjectRed = []
+        # for project in session['currentProjects']:
+        #     currentProjectGreen.append(ProjectsClass(project.project_id))
+
+        return render_template('/developerHome.html')
+
+    # else:
+    #     flash("Passwords do not match.")
+    #     return redirect('/register')
 
 @app.route('/logout')
 def logout():
