@@ -1,4 +1,4 @@
-from trackGit import get_open_issues_count, get_hourly_commits
+from trackGit import get_open_issues_count
 from werkzeug import security
 from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -40,16 +40,15 @@ def monte_carlo(avg, best, worst):
     return 0
 
 def calculateRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, worstCost):
-    # proj_manager_id = current_user.id
-    # pm = User.query.filter_by(id=proj_manager_id).first().email
+    proj_manager_id = current_user.id
+    pm = User.query.filter_by(id=proj_manager_id).first().email
     #Thread open
     costMC = monte_carlo(avgTime, bestTime, worstTime)
     timeMC = monte_carlo(avgCost, bestCost, worstCost)
     #Thread close
     memberRisk = teamMemberRisk(proj_id)
     currentIssuesOpen = get_open_issues_count('calculator', 'microsoft')
-    hourly_commits = get_hourly_commits('calculator', 'microsoft')
-    return hourly_commits
+    return currentIssuesOpen
 
 
 @login_manager.user_loader
@@ -67,38 +66,41 @@ def reg():
 
 @app.route('/developerSkills')
 def developerSkills():
-    results=DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=current_user.id).all()
-    results = [r[0] for r in results]
-    return render_template('/developerSkills.html', currentSkills=results)
+    # results=DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=current_user.id).all()
+    # results = [r[0] for r in results]
+    return render_template('/developerSkills.html', currentSkills=session['strengths'])
 
 @app.route('/addDeveloperSkill', methods = ['POST'])
 def addDeveloperSkill():
-    if not current_user.is_authenticated:
-        print("not logged in")
-        return redirect('/login')
+    
     skillName = request.form['skillName']
     # check if the skill already exists in the db
-    temp = DeveloperStrength.query.filter((DeveloperStrength.developer_id == current_user.id) & (DeveloperStrength.strength == skillName)).first()
+    check = DeveloperStrength.query.filter((DeveloperStrength.developer_id == session['user']['id']) & (DeveloperStrength.strength == skillName)).first()
+
     # new skill
-    if temp is None:
-        db.session.add(DeveloperStrength(current_user.id, skillName))
+    if check is None:
+        db.session.add(DeveloperStrength(session['user']['id'], skillName))
         db.session.commit()
-        results=DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=current_user.id).all()
-        results = [r[0] for r in results]
-        return render_template('/developerSkills.html', currentSkills=results)
+        update = session['strengths']
+        update.append(skillName)
+        session['strengths'] = update
+        print("add developer skills: ",session['strengths'])
+        # return render_template('/developerSkills.html', currentSkills=session['strengths'])
+        return "OK"
     # else, the function is not "succesfull", and so the js does not add the skill either
 
 @app.route('/removeDeveloperSkill', methods = ['POST'])
 def removeDeveloperSkill():
-    if not current_user.is_authenticated:
-        print("not logged in")
-        return redirect('/login')
+
     skillName = request.form['skillName']
-    temp = DeveloperStrength.query.filter((DeveloperStrength.developer_id == current_user.id) & (DeveloperStrength.strength == skillName)).delete()
+    DeveloperStrength.query.filter((DeveloperStrength.developer_id == session['user']['id']) & (DeveloperStrength.strength == skillName)).delete()
     db.session.commit()
-    results=DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=current_user.id).all()
-    results = [r[0] for r in results]
-    return render_template('/developerSkills.html', currentSkills=results)
+    update = session['strengths']
+    update.remove(skillName)
+    session['strengths'] = update
+    print("remove developer skills: ",session['strengths'])
+    # return render_template('/developerSkills.html', currentSkills=session['strengths'])
+    return "OK"
 
 @app.route('/updateSoftSkills', methods = ['POST'])
 def updateSoftSkills():
@@ -112,35 +114,36 @@ def updateSoftSkills():
     print(challenge)
     print(health)
     print(resilience)
-    db.session.add(UserSkills(current_user.id, enthusiasm, purpose, challenge, health, resilience))
-    db.session.commit()
-    if current_user.role == "manager":
-        return render_template('/managerHome.html', name=current_user.first_name)
+    # db.session.add(UserSkills(current_user.id, enthusiasm, purpose, challenge, health, resilience))
+    # db.session.commit()
+    UserClass.updateSoftSkills(session['user']['id'],[enthusiasm,purpose,challenge,health,resilience])
+
+    user_id = session['softSkills']['user_id']
+    user_skill_id = session['softSkills']['user_skill_id']
+
+    session['softSkills'] = {"enthusiasm": enthusiasm, "purpose":purpose,"challenge":challenge,"health":health,"resilience":resilience,"user_id":user_id,"user_skill_id":user_skill_id}
+
+    if session['user']['role'] == "Project Manager":
+        return redirect('/managerHome')
     else:
-        return render_template('/developerHome.html', name=current_user.first_name)
+        return redirect('/developerHome')
 
 @app.route('/softSkills', methods = ['GET', 'POST'])
 def softSkills():
-    isManager = False
-    if current_user.role == "manager":
-        isManager = True
-    return render_template('/softSkills.html', isManager=isManager)
+    if 'user' not in session:
+        return redirect('/')
+
+    isManager = True if (session['user']['role'] == "Project Manager") else False
+    print("session softskills: ",session['softSkills'])
+    return render_template('/softSkills.html', isManager=isManager, defaultValues = session['softSkills'])
 
 @app.route('/createProject', methods = ['GET', 'POST'])
 def proj():
-    allDevelopers = User.query.filter_by(role="developer").all()
+    if 'user' not in session:
+        return redirect('/')
+    
+    allDevelopers = User.query.filter_by(role="Developer").all()
     return render_template('/createProject.html', allDevelopers=allDevelopers)
-
-@app.route('/managerHome')
-def managerHome():
-    id = calculateRisk(current_user.id,1,1,1,1,1,1)
-    print("Open Issues:")
-    print(id)
-    return render_template('/managerHome.html', name=current_user.first_name)
-
-@app.route('/developerHome')
-def developerHome():
-    return render_template('/developerHome.html', name=current_user.first_name)
 
 @app.route('/createProjectRedirect')
 def newProj():
@@ -150,51 +153,48 @@ def newProj():
 def checkLogin():
     email = request.form['email']
     password = request.form['password']
+    actor = UserClass.authenticateUser(email,password)
 
-    user = User.query.filter_by(email=email).first()
-    email=escape(email)
-    if not user:
-        return render_template('/login.html')
+    if actor == "Developer":
+        user = Developer(email)
+        
+        session['user'] = as_dict(user.user)
+        session['softSkills'] = as_dict(user.softSkills)
+        session['currentProjects'] = user.currentProjects
+        session['pastProjects'] = user.pastProjects
+        session['strengths'] = user.strengths
 
-    if current_user.is_authenticated:
-        if current_user.role == "manager":
-            return render_template('/managerHome.html', name=current_user.first_name)
-        else:
-            return render_template('/developerHome.html', name=current_user.first_name)
-    if security.check_password_hash(user.password_hash, password):
-        login_user(user)
+        return redirect('/developerHome')
+    elif actor == "Project Manager":
+        user = ProjectManager(email)
+        
+        session['user'] = as_dict(user.user)
+        session['softSkills'] = as_dict(user.softSkills)
+        session['currentProjects'] = user.currentProjects
+        session['pastProjects'] = user.pastProjects
 
-        if user.role == "manager":
-            return render_template('/managerHome.html', name=user.first_name)
-        else:
-            return render_template('/developerHome.html', name=user.first_name)
+        return redirect('/managerHome')
     else:
-        return render_template('/login.html')
+        flash("Wrong Email or Password")
+        return redirect('/')
 
 @app.route('/registerRedirect', methods = ['POST'])
 def newUser():
-    id = calculateRisk(1,1,1,1,1,1,1)
-    print("Open Issues:")
-    print(id)
     firstname = request.form['firstname']
     lastname = request.form['lastname']
     email = request.form['email']
     password = request.form['password']
-    confpassword = request.form['confpassword']
-    manager=False
+    # confpassword = request.form['confpassword']
+    # HAVE FRONT END CHECK THEY ARE THE SAME AND THEN DONT SEND IN FORM
+
     if((User.query.filter_by(email=email).first()) is not None):
         flash("Username already taken")
         return redirect('/register')
     
     if request.form.get("myCheck"):
-        print("USER IS A MANAGER")
         manager = True
         ProjectManager.insertUser("Project Manager", firstname, lastname, email, password)
-    else:
-        manager = False
-        Developer.insertUser("Developer", firstname, lastname, email, password)
-    
-    if manager:
+
         user = ProjectManager(email)
 
         session['user'] = as_dict(user.user)
@@ -202,7 +202,7 @@ def newUser():
         session['currentProjects'] = user.currentProjects
         session['pastProjects'] = user.pastProjects
 
-        print(session['user']['first_name'])
+        # print(session['user']['first_name'])
 
         # add colour risk estimates once cost function is done
         currentProjectGreen = []
@@ -211,16 +211,20 @@ def newUser():
         # for project in session['currentProjects']:
         #     currentProjectGreen.append(ProjectsClass(project.project_id))
 
-        return render_template('/managerHome.html')
+        return redirect('/managerHome')
     else:
+        manager = False
+        Developer.insertUser("Developer", firstname, lastname, email, password)
+
         user = Developer(email)
         
         session['user'] = as_dict(user.user)
         session['softSkills'] = as_dict(user.softSkills)
         session['currentProjects'] = user.currentProjects
         session['pastProjects'] = user.pastProjects
+        session['strengths'] = user.strengths
 
-        print(session['user']['first_name'])
+        # print(session['user']['first_name'])
         # add colour risk estimates once cost function is done
         currentProjectGreen = []
         currentProjectAmber = []
@@ -228,13 +232,44 @@ def newUser():
         # for project in session['currentProjects']:
         #     currentProjectGreen.append(ProjectsClass(project.project_id))
 
-        return render_template('/developerHome.html')
+        return redirect('/developerHome')
+    
+@app.route('/managerHome')
+def managerHome():
+    if 'user' not in session:
+        return redirect('/')
 
-    # else:
-    #     flash("Passwords do not match.")
-    #     return redirect('/register')
+    # user = ProjectManager(session['user']['email'])
+    userProjects = ProjectManager.createUserProjects(session['currentProjects'])
+
+    currentProjects = []
+    for project in userProjects:
+        currentProjects.append(as_dict(project))
+
+    print(session['currentProjects'])
+    print(currentProjects)
+
+    return render_template('/managerHome.html',name=session['user']['first_name'],greenProjects=currentProjects)
+
+@app.route('/developerHome')
+def developerHome():
+    if 'user' not in session:
+        return redirect('/')
+    
+    # user = Developer(session['user']['email'])
+    userProjects = Developer.createUserProjects(session['currentProjects'])
+
+    currentProjects = []
+    for project in userProjects:
+        currentProjects.append(as_dict(project))
+
+    print(session['currentProjects'])
+    print(currentProjects)
+
+    return render_template('/developerHome.html', name=session['user']['first_name'],projects=currentProjects)
 
 @app.route('/logout')
 def logout():
-    logout_user()
-    return render_template('/login.html')
+    session.clear()
+    return redirect('/')
+

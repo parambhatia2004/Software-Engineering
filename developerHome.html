@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" >
+        <link rel="stylesheet" href="../static/css/menu.css">
+        <link rel="stylesheet" href="../static/css/main.css">
+        <link rel="stylesheet" href="../static/css/section.css">
+        <link rel="stylesheet" href="../static/css/formformat.css">
+        <script src="../static/js/jquery-3.6.0.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+        <script src='../static/js/section.js'></script>
+        <title>Home</title>
+    </head>
+    <body>
+        <div class="menu">
+            <a href="/developerHome"><img src="../static/images/home.png" alt="Home" height="30px"></a>
+            <a href="#" class="inactiveLink">Home</a>
+            <a href="/developerSkills">Add skills</a>
+            <a href="/softSkills">Update personal status</a>
+            <a href="/logout">Log out</a>
+        </div>
+        <div class="main">
+            <h1>Welcome, {{name}}</h1>
+            <div class="contentdiv">
+            {% for project in projects %}
+                <button class="section">{{project.project_name}}</button>
+                <div class="panel">
+                    <p>Deadline: {{project.deadline}}</p><br>
+                    <p>Overview: {{project.description}}</p>
+                </div>
+            {% endfor %}
+            </div>
+            {% if projects is not defined or projects is none %}
+            <h3 style="color:#777;">You haven't been assigned to any projects yet!</h3>
+            {% endif %}
+        </div>
+    </body>
+</html>
