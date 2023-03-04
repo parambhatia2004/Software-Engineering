@@ -32,21 +32,21 @@ def create_commits_df(repo, owner, api):
     commits_list = commits_of_repo_github(repo, owner, api)
     return json_normalize(commits_list)
 
-commits = create_commits_df('calculator', 'microsoft', github_api)
-# pd.set_option('display.max_columns', None)
-# print(commits.info())
-#I want to see all columns
+# commits = create_commits_df('calculator', 'microsoft', github_api)
+# # pd.set_option('display.max_columns', None)
+# # print(commits.info())
+# #I want to see all columns
 
 
-commits['date'] =  pd.to_datetime(commits['commit.committer.date'])
-commits['date'] =  pd.to_datetime(commits['date'], utc=True)
-commits['commit_date'] = commits['date'].dt.date
-commits['commit_year'] = commits['date'].dt.year
-commits['commit_hour'] = commits['date'].dt.hour
+# commits['date'] =  pd.to_datetime(commits['commit.committer.date'])
+# commits['date'] =  pd.to_datetime(commits['date'], utc=True)
+# commits['commit_date'] = commits['date'].dt.date
+# commits['commit_year'] = commits['date'].dt.year
+# commits['commit_hour'] = commits['date'].dt.hour
 
-print(commits['author.login'].unique().size)
-commits_by_hour = commits.groupby('commit_hour')[['sha']].count()
-commits_by_hour = commits_by_hour.rename(columns = {'sha': 'commit_count'})
+# print(commits['author.login'].unique().size)
+# commits_by_hour = commits.groupby('commit_hour')[['sha']].count()
+# commits_by_hour = commits_by_hour.rename(columns = {'sha': 'commit_count'})
 
 def get_open_issues(repo, owner, api):
     url = api + 'search/issues?q=repo:{}/{}+type:issue+state:open'.format(owner, repo)
@@ -63,28 +63,39 @@ def get_open_issues_count(repo, owner, api=github_api):
     normalised_list = json_normalize(commits_list)
     return normalised_list['total_count'][0]
 
-print('------------------')
-print(commits_by_hour.commit_count)
-print('------------------')
+
+
+def get_hourly_commits(repo, owner, api=github_api):
+    commits = create_commits_df(repo, owner, api)
+    # pd.set_option('display.max_columns', None)
+    # print(commits.info())
+    #I want to see all columns
+
+
+    commits['date'] =  pd.to_datetime(commits['commit.committer.date'])
+    commits['date'] =  pd.to_datetime(commits['date'], utc=True)
+    commits['commit_date'] = commits['date'].dt.date
+    commits['commit_year'] = commits['date'].dt.year
+    commits['commit_hour'] = commits['date'].dt.hour
+    commits_by_hour = commits.groupby('commit_hour')[['sha']].count()
+    commits_by_hour = commits_by_hour.rename(columns = {'sha': 'commit_count'})
+    return commits_by_hour.commit_count
 
 
 
 
+# import matplotlib.pyplot as plt
 
+# # # Plot the bar chart
+# plt.bar(commits_by_hour.index, commits_by_hour.commit_count)
 
-
-import matplotlib.pyplot as plt
-
-# # Plot the bar chart
-plt.bar(commits_by_hour.index, commits_by_hour.commit_count)
-
-# Set the chart title and axis labels
-plt.title('Commits by Hour')
-plt.xlabel('Hour')
-plt.ylabel('Commits Count')
+# # Set the chart title and axis labels
+# plt.title('Commits by Hour')
+# plt.xlabel('Hour')
+# plt.ylabel('Commits Count')
 
 # Show the plot
-plt.show()
+# plt.show()
 
 # commits_by_day = commits.groupby('commit_date')[['sha']].count()
 # commits_by_day = commits_by_day.rename(columns = {'sha': 'commit_count'})
@@ -97,4 +108,4 @@ plt.show()
 # plt.ylabel('Commits Count')
 
 # Show the plot
-plt.show()
+# plt.show()

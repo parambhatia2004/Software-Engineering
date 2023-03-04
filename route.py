@@ -1,4 +1,4 @@
-from trackGit import get_open_issues_count
+from trackGit import get_open_issues_count, get_hourly_commits
 from werkzeug import security
 from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -40,15 +40,16 @@ def monte_carlo(avg, best, worst):
     return 0
 
 def calculateRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, worstCost):
-    proj_manager_id = current_user.id
-    pm = User.query.filter_by(id=proj_manager_id).first().email
+    # proj_manager_id = current_user.id
+    # pm = User.query.filter_by(id=proj_manager_id).first().email
     #Thread open
     costMC = monte_carlo(avgTime, bestTime, worstTime)
     timeMC = monte_carlo(avgCost, bestCost, worstCost)
     #Thread close
     memberRisk = teamMemberRisk(proj_id)
     currentIssuesOpen = get_open_issues_count('calculator', 'microsoft')
-    return currentIssuesOpen
+    hourly_commits = get_hourly_commits('calculator', 'microsoft')
+    return hourly_commits
 
 
 @login_manager.user_loader
@@ -172,17 +173,21 @@ def checkLogin():
 
 @app.route('/registerRedirect', methods = ['POST'])
 def newUser():
+    id = calculateRisk(1,1,1,1,1,1,1)
+    print("Open Issues:")
+    print(id)
     firstname = request.form['firstname']
     lastname = request.form['lastname']
     email = request.form['email']
     password = request.form['password']
     confpassword = request.form['confpassword']
-
+    manager=False
     if((User.query.filter_by(email=email).first()) is not None):
         flash("Username already taken")
         return redirect('/register')
     
     if request.form.get("myCheck"):
+        print("USER IS A MANAGER")
         manager = True
         ProjectManager.insertUser("Project Manager", firstname, lastname, email, password)
     else:
