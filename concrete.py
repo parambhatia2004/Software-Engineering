@@ -211,47 +211,47 @@ class RiskEstimateClass():
 
 
 # TESTING
-actor = ProjectManager.authenticateUser("Matt@gmail","asdf")
-if actor == "Developer":
-    print("Developer authentication successful")
-    matt = Developer("Matt@gmail")
-    # matt.changePassword("asdf","asdf123")
-    print("Enthusiasm before change: ",matt.softSkills.enthusiasm)
-    matt.updateSoftSkills([10,11,12,13,14])
-    print("Enthusiasm after change: ",matt.softSkills.enthusiasm)
-    print("Developer Strengths: ", matt.strengths)
-    print("Developer current projects: ", matt.currentProjects)
-    print("Developer past projects: ", matt.pastProjects)
-elif actor == "Project Manager":
-    print("Project Manager authentication successful")
-    matt = Developer("test123")
-    matt.changePassword("qwerty","qwerty123")
-else:
-    print("authentication unsuccessful")
+# actor = ProjectManager.authenticateUser("Matt@gmail","asdf")
+# if actor == "Developer":
+#     print("Developer authentication successful")
+#     matt = Developer("Matt@gmail")
+#     # matt.changePassword("asdf","asdf123")
+#     print("Enthusiasm before change: ",matt.softSkills.enthusiasm)
+#     matt.updateSoftSkills([10,11,12,13,14])
+#     print("Enthusiasm after change: ",matt.softSkills.enthusiasm)
+#     print("Developer Strengths: ", matt.strengths)
+#     print("Developer current projects: ", matt.currentProjects)
+#     print("Developer past projects: ", matt.pastProjects)
+# elif actor == "Project Manager":
+#     print("Project Manager authentication successful")
+#     matt = Developer("test123")
+#     matt.changePassword("qwerty","qwerty123")
+# else:
+#     print("authentication unsuccessful")
 
 
 
-testProject = ProjectsClass(1)
-print("Original name: ", testProject.project.project_name)
-testProject.setProjectName('Ham Sandwich')
-print("Name after change: ", testProject.project.project_name)
+# testProject = ProjectsClass(1)
+# print("Original name: ", testProject.project.project_name)
+# testProject.setProjectName('Ham Sandwich')
+# print("Name after change: ", testProject.project.project_name)
 
-Developer.insertUser("Developer","Insert","Method","@123","test")
-ProjectsClass.insertProject(2,"insertProject",23,45,"Ongoing","This was inserted with method")
+# Developer.insertUser("Developer","Insert","Method","@123","test")
+# ProjectsClass.insertProject(2,"insertProject",23,45,"Ongoing","This was inserted with method")
 
-project4 = ProjectsClass(4)
-project4.updateGitHub(["Changed",32,54,datetime.time(10,29)])
+# project4 = ProjectsClass(4)
+# project4.updateGitHub(["Changed",32,54,datetime.time(10,29)])
 
-oscar = ProjectManager("Oscar@gmail")
-print("Oscars current projecs:", oscar.currentProjects)
-print("Oscars past projects:", oscar.pastProjects)
+# oscar = ProjectManager("Oscar@gmail")
+# print("Oscars current projecs:", oscar.currentProjects)
+# print("Oscars past projects:", oscar.pastProjects)
 
-oscarsProjects = oscar.createUserProjects()
-print("Oscars projects: ", oscarsProjects)
+# oscarsProjects = oscar.createUserProjects()
+# print("Oscars projects: ", oscarsProjects)
 
-mattsProjects = matt.createUserProjects()
-print("Matts projects:", mattsProjects)
+# mattsProjects = matt.createUserProjects()
+# print("Matts projects:", mattsProjects)
 
-print("Matts Projects by name:")
-for project in mattsProjects:
-    print("Project Name:", project.project_name)
+# print("Matts Projects by name:")
+# for project in mattsProjects:
+#     print("Project Name:", project.project_name)

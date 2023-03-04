@@ -64,6 +64,7 @@ def get_open_issues_count(repo, owner, api=github_api):
     return normalised_list['total_count'][0]
 
 print('------------------')
+print(commits_by_hour.commit_count)
 print('------------------')
 
 
@@ -72,28 +73,28 @@ print('------------------')
 
 
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 # # Plot the bar chart
-# plt.bar(commits_by_hour.index, commits_by_hour.commit_count)
+plt.bar(commits_by_hour.index, commits_by_hour.commit_count)
 
-# # Set the chart title and axis labels
-# plt.title('Commits by Hour')
-# plt.xlabel('Hour')
-# plt.ylabel('Commits Count')
+# Set the chart title and axis labels
+plt.title('Commits by Hour')
+plt.xlabel('Hour')
+plt.ylabel('Commits Count')
 
-# # Show the plot
-# plt.show()
-commits_by_day = commits.groupby('commit_date')[['sha']].count()
-commits_by_day = commits_by_day.rename(columns = {'sha': 'commit_count'})
+# Show the plot
+plt.show()
+
+# commits_by_day = commits.groupby('commit_date')[['sha']].count()
+# commits_by_day = commits_by_day.rename(columns = {'sha': 'commit_count'})
 
 # plt.fill_between(commits_by_day.index, commits_by_day.commit_count, color='skyblue', alpha=0.4)
 # plt.scatter(commits_by_day.index, commits_by_day.commit_count, color='royalblue')
 
-# # Set the chart title and axis labels
 # plt.title('Commits by Date')
 # plt.xlabel('Date')
 # plt.ylabel('Commits Count')
 
 # Show the plot
-# plt.show()
+plt.show()
