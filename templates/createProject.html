@@ -32,19 +32,19 @@
                     </label><br>
                     <h3>Codebase details</h3>
                     <div class="inputgroup">
-                        <label> Repository owner:
+                        <!-- <label> Repository owner:
                             <input type="text" name="repo_owner" id="repo_owner">
-                        </label>
+                        </label> -->
                         <label> Repository name:
                             <input type="text" name="repo_name" id="repo_name">
                         </label>
                     </div>
                     <hr>
-                    <label>Deadline:
-                        <input type="date" name="deadline" id="deadline">
+                    <label>Deadline (days until):
+                        <input type="number" name="deadline" id="deadline">
                     </label><br><br>
                     <div class="inputgroup">
-                        <label>Worst-case time estimate:
+                        <!-- <label>Worst-case time estimate:
                             <input type="date" name="worst_time" id="worst_time">
                         </label>
                         <label>Best-case time estimate:
@@ -52,13 +52,13 @@
                         </label>
                         <label>Average time estimate:
                             <input type="date" name="avg_time" id="avg_time">
-                        </label>
+                        </label> -->
                     </div><hr>
                     <label>Budget:
                         <input type="number" name="budget" id="budget">
                     </label><br><br>
                     <div class="inputgroup">
-                        <label>Worst-case budget estimate:
+                        <!-- <label>Worst-case budget estimate:
                             <input type="number" name="worst_budget" id="worst_budget">
                         </label>
                         <label>Best-case budget estimate:
@@ -66,7 +66,7 @@
                         </label>
                         <label>Average budget estimate:
                             <input type="number" name="avg_budget" id="avg_budget">
-                        </label>
+                        </label> -->
                     </div><hr>
                 </div>
                 <div id="dynamicdata" class="inputgroup">
@@ -75,11 +75,11 @@
                         <div class="inputgroup">
                             <select name="developers" id="developers">
                             {% for dev in allDevelopers%}
-                                <option value="{{dev.developer_id}}">{{dev.first_name}} {{dev.last_name}}</option>
+                                <option value="{{dev.id}}">{{dev.first_name}} {{dev.last_name}}</option>
                             {% endfor %}
                             </select>
-                            <button class="add_developer">Add a developer</button>
-                            <button class="remove_developer">Remove the selected developer</button>
+                            <button type = "button" class="add_developer">Add a developer</button>
+                            <button type = "button" class="remove_developer">Remove the selected developer</button>
                         </div>
                         <br> 
                         <p> The current developers are:</p>
@@ -95,8 +95,8 @@
                                 <option value="{{skill}}">{{skill}}</option>
                             {% endfor %}
                             </select>
-                            <button class="add_requirement">Add a requirement</button>
-                            <button class="remove_requirement">Remove the selected requirement</button>
+                            <button type = "button" class="add_requirement">Add a requirement</button>
+                            <button type = "button" class="remove_requirement">Remove the selected requirement</button>
                         </div>
                         <br> 
                         <p> The current project requirements are:</p>
@@ -110,6 +110,9 @@
 
             <script>
                 function validateForm() {
+                    // ADDED FOR EASE OF TESTING REMOVE RETURN TRUE
+                    return true;
+
                     worst_time = document.getElementById("worst_time").value
                     best_time = document.getElementById("best_time").value
                     avg_time = document.getElementById("avg_time").value
