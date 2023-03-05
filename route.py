@@ -1,4 +1,4 @@
-from trackGit import get_open_issues_count, get_hourly_commits
+from trackGit import get_open_issues_count
 from werkzeug import security
 from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -32,10 +32,6 @@ def as_dict(self):
     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 def softSkillRisk(proj_id):
-    #Get all Developers on the project
-    # Calculate the average soft skill for the project
-    # Calculate Expected soft skill based on team size
-    # Calculate percentage difference from expected
     return 0
 def teamMemberRisk(proj_id):
     return 0
@@ -43,21 +39,17 @@ def teamMemberRisk(proj_id):
 def monte_carlo(avg, best, worst):
     return 0
 
-def calculatePrimaryRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, worstCost):
-    # proj_manager_id = current_user.id
-    # pm = User.query.filter_by(id=proj_manager_id).first().email
+def calculateRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, worstCost):
+    proj_manager_id = current_user.id
+    pm = User.query.filter_by(id=proj_manager_id).first().email
     #Thread open
     costMC = monte_carlo(avgTime, bestTime, worstTime)
     timeMC = monte_carlo(avgCost, bestCost, worstCost)
     #Thread close
     memberRisk = teamMemberRisk(proj_id)
     currentIssuesOpen = get_open_issues_count('calculator', 'microsoft')
-    hourly_commits = get_hourly_commits('calculator', 'microsoft')
-    return hourly_commits
+    return currentIssuesOpen
 
-def calculateSecondaryRisk(proj_id):
-    overallRisk = softSkillRisk(proj_id) * calculatePrimaryRisk(proj_id, 0, 0, 0, 0, 0, 0)
-    return overallRisk
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -150,12 +142,64 @@ def proj():
     if 'user' not in session:
         return redirect('/')
     
+    session['projectDevelopers'] = []
+    session['projectRequirements'] = []
+
     allDevelopers = User.query.filter_by(role="Developer").all()
     return render_template('/createProject.html', allDevelopers=allDevelopers)
 
-@app.route('/createProjectRedirect')
-def newProj():
-    return render_template('/managerHome.html')
+@app.route('/createProjectRedirect', methods = ['POST'])
+def createProjectRedirect():
+    if request.method == 'POST':
+        # def insertProject(project_manager_id, project_name, deadline, budget, project_state, description, repo_name):
+        projectName = request.form['project_name']
+        repo_owner = session['user']['id']
+        repo_name = request.form['repo_name']
+
+        deadline = request.form['deadline']
+        budget = request.form['budget']
+
+        thisProjectID = ProjectsClass.insertProject(session['user']['id'], projectName, deadline, budget, "Ongoing", "THIS IS A DESCRIPTION OF THE PROJECT",repo_name, session['projectDevelopers'], session['projectRequirements'])
+        # thisProject = Projects.query.order_by(Projects.project_id.desc()).first()
+        update = session['currentProjects']
+        update.append(thisProjectID)
+        session['currentProjects'] = update
+
+    return redirect('/managerHome')
+
+@app.route('/addDevToProjectList', methods = ['POST'])
+def addDevToProjectList():
+    if request.form['devId'] not in session['projectDevelopers']:
+        update = session['projectDevelopers']
+        update.append(request.form['devId'])
+        session['projectDevelopers'] = update
+        print(session['projectDevelopers'])
+        return "OK"
+
+@app.route('/removeDevFromProjectList', methods = ['POST'])
+def removeDevFromProjectList():
+    update = session['projectDevelopers']
+    update.remove(request.form['devId'])
+    session['projectDevelopers'] = update
+    print(session['projectDevelopers'])
+    return "OK"
+
+@app.route('/addReqToProjectList', methods = ['POST'])
+def addReqToProjectList():
+    if request.form['reqName'] not in session['projectRequirements']:
+        update = session['projectRequirements']
+        update.append(request.form['reqName'])
+        session['projectRequirements'] = update
+        print(session['projectRequirements'])
+        return "OK"
+
+@app.route('/removeReqFromProjectList', methods = ['POST'])
+def removeReqFromProjectList():
+    update = session['projectRequirements']
+    update.remove(request.form['reqName'])
+    session['projectRequirements'] = update
+    session['projectRequirements']
+    return "OK"
 
 @app.route('/loginRedirect', methods = ['POST'])
 def checkLogin():
@@ -209,11 +253,8 @@ def newUser():
         session['softSkills'] = as_dict(user.softSkills)
         session['currentProjects'] = user.currentProjects
         session['pastProjects'] = user.pastProjects
-        print("Checks")
-        print(session['user'])
-        print("-----------------")
-        print(session['user']['first_name'])
-        print("-----------------")
+
+        # print(session['user']['first_name'])
 
         # add colour risk estimates once cost function is done
         currentProjectGreen = []
