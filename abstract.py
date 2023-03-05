@@ -62,11 +62,12 @@ class UserClass(ABC):
         return False
 
     # takes in a 5 length int array and updates the soft skills to these values
-    def updateSoftSkills(self, softSkills):
+    @staticmethod
+    def updateSoftSkills(userID,softSkills):
 
         if len(softSkills) == 5:
             with app.app_context():
-                changeSoftSkills = UserSkills.query.filter_by(user_id = self.user.id).first()
+                changeSoftSkills = UserSkills.query.filter_by(user_id = userID).first()
                 
                 changeSoftSkills.enthusiasm = softSkills[0]
                 changeSoftSkills.purpose = softSkills[1]
@@ -76,20 +77,21 @@ class UserClass(ABC):
             
                 db.session.commit()
 
-                # self.softSkills = UserSkills.query.filter_by(user_id = self.user.id).first()
-                self.softSkills.enthusiasm = softSkills[0]
-                self.softSkills.purpose = softSkills[1]
-                self.softSkills.challenge = softSkills[2]
-                self.softSkills.health = softSkills[3]
-                self.softSkills.resilience = softSkills[4]
+                # # self.softSkills = UserSkills.query.filter_by(user_id = self.user.id).first()
+                # self.softSkills.enthusiasm = softSkills[0]
+                # self.softSkills.purpose = softSkills[1]
+                # self.softSkills.challenge = softSkills[2]
+                # self.softSkills.health = softSkills[3]
+                # self.softSkills.resilience = softSkills[4]
         
             return True
 
         return False
     
-    def createUserProjects(self):
+    @staticmethod
+    def createUserProjects(currentProjects):
         with app.app_context():
-            return Projects.query.filter(Projects.project_id.in_(self.currentProjects)).all()
+            return Projects.query.filter(Projects.project_id.in_(currentProjects)).all()
     
     # decorator
     @abstractmethod
