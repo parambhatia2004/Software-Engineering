@@ -233,10 +233,13 @@ class DeveloperStrength(db.Model):
         self.strength = strength
 
 def dbinit():
-    db.session.add(User('Developer','Matt', 'Jk', 'Matt@gmail', generate_password_hash("asdf")))
-    db.session.add(User('Project Manager', 'Oscar', 'Jk', 'Oscar@gmail', generate_password_hash("qwerty")))
+    db.session.add(User('Developer','Matt', 'Jk', 'Matt@gmail', generate_password_hash("asdfasdf")))
+    db.session.add(User('Project Manager', 'Oscar', 'Jk', 'Oscar@gmail', generate_password_hash("asdfasdf")))
+    db.session.add(User('Developer','Ella', 'Jk', 'Ella@gmail', generate_password_hash("asdfasdf")))
 
     db.session.add(UserSkills('1','1','2','3','4','5'))
+    db.session.add(UserSkills('2','1','2','3','4','5'))
+    db.session.add(UserSkills('3','1','2','3','4','5'))
 
     db.session.add(Projects(2,'Test Project', 100, 200, 'Ongoing', 'This is a test project'))
     db.session.add(Projects(2,"Failed projects",1,30,'Failure','This project failed'))

@@ -101,16 +101,24 @@ class ProjectsClass():
 
     # insert project AND create a project risk row for it in the database
     @staticmethod
-    def insertProject(project_manager_id, project_name, deadline, budget, project_state, description):
+    def insertProject(project_manager_id, project_name, deadline, budget, project_state, description, repo_name, developers, requirements):
         with app.app_context():
             db.session.add(Projects(project_manager_id,project_name,deadline,budget,project_state,description))
             db.session.commit()
 
             thisProject = Projects.query.order_by(Projects.project_id.desc()).first()
             db.session.add(ProjectRisk(thisProject.project_id,None,None,None))
-            db.session.add(ProjectGitHub(thisProject.project_id,None,None,None,None))
+            db.session.add(ProjectGitHub(thisProject.project_id,repo_name,None,None,None))
+
+            for id in developers:
+                db.session.add(DeveloperProject(id, thisProject.project_id))
+
+            for req in requirements:
+                db.session.add(ProjectRequirement(thisProject.project_id, req))
+                
             db.session.commit()
 
+            return thisProject.project_id
 
     # Setters - changes both the object that calls it and the SQL database info
     def setProjectName(self, newName):
