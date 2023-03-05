@@ -28,7 +28,10 @@
             <form method='post' id="createProjectForm" onsubmit="return validateForm();" action="/createProjectRedirect">
                 <div id="staticdata">
                     <label> Project name:
-                        <input type="text" name="project_name" id="project_name">
+                        <input type="text" name="project_name" id="project_name" required>
+                    </label><br>
+                    <label> Project description:
+                        <input type="text" name="project_description" id="project_description" required>
                     </label><br>
                     <h3>Codebase details</h3>
                     <div class="inputgroup">
@@ -36,12 +39,12 @@
                             <input type="text" name="repo_owner" id="repo_owner">
                         </label> -->
                         <label> Repository name:
-                            <input type="text" name="repo_name" id="repo_name">
+                            <input type="text" name="repo_name" id="repo_name" required>
                         </label>
                     </div>
                     <hr>
                     <label>Deadline (days until):
-                        <input type="number" name="deadline" id="deadline">
+                        <input type="number" name="deadline" id="deadline" step="1" required>
                     </label><br><br>
                     <div class="inputgroup">
                         <!-- <label>Worst-case time estimate:
@@ -55,7 +58,7 @@
                         </label> -->
                     </div><hr>
                     <label>Budget:
-                        <input type="number" name="budget" id="budget">
+                        <input type="number" name="budget" id="budget" required>
                     </label><br><br>
                     <div class="inputgroup">
                         <!-- <label>Worst-case budget estimate:
