@@ -29,7 +29,9 @@
                 <div id="greenCarousel" class="contentbox carousel slide" data-interval="false">
                     <h3 style="color:green;"> Green projects </h3>
                     <div class="carousel-inner">
-                        {% for green_proj in green_projects %}
+                        {% for green_proj in greenProjects %}
+                        <!-- just to test it works, remove the line below -->
+                        <h1>{{green_proj.project_name}}</h1>
                         <div class="carousel-item">
                             <div class="container">
                                 <h4>{{green_proj.project_name}}</h4>

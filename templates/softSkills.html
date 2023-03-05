@@ -27,28 +27,28 @@
         <div class="main">
             <h1>Personal status questionnaire</h1>
             <form method="post" action="/updateSoftSkills">
-                {% if defaultvalues is not defined %}
-                    {% set defaultvalues = {'enthusiasm': 4, 'purpose': 4,'challenge': 4, 'health': 4, 'resilience': 4} %}
+                {% if defaultValues is not defined %}
+                    {% set defaultValues = {'enthusiasm': 3, 'purpose': 3,'challenge': 3, 'health': 3, 'resilience': 3} %}
                 {% endif %}
                 <div class='formgroup'>
                     <label>Enthusiasm</label>
-                    <input type='range' name='enthusiasm' id='enthusiasm' min='1' max='5' step='1' value='{{defaultvalues.enthusiasm}}'>
+                    <input type='range' name='enthusiasm' id='enthusiasm' min='1' max='5' step='1' value='{{defaultValues.enthusiasm}}'>
                 </div> <br>
                 <div class='formgroup'>
                     <label>Purpose</label>
-                    <input type='range' name='purpose' id='purpose' min='1' max='5' step='1' value='{{defaultvalues.purpose}}'>
+                    <input type='range' name='purpose' id='purpose' min='1' max='5' step='1' value='{{defaultValues.purpose}}'>
                 </div> <br>
                 <div class='formgroup'>
                     <label>Challenge</label>
-                    <input type='range' name='challenge' id='challenge' min='1' max='5' step='1' value='{{defaultvalues.challenge}}'>
+                    <input type='range' name='challenge' id='challenge' min='1' max='5' step='1' value='{{defaultValues.challenge}}'>
                 </div> <br>
                 <div class='formgroup'>
                     <label>Health</label>
-                    <input type='range' name='health' id='health' min='1' max='5' step='1' value='{{defaultvalues.health}}'>
+                    <input type='range' name='health' id='health' min='1' max='5' step='1' value='{{defaultValues.health}}'>
                 </div> <br>
                 <div class='formgroup'>
                     <label>Resilience</label>
-                    <input type='range' name='resilience' id='resilience' min='1' max='5' step='1' value='{{defaultvalues.resilience}}'>
+                    <input type='range' name='resilience' id='resilience' min='1' max='5' step='1' value='{{defaultValues.resilience}}'>
                 </div> <br>
               
                 <input type='submit' value='Update information'>
