@@ -8,7 +8,7 @@ $(document).ready( function(){
 
         let selectedId = $('#developers').find(":selected").val();
         let selectedName = $('#developers').find(":selected").text();
-        let currentDevList = document.getElementById('currentDev')
+        let currentDevList = document.getElementById('currentdev')
     
         $.ajax({
             url: '/addDevToProjectList',
