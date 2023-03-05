@@ -53,9 +53,21 @@
                     <h2>Add a new cost component</h2>
                     <a href="#" class="add">&plus;</a>
                 </div>
-                <div class="inputgroup">
+                <div class="estimations">
+                    {% for comp in components %}
+                    <div class="flex">
+                        <input type="text" value={{comp.name}} name={{comp.name}}>
+                        <input type="number" value={{comp.absval}}>
+                        <input type="number" value={{comp.worst}}>
+                        <input type="number" value={{comp.best}}>
+                        <input type="number" value={{comp.average}}>
+                        <a class="delete" onclick="removeInput()">&times;</a>
+                        <input type="submit" class="submit" name="Submit" onsubmit="submitInput()">
+                        <hr class="customHR">
+                    </div>
+                    {% endfor %}
                 </div>
-                <script src="addComponent.js"></script>
+                <script src="../static/js/addComponent.js"></script>
             </div>
         </div>
     </body>
