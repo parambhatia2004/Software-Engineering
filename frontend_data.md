@@ -14,8 +14,8 @@ Will add stuff here as I do the files
 ### managerHome.html
 - flask route: `/managerHome`
 - data required:
-    - `manager.name`
-    - 3 lists of projects - one for green projects, one for amber and one for red;
+    - `name`
+    - 3 lists of projects - one for green projects `greenProjects`, one for amber `amberProjects` and one for red `redProjects`;
     - the green list should contain for each project the name, id and description;
     - the amber and red lists should include everything the green one does, plus - for each project - a list of top risks (`project.toprisks`).
 - data transmitted:
