@@ -1,3 +1,11 @@
+# Semantic Changes:
+# Add popup to signify non login
+# Add info (i) button to explain what the sections in the create project page require
+# Add info (i) button for status questionnare skill explanation
+# Change menu buttons to icons, with hover showing text eg Create Project, Update Status, Log Out etc.
+# Make skill slider equal in length, currently start at different paddings
+# Add stats to Dev home page maybe
+
 from trackGit import get_open_issues_count
 from werkzeug import security
 from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
