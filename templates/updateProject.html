@@ -28,13 +28,13 @@
                 <div class="estimations" id="budgetEstimation">
                     {% for comp in budgetComponents %}
                     <div class="flex">
-                        <input type="hidden" value="Cost">
-                        <input type="text" value="{{comp.name}}" name={{comp.name}}>
-                        <input type="number" value="{{comp.absval}}" name={{comp.absval}}>
-                        <input type="number" value="{{comp.worst}}" name={{comp.worst}}>
-                        <input type="number" value="{{comp.best}}" name={{comp.best}}>
-                        <input type="number" value="{{comp.average}}" name={{comp.average}}>
-                        <a class="delete" onclick="removeInput()">&times;</a>
+                        <input name="type" type="hidden" value="Cost">
+                        <input name="name" type="text" value="{{comp.name}}" >
+                        <input name="absval" type="number" value="{{comp.absval}}">
+                        <input name="worst" type="number" value="{{comp.worst}}" >
+                        <input name="best" type="number" value="{{comp.best}}" >
+                        <input name="average" type="number" value="{{comp.average}}" >
+                        <a class="delete">&times;</a>
                         <hr class="customHR">
                     </div>
                     {% endfor %}
@@ -49,14 +49,13 @@
                 <div class="estimations" id="timeEstimation">
                     {% for comp in timeComponents %}
                     <div class="flex">
-                        <input type="hidden" value="Time">
-                        <input type="text" value="{{comp.name}}" name={{comp.name}}>
-                        <input type="number" value="{{comp.absval}}" name={{comp.absval}}>
-                        <input type="number" value="{{comp.worst}}" name{{comp.worst}}>
-                        <input type="number" value="{{comp.best}}" name={{comp.best}}>
-                        <input type="number" value="{{comp.average}}" name={{comp.average}}>
-                        <a class="delete" onclick="removeInput()">&times;</a>
-                        <!-- <input type="submit" class="submit" name="Submit" onsubmit="submitInput()"> -->
+                        <input name="type" type="hidden" value="Time">
+                        <input name="name" type="text" value="{{comp.name}}" >
+                        <input name="absval" type="number" value="{{comp.absval}}">
+                        <input name="worst" type="number" value="{{comp.worst}}" >
+                        <input name="best" type="number" value="{{comp.best}}" >
+                        <input name="average" type="number" value="{{comp.average}}" >
+                        <a class="delete">&times;</a>
                         <hr class="customHR">
                     </div>
                     {% endfor %}

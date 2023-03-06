@@ -2,68 +2,95 @@
 const addBtns = document.getElementsByClassName("add");
 
 function removeInput(){
-    $.ajax({
-        url: '/removeCostComponent',
-        type: 'post',
-        data: {
-            projectIriskD : document.getElementById("projectriskid").value,
-            type : this.parentElement.childNodes[0].value,
-            name : this.parentElement.childNodes[1].value,
-            //use this as id of component for this project
-            absval: this.parentElement.childNodes[2].value,
-            worst: this.parentElement.childNodes[3].value,
-            best: this.parentElement.childNodes[4].value,
-            average: this.parentElement.childNodes[5].value
-        },
-        success:function(response){
-            // ajax processing of data
-            this.parentElement.remove();
-        }
-    }) 
+    var element = this;
+    eType = element.parentNode.querySelector('input[name="type"]').value;
+    eName = element.parentNode.querySelector('input[name="name"]').value;
+    eWorst = element.parentNode.querySelector('input[name="worst"]').value;
+    eBest = element.parentNode.querySelector('input[name="best"]').value;
+    eAbsVal = element.parentNode.querySelector('input[name="absval"]').value;
+    eAverage = element.parentNode.querySelector('input[name="average"]').value;
+    if(element.parentElement.hasChildNodes()){
+        $.ajax({
+            url: '/removeCostComponent',
+            type: 'post',
+            data: {
+                projectID : document.getElementById("projectriskid").value,
+                type : eType,
+                name : eName,
+                //use this as id of component for this project
+                absval: eAbsVal,
+                worst: eWorst,
+                best: eBest,
+                average: eAverage
+            },
+            success:function(response){
+                // ajax processing of data
+                console.log("removal success")
+                element.parentElement.remove();
+            }
+        }) 
+    }
 }
 
 function submitInput(){
-    $.ajax({
-        url: '/submitCostComponent',
-        type: 'post',
-        data: {
-            projectID : document.getElementById("projectriskid").value,
-            type : this.parentElement.childNodes[0].value,
-            name : this.parentElement.childNodes[1].value,
-            //use this as id of component for this project
-            absval: this.parentElement.childNodes[2].value,
-            worst: this.parentElement.childNodes[3].value,
-            best: this.parentElement.childNodes[4].value,
-            average: this.parentElement.childNodes[5].value
-        },
-        success: function(response){
-            this.parentElement.childNodes[7].remove()
-        },
-        error: function(response){
-            this.parentElement.remove();
-        }
-    }) 
+    var element = this;
+    eType = element.parentNode.querySelector('input[name="type"]').value;
+    eName = element.parentNode.querySelector('input[name="name"]').value;
+    eWorst = element.parentNode.querySelector('input[name="worst"]').value;
+    eBest = element.parentNode.querySelector('input[name="best"]').value;
+    eAbsVal = element.parentNode.querySelector('input[name="absval"]').value;
+    eAverage = element.parentNode.querySelector('input[name="average"]').value;
+    if(element.parentElement.hasChildNodes()){
+        $.ajax({
+            url: '/submitCostComponent',
+            type: 'post',
+            data: {
+                projectID : document.getElementById("projectriskid").value,
+                type : eType,
+                name : eName,
+                //use this as id of component for this project
+                absval: eAbsVal,
+                worst: eWorst,
+                best: eBest,
+                average: eAverage
+            },
+            success: function(response){
+                console.log("success")
+                element.parentElement.childNodes[7].remove()
+            },
+            error: function(response){
+                console.log("error")
+                element.parentElement.remove();
+            }
+        }) 
+    }
+    
 }
 
 function addInput(item){
     const name = document.createElement("input");
     name.type="text"
+    name.name="name"
     name.placeholder="Name of the component"
 
     const absval = document.createElement("input");
     absval.type="number"
+    absval.name="absval"
     absval.placeholder="Absolute value"
 
     const worst = document.createElement("input");
     worst.type="number"
+    worst.name="worst"
     worst.placeholder="Worst case estimation"
 
     const best = document.createElement("input");
     best.type="number"
+    best.name="best"
     best.placeholder="Best case estimation"
 
     const average = document.createElement("input");
     average.type="number"
+    average.name="average"
     average.placeholder="Average estimation"
 
     const btn = document.createElement("a");
@@ -86,10 +113,12 @@ function addInput(item){
 
     const budget = document.createElement("input")
     budget.type ="hidden"
+    budget.name="type"
     budget.value="Cost"
 
     const time = document.createElement("input")
     time.type ="hidden"
+    time.name="type"
     time.value="Time"
 
     var input
@@ -100,7 +129,8 @@ function addInput(item){
     }
 
     input.appendChild(flex)
-    if (this.id=="addBudget"){
+    if (input.id === "budgetEstimation"){
+        console.log(input.id);
         flex.appendChild(budget)
     } else {
         flex.appendChild(time)
@@ -115,6 +145,11 @@ function addInput(item){
     flex.appendChild(hr);
 }
 
+var deleteBtns = document.getElementsByClassName("delete")
+for(var i=0; i<deleteBtns.length; i++){
+    var item = deleteBtns[i];
+    item.addEventListener("click", removeInput)
+}
 var count = addBtns.length;
 
 for(var i = 0; i < count; i++) {
