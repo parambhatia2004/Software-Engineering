@@ -2,7 +2,7 @@
 const addBtns = document.getElementsByClassName("add");
 
 function removeInput(){
-    /*$.ajax({
+    $.ajax({
         url: '/removeCostComponent',
         type: 'post',
         data: {
@@ -19,9 +19,7 @@ function removeInput(){
             // ajax processing of data
             this.parentElement.remove();
         }
-    }) */
-      // ajax processing of data
-      this.parentElement.remove(); 
+    }) 
 }
 
 function submitInput(){
@@ -38,7 +36,8 @@ function submitInput(){
             best: this.parentElement.childNodes[4].value(),
             average: this.parentElement.childNodes[5].value()
         },
-        success:function(response){
+        error: function(response){
+            this.parentElement.remove();
         }
     }) 
 }
@@ -96,7 +95,7 @@ function addInput(item){
     } else {
         input = document.querySelector("#budgetEstimation")
     }
-    
+
     input.appendChild(flex)
     if (this.id=="addBudget"){
         flex.appendChild(budget)
