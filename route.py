@@ -331,6 +331,29 @@ def logout():
 
 @app.route('/updateProject')
 def updateProject():
+    # if request.method == 'POST':
+    #     projectID = request.form['project_id']
+    #     thisProject = Projects.query.filter_by(project_id = projectID).first()
+
+    #     # needs a list of dictionaries
+    #     thisProjectRiskID = (ProjectRisk.query.filter_by(project_id = projectID).first()).project_risk_id
+
+    #     session['currentProject'] = {"project_id" : projectID, "project_name" : thisProject.project_name, "project_risk_id" : thisProjectRiskID}
+
+    #     costComponentObjects = RiskComponent.query.filter_by(project_risk_id = thisProjectRiskID, risk_type = "Cost").all()
+    #     budgetComponents = []
+
+    #     for component in costComponentObjects:
+    #         budgetComponents.append(as_dict(component))
+
+    #     timeComponentObjects = RiskComponent.query.filter_by(project_risk_id = thisProjectRiskID, risk_type = "Time").all()
+    #     timeComponents = []
+
+    #     for component in timeComponentObjects:
+    #         timeComponents.append(as_dict(component))
+
+    #     session['budgetComponents'] = budgetComponents
+    #     session['timeComponents'] = timeComponents
 
     # if not (session['currentProject'] and session['budgetComponents'] and session['timeComponents']):
     #     session['currentProject'] = {"projectID" : 0, "project_name" : "No Project"}
@@ -388,9 +411,37 @@ def submitCostComponent():
             # thisComponent.risk_type = request.form['type']
 
         else:
-            db.session.add(RiskComponent(session['currentProject']['project_risk_id'], request.form['best'], request.form['worst'], request.form['average'], request.form['absval'], request.form['type']))
+            db.session.add(RiskComponent(session['currentProject']['project_risk_id'], componentName, request.form['best'], request.form['worst'], request.form['average'], request.form['absval'], request.form['type']))
             db.session.commit()
+
+            print(request.form['type'])
+            if request.form['type'] == "Time":
+                update = session['timeComponents']
+                update.append(as_dict(RiskComponent.query.filter_by(name = componentName).first()))
+                session['timeComponents'] = update
+            else:
+                update = session['budgetComponents']
+                update.append(as_dict(RiskComponent.query.filter_by(name = componentName).first()))
+                session['budgetComponents'] = update
+        
 
         return "OK"
 
 
+@app.route('/removeCostComponent', methods=['POST'])
+def removeCostComponent():
+    if request.method == 'POST':
+        componentName = request.form['name']
+        RiskComponent.query.filter_by(name = componentName, project_risk_id = session['currentProject']['project_risk_id']).delete()
+        db.session.commit()
+
+        if request.form['type'] == "Time":
+            update = session['timeComponents']
+            update = list(filter(lambda x: x.name != componentName, update))
+            session['timeComponents'] = update
+        else:
+            update = session['budgetComponents']
+            update = list(filter(lambda x: x.name != componentName, update))
+            session['budgetComponents'] = update
+
+        return "OK"
