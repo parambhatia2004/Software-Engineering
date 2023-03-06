@@ -66,7 +66,7 @@
     border-width:2px;
   }
 
-  div.add_content >* input{
+  div.add_content input[type="number"], div.add_content input[type="text"]{
     width:fit-content;
     border-radius: 8px;
     background: #d6e5ff;

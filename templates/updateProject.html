@@ -19,56 +19,51 @@
         </div>
         <div class="main">
             <h1>Project name: {{project.project_name}}</h1>
-            <form method="post" action="/updateProjectRedirect">
-                <input type='hidden' name='id' id='projectid' value={{project.project_id}}>
-                <legend>Time estimates</legend><br>
-                <div class="inputgroup">
-                    <label>Worst-case time estimate:
-                        <input type="date" name="worst_time" id="worst_time" value="{{timecomponent.worst}}">
-                    </label>
-                    <label>Best-case time estimate:
-                        <input type="date" name="best_time" id="best_time" value="{{timecomponent.best}}">
-                    </label>
-                    <label>Average time estimate:
-                        <input type="date" name="avg_time" id="avg_time" value="{{timecomponent.average}}">
-                    </label>
-                </div>
-                <br><hr><br>
-                <legend>Budget estimates</legend><br>
-                <div class="inputgroup">
-                    <label>Worst-case budget estimate:
-                        <input type="number" name="worst_budget" id="worst_budget" value="{{costcomponent.worst}}">
-                    </label>
-                    <label>Best-case budget estimate:
-                        <input type="number" name="best_budget" id="best_budget" value="{{costcomponent.best}}">
-                    </label>
-                    <label>Average budget estimate:
-                        <input type="number" name="avg_budget" id="avg_budget" value="{{costcomponent.average}}">
-                    </label>
-                </div><br>
-                <input type='submit' value='Update information'>
-            </form>
-            <div class="add_content">
+            
+            <div class="add_content" id="budgetcomponents">
                 <div class="wrap">
-                    <h2>Add a new cost component</h2>
-                    <a href="#" class="add">&plus;</a>
+                    <h2>Add a new budget component</h2>
+                    <a href="#budgetcomponents" class="add" id="addBudget">&plus;</a>
                 </div>
-                <div class="estimations">
-                    {% for comp in components %}
+                <div class="estimations" id="budgetEstimation">
+                    {% for comp in budgetComponents %}
                     <div class="flex">
+                        <input type="hidden" value="Budget">
                         <input type="text" value={{comp.name}} name={{comp.name}}>
-                        <input type="number" value={{comp.absval}}>
-                        <input type="number" value={{comp.worst}}>
-                        <input type="number" value={{comp.best}}>
-                        <input type="number" value={{comp.average}}>
+                        <input type="number" value={{comp.absval}} name={{comp.absval}}>
+                        <input type="number" value={{comp.worst}} name{{comp.worst}}>
+                        <input type="number" value={{comp.best}} name={{comp.best}}>
+                        <input type="number" value={{comp.average}} name={{comp.average}}>
                         <a class="delete" onclick="removeInput()">&times;</a>
                         <input type="submit" class="submit" name="Submit" onsubmit="submitInput()">
                         <hr class="customHR">
                     </div>
                     {% endfor %}
                 </div>
-                <script src="../static/js/addComponent.js"></script>
             </div>
+
+            <div class="add_content" id="timecomponents">
+                <div class="wrap">
+                    <h2>Add a new time component</h2>
+                    <a href="#timecomponents" id="addTime" class="add">&plus;</a>
+                </div>
+                <div class="estimations" id="timeEstimation">
+                    {% for comp in timeComponents %}
+                    <div class="flex">
+                        <input type="hidden" value="Time">
+                        <input type="text" value={{comp.name}} name={{comp.name}}>
+                        <input type="number" value={{comp.absval}} name={{comp.absval}}>
+                        <input type="number" value={{comp.worst}} name{{comp.worst}}>
+                        <input type="number" value={{comp.best}} name={{comp.best}}>
+                        <input type="number" value={{comp.average}} name={{comp.average}}>
+                        <a class="delete" onclick="removeInput()">&times;</a>
+                        <input type="submit" class="submit" name="Submit" onsubmit="submitInput()">
+                        <hr class="customHR">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <script src="../static/js/addComponent.js"></script>
         </div>
     </body>
 </html>
