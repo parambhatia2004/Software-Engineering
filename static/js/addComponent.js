@@ -2,7 +2,7 @@
 const addBtns = document.getElementsByClassName("add");
 
 function removeInput(){
-    $S.ajax({
+    $.ajax({
         url: '/removeCostComponent',
         type: 'post',
         data: {
