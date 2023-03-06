@@ -108,6 +108,7 @@ class ProjectGitHub(db.Model):
     project_id =  db.Column(db.Integer, db.ForeignKey('projects.project_id', ondelete='CASCADE'), unique=True, nullable=False)
 
     # Fields
+    # repo_owner_name = db.Column(db.String(255))
     repo_name = db.Column(db.String(255))
     issues_24 = db.Column(db.Integer)
     issues_7 = db.Column(db.Integer)
@@ -120,6 +121,8 @@ class ProjectGitHub(db.Model):
         self.issues_7 = issues_7
         self.time_of_day = time_of_day
 
+        # 2? time stamps
+
 
 class RiskComponent(db.Model):
     __tablename__ = 'risk_component'
@@ -129,14 +132,17 @@ class RiskComponent(db.Model):
     project_risk_id = db.Column(db.Integer, db.ForeignKey('project_risk.project_risk_id', ondelete='CASCADE'), nullable=False)
 
     # Fields
+    name = db.Column(db.String(255), nullable=False, unique=True)
     best = db.Column(db.Integer, nullable=True)
     worst = db.Column(db.Integer, nullable=True)
     average = db.Column(db.Integer, nullable=True)
     absolute_value = db.Column(db.Integer, nullable=True)
     risk_type = db.Column(db.String(20),CheckConstraint("risk_type IN ('Time', 'Cost')"))
+    # risk_name = unique
 
-    def __init__(self, project_risk_id, best, worst, average, absolute_value, risk_type):
+    def __init__(self, project_risk_id, name, best, worst, average, absolute_value, risk_type):
         self.project_risk_id = project_risk_id
+        self.name = name
         self.best = best
         self.worst = worst
         self.average = average
@@ -250,6 +256,9 @@ def dbinit():
     db.session.add(DeveloperProject(1,3))
 
     db.session.add(ProjectRisk(1,None,None,None))
+    db.session.add(RiskComponent(1,"Front End", 10,90,50,None,"Time"))
+    db.session.add(RiskComponent(1,"Back End", 600,7000,550,None,"Time"))
+    db.session.add(RiskComponent(1,"New Computer", 30,100,40,None,"Cost"))
 
     db.session.commit()
 
