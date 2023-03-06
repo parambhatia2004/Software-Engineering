@@ -28,10 +28,10 @@
                 <div class="estimations" id="budgetEstimation">
                     {% for comp in budgetComponents %}
                     <div class="flex">
-                        <input type="hidden" value="Budget">
+                        <input type="hidden" value="Cost">
                         <input type="text" value="{{comp.name}}" name={{comp.name}}>
                         <input type="number" value="{{comp.absval}}" name={{comp.absval}}>
-                        <input type="number" value="{{comp.worst}}" name{{comp.worst}}>
+                        <input type="number" value="{{comp.worst}}" name={{comp.worst}}>
                         <input type="number" value="{{comp.best}}" name={{comp.best}}>
                         <input type="number" value="{{comp.average}}" name={{comp.average}}>
                         <a class="delete" onclick="removeInput()">&times;</a>
@@ -56,7 +56,7 @@
                         <input type="number" value="{{comp.best}}" name={{comp.best}}>
                         <input type="number" value="{{comp.average}}" name={{comp.average}}>
                         <a class="delete" onclick="removeInput()">&times;</a>
-                        <input type="submit" class="submit" name="Submit" onsubmit="submitInput()">
+                        <!-- <input type="submit" class="submit" name="Submit" onsubmit="submitInput()"> -->
                         <hr class="customHR">
                     </div>
                     {% endfor %}

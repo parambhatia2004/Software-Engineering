@@ -41,7 +41,7 @@
                                     <p>{{green_proj.description}}</p>
                                     <p>Looks like this project is low-risk!<p>
                                     <form method="POST" action="/projectInfoRedirect">
-                                        <input type="hidden"  name="{{green_proj.project_id}}" id="{{green_proj.project_id}}">
+                                        <input type="hidden"  name = "project_id" value="{{green_proj.project_id}}" id="project_id">
                                         <input type="submit" value="See more information">
                                     </form>
                                 </div>
