@@ -19,7 +19,7 @@
         </div>
         <div class="main">
             <h1>Project name: {{project.project_name}}</h1>
-            
+            <input type="hidden" id="projectriskid" name="projectriskID" value={{project.project_risk_id}}>
             <div class="add_content" id="budgetcomponents">
                 <div class="wrap">
                     <h2>Add a new budget component</h2>
@@ -35,7 +35,6 @@
                         <input type="number" value={{comp.best}} name={{comp.best}}>
                         <input type="number" value={{comp.average}} name={{comp.average}}>
                         <a class="delete" onclick="removeInput()">&times;</a>
-                        <input type="submit" class="submit" name="Submit" onsubmit="submitInput()">
                         <hr class="customHR">
                     </div>
                     {% endfor %}
