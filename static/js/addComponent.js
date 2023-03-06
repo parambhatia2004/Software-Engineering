@@ -6,7 +6,7 @@ function removeInput(){
         url: '/removeCostComponent',
         type: 'post',
         data: {
-            projectID : document.getElementById("projectid").value(),
+            projectIriskD : document.getElementById("projectriskid").value(),
             type : this.parentElement.childNodes[0].value(),
             name : this.parentElement.childNodes[1].value(),
             //use this as id of component for this project
@@ -27,7 +27,7 @@ function submitInput(){
         url: '/submitCostComponent',
         type: 'post',
         data: {
-            projectID : document.getElementById("projectid").value(),
+            projectID : document.getElementById("projectriskid").value(),
             type : this.parentElement.childNodes[0].value(),
             name : this.parentElement.childNodes[1].value(),
             //use this as id of component for this project
@@ -35,6 +35,9 @@ function submitInput(){
             worst: this.parentElement.childNodes[3].value(),
             best: this.parentElement.childNodes[4].value(),
             average: this.parentElement.childNodes[5].value()
+        },
+        success: function(response){
+            this.parentElement.childNodes[7].remove()
         },
         error: function(response){
             this.parentElement.remove();
