@@ -4,7 +4,7 @@
 # Add info (i) button for status questionnare skill explanation
 # Change menu buttons to icons, with hover showing text eg Create Project, Update Status, Log Out etc.
 # Make skill slider equal in length, currently start at different paddings
-# Add stats to Dev home page maybe
+# Add stats to Dev home page?
 
 from trackGit import get_open_issues_count
 from werkzeug import security
@@ -40,6 +40,10 @@ def as_dict(self):
     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 def softSkillRisk(proj_id):
+    #Get all Developers on the project
+    # Calculate the average soft skill for the project
+    # Calculate Expected soft skill based on team size
+    # Calculate percentage difference from expected
     return 0
 def teamMemberRisk(proj_id):
     return 0
