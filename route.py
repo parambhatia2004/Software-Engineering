@@ -1,11 +1,3 @@
-# Semantic Changes:
-# Add popup to signify non login
-# Add info (i) button to explain what the sections in the create project page require
-# Add info (i) button for status questionnare skill explanation
-# Change menu buttons to icons, with hover showing text eg Create Project, Update Status, Log Out etc.
-# Make skill slider equal in length, currently start at different paddings
-# Add stats to Dev home page?
-
 from trackGit import get_open_issues_count
 from werkzeug import security
 from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
@@ -21,7 +13,7 @@ app.secret_key = 'SecRetKeyHighLyConFiDENtIal'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///RiskTracker.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-from schema import db, User, DeveloperStrength, UserSkills, dbinit
+from schema import db, User, DeveloperStrength, UserSkills, dbinit, RiskComponent
 db.init_app(app)
 
 login_manager = LoginManager()
@@ -40,10 +32,6 @@ def as_dict(self):
     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 def softSkillRisk(proj_id):
-    #Get all Developers on the project
-    # Calculate the average soft skill for the project
-    # Calculate Expected soft skill based on team size
-    # Calculate percentage difference from expected
     return 0
 def teamMemberRisk(proj_id):
     return 0
@@ -163,15 +151,17 @@ def proj():
 @app.route('/createProjectRedirect', methods = ['POST'])
 def createProjectRedirect():
     if request.method == 'POST':
-        # def insertProject(project_manager_id, project_name, deadline, budget, project_state, description, repo_name):
         projectName = request.form['project_name']
+        projectDescription = request.form['project_description']
+
         repo_owner = session['user']['id']
         repo_name = request.form['repo_name']
 
         deadline = request.form['deadline']
         budget = request.form['budget']
 
-        thisProjectID = ProjectsClass.insertProject(session['user']['id'], projectName, deadline, budget, "Ongoing", "THIS IS A DESCRIPTION OF THE PROJECT",repo_name, session['projectDevelopers'], session['projectRequirements'])
+        # def insertProject(project_manager_id, project_name, deadline, budget, project_state, description, repo_name, developers, requirements):
+        thisProjectID = ProjectsClass.insertProject(session['user']['id'], projectName, deadline, budget, "Ongoing", projectDescription,repo_name, session['projectDevelopers'], session['projectRequirements'])
         # thisProject = Projects.query.order_by(Projects.project_id.desc()).first()
         update = session['currentProjects']
         update.append(thisProjectID)
@@ -336,4 +326,71 @@ def developerHome():
 def logout():
     session.clear()
     return redirect('/')
+
+
+
+@app.route('/updateProject')
+def updateProject():
+
+    # if not (session['currentProject'] and session['budgetComponents'] and session['timeComponents']):
+    #     session['currentProject'] = {"projectID" : 0, "project_name" : "No Project"}
+    #     session['budgetComponents'] = []
+    #     session['timeComponents'] = []
+    print("budgetComponents:", session['budgetComponents'])
+    print("timeComponents:", session['timeComponents'])
+
+    return render_template('/updateProject.html', project = session['currentProject'], budgetComponents = session['budgetComponents'], timeComponents = session['timeComponents'])
+
+@app.route('/projectInfoRedirect', methods = ['POST'])
+# needs a list of dictionaries
+def projectInfoRedirect():
+    if request.method == 'POST':
+        projectID = request.form['project_id']
+        thisProject = Projects.query.filter_by(project_id = projectID).first()
+
+        # needs a list of dictionaries
+        thisProjectRiskID = (ProjectRisk.query.filter_by(project_id = projectID).first()).project_risk_id
+
+        session['currentProject'] = {"project_id" : projectID, "project_name" : thisProject.project_name, "project_risk_id" : thisProjectRiskID}
+
+        costComponentObjects = RiskComponent.query.filter_by(project_risk_id = thisProjectRiskID, risk_type = "Cost").all()
+        budgetComponents = []
+
+        for component in costComponentObjects:
+            budgetComponents.append(as_dict(component))
+
+        timeComponentObjects = RiskComponent.query.filter_by(project_risk_id = thisProjectRiskID, risk_type = "Time").all()
+        timeComponents = []
+
+        for component in timeComponentObjects:
+            timeComponents.append(as_dict(component))
+
+        session['budgetComponents'] = budgetComponents
+        session['timeComponents'] = timeComponents
+    
+    return redirect('/updateProject')
+
+@app.route('/submitCostComponent', methods=['POST'])
+def submitCostComponent():
+    if request.method == 'POST':
+        componentName = request.form['name']
+
+        thisComponent = RiskComponent.query.filter_by(name = componentName, project_risk_id = session['currentProject']['project_risk_id']).first()
+
+        if thisComponent:
+            # flash("Name for component already taken")
+            raise ValueError("Name already in database")
+            # thisComponent.name = componentName
+            # thisComponent.best = request.form['best']
+            # thisComponent.worst = request.form['worst']
+            # thisComponent.average = request.form['average']
+            # thisComponent.absolute_value = request.form['absval']
+            # thisComponent.risk_type = request.form['type']
+
+        else:
+            db.session.add(RiskComponent(session['currentProject']['project_risk_id'], request.form['best'], request.form['worst'], request.form['average'], request.form['absval'], request.form['type']))
+            db.session.commit()
+
+        return "OK"
+
 
