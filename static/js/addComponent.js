@@ -6,14 +6,14 @@ function removeInput(){
         url: '/removeCostComponent',
         type: 'post',
         data: {
-            projectIriskD : document.getElementById("projectriskid").value(),
-            type : this.parentElement.childNodes[0].value(),
-            name : this.parentElement.childNodes[1].value(),
+            projectIriskD : document.getElementById("projectriskid").value,
+            type : this.parentElement.childNodes[0].value,
+            name : this.parentElement.childNodes[1].value,
             //use this as id of component for this project
-            absval: this.parentElement.childNodes[2].value(),
-            worst: this.parentElement.childNodes[3].value(),
-            best: this.parentElement.childNodes[4].value(),
-            average: this.parentElement.childNodes[5].value()
+            absval: this.parentElement.childNodes[2].value,
+            worst: this.parentElement.childNodes[3].value,
+            best: this.parentElement.childNodes[4].value,
+            average: this.parentElement.childNodes[5].value
         },
         success:function(response){
             // ajax processing of data
@@ -27,14 +27,14 @@ function submitInput(){
         url: '/submitCostComponent',
         type: 'post',
         data: {
-            projectID : document.getElementById("projectriskid").value(),
-            type : this.parentElement.childNodes[0].value(),
-            name : this.parentElement.childNodes[1].value(),
+            projectID : document.getElementById("projectriskid").value,
+            type : this.parentElement.childNodes[0].value,
+            name : this.parentElement.childNodes[1].value,
             //use this as id of component for this project
-            absval: this.parentElement.childNodes[2].value(),
-            worst: this.parentElement.childNodes[3].value(),
-            best: this.parentElement.childNodes[4].value(),
-            average: this.parentElement.childNodes[5].value()
+            absval: this.parentElement.childNodes[2].value,
+            worst: this.parentElement.childNodes[3].value,
+            best: this.parentElement.childNodes[4].value,
+            average: this.parentElement.childNodes[5].value
         },
         success: function(response){
             this.parentElement.childNodes[7].remove()
@@ -72,10 +72,10 @@ function addInput(item){
     btn.addEventListener("click", removeInput)
 
     const submit = document.createElement("input");
-    submit.type="submit";
+    submit.type="button";
     submit.className = "submit";
-    submit.name = "Submit";
-    submit.addEventListener("submit", submitInput)
+    submit.value = "Submit";
+    submit.addEventListener("click", submitInput)
    
 
     const flex = document.createElement("div");
@@ -86,7 +86,7 @@ function addInput(item){
 
     const budget = document.createElement("input")
     budget.type ="hidden"
-    budget.value="Budget"
+    budget.value="Cost"
 
     const time = document.createElement("input")
     time.type ="hidden"
