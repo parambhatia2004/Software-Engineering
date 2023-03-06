@@ -21,7 +21,8 @@ function removeInput(){
             this.parentElement.remove();
         }
     })
-   
+      // ajax processing of data
+      this.parentElement.remove(); 
 }
 
 function submitInput(){
