@@ -1,0 +1,74 @@
+
+.add_content{
+    background-color:white; 
+    padding:10px 20px;
+    border-radius:8px;
+    margin:20px 0px;
+  }
+
+  .wrap{
+    display:flex;
+    justify-content:left;
+    align-items: center;
+    width:100%;
+    padding-bottom:0px;
+    border-bottom:3px solid #6B9BEC;
+  }
+
+  .add, .delete, .submit{
+    text-decoration:none;
+    display:inline-block;
+    width: 40px;
+    height:40px;
+    border-radius: 5px;
+    background:#6B9BEC;
+    font-size:3rem;
+    font-weight:bold;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-left:30px;
+  }
+
+  .flex{
+    margin-top: 10px ;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items:center;
+    max-width:100%;
+  }
+
+  .delete{
+    background:red;
+    width: 30px;
+    height: 30px;
+    font-size: 1.5em;
+    cursor:pointer;
+    margin-left:0px;
+    margin-right:10px;
+  }
+
+  .submit{
+    background:#0b3378;
+    width: fit-content;
+    height: 30px;
+    font-size:large;
+    padding: 5px 10px;
+    cursor:pointer;
+    margin-left:0px;
+    margin-right:10px;
+  }
+
+  .customHR{
+    margin: 5px 0px;
+    border-width:2px;
+  }
+
+  div.add_content input[type="number"], div.add_content input[type="text"]{
+    width:fit-content;
+    border-radius: 8px;
+    background: #d6e5ff;
+    margin: 5px !important;
+  }
