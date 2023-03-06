@@ -414,7 +414,7 @@ def submitCostComponent():
             db.session.add(RiskComponent(session['currentProject']['project_risk_id'], componentName, request.form['best'], request.form['worst'], request.form['average'], request.form['absval'], request.form['type']))
             db.session.commit()
 
-            print(request.form['type'])
+            #print(request.form['type'])
             if request.form['type'] == "Time":
                 update = session['timeComponents']
                 update.append(as_dict(RiskComponent.query.filter_by(name = componentName).first()))
@@ -434,14 +434,13 @@ def removeCostComponent():
         componentName = request.form['name']
         RiskComponent.query.filter_by(name = componentName, project_risk_id = session['currentProject']['project_risk_id']).delete()
         db.session.commit()
-
         if request.form['type'] == "Time":
             update = session['timeComponents']
-            update = list(filter(lambda x: x.name != componentName, update))
+            update = list(filter(lambda x: x['name'] != componentName, update))
             session['timeComponents'] = update
         else:
             update = session['budgetComponents']
-            update = list(filter(lambda x: x.name != componentName, update))
+            update = list(filter(lambda x: x['name'] != componentName, update))
             session['budgetComponents'] = update
 
         return "OK"
