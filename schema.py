@@ -260,6 +260,10 @@ def dbinit():
     db.session.add(RiskComponent(1,"Back End", 600,7000,550,None,"Time"))
     db.session.add(RiskComponent(1,"New Computer", 30,100,40,None,"Cost"))
 
+    db.session.add(ProjectRisk(2,None,None,None))
+
+    db.session.add(ProjectRisk(3,None,None,None))
+
     db.session.commit()
 
 
