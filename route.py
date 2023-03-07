@@ -364,17 +364,11 @@ def updateProject():
 
     return render_template('/updateProject.html', project = session['currentProject'], budgetComponents = session['budgetComponents'], timeComponents = session['timeComponents'])
 
-@app.route('/projectInfoRedirect', methods = ['POST'])
+@app.route('/updateProjectRedirect', methods = ['POST'])
 # needs a list of dictionaries
-def projectInfoRedirect():
+def updateProjectRedirect():
     if request.method == 'POST':
-        projectID = request.form['project_id']
-        thisProject = Projects.query.filter_by(project_id = projectID).first()
-
-        # needs a list of dictionaries
-        thisProjectRiskID = (ProjectRisk.query.filter_by(project_id = projectID).first()).project_risk_id
-
-        session['currentProject'] = {"project_id" : projectID, "project_name" : thisProject.project_name, "project_risk_id" : thisProjectRiskID}
+        thisProjectRiskID = session['currentProject']['project_risk_id']
 
         costComponentObjects = RiskComponent.query.filter_by(project_risk_id = thisProjectRiskID, risk_type = "Cost").all()
         budgetComponents = []
@@ -444,3 +438,24 @@ def removeCostComponent():
             session['budgetComponents'] = update
 
         return "OK"
+    
+
+@app.route('/projectInfoRedirect', methods = ['POST'])
+def projectInfoRedirect():
+
+    if request.method == 'POST':
+        projectID = request.form['project_id']
+        thisProject = Projects.query.filter_by(project_id = projectID).first()
+
+        # needs a list of dictionaries
+        thisProjectRiskID = (ProjectRisk.query.filter_by(project_id = projectID).first()).project_risk_id
+
+        session['currentProject'] = {"project_id" : projectID, "project_name" : thisProject.project_name, "project_risk_id" : thisProjectRiskID}
+    return redirect('/projectInfo')
+
+@app.route('/projectInfo')
+def projectInfo():
+    if 'currentProject' not in session:
+        return redirect('/managerHome')
+    
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = [], projectReqValues = [], budgetComp = [], timeComp = [], commitsByDay = [], commitsByHour = [], developerData = [])
