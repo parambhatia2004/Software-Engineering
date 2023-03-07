@@ -359,6 +359,9 @@ def updateProject():
     #     session['currentProject'] = {"projectID" : 0, "project_name" : "No Project"}
     #     session['budgetComponents'] = []
     #     session['timeComponents'] = []
+    if ('budgetComponents' or 'timeComponents' or 'currentProject') not in session:
+        return redirect('/managerHome')
+    
     print("budgetComponents:", session['budgetComponents'])
     print("timeComponents:", session['timeComponents'])
 
