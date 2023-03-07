@@ -4,9 +4,22 @@
         <meta charset="utf-8" >
         <link rel="stylesheet" href="../static/css/menu.css">
         <link rel="stylesheet" href="../static/css/main.css">
+        <link rel="stylesheet" href="../static/css/formformat.css">
         <script src="../static/js/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.37.1/apexcharts.min.js" integrity="sha512-hl0UXLK2ElpaU9SHbuVNsvFv2BaYszlhxB2EntUy5FTGdfg9wFJrJG2JDcT4iyKmWeuDLmK+Nr2hLoq2sKk6MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.37.1/apexcharts.min.css" integrity="sha512-FVK9gBi+kZ53Adi2mwTlAXLduxcltMFsyTyoLhJyJcVgbhXb0eQdAGNjoNc7Mt75cH0uc6I1JEdjWc36TUhBuQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
         <title>Project Information</title>
+        <style>
+            .contentbox {
+                margin: 10px;
+                width:100%;
+            }
+            form{
+                padding:0px;
+                background-color:#00000000;
+            }
+        </style>
     </head>
     <body>
         <div class="menu">
@@ -18,13 +31,207 @@
         </div>
         <div class="main">
             <h1>Project details: {{project.name}}</h1>
-            <div>
-                <div>
-                    
+            <form method="post" action="/updateProjectRedirect">
+                <input type="hidden" name="projectID" value="project.project_id">
+                <input type="submit" value="Update estimations for project components">
+            </form>
+            <div id="projectAnalysis" class="contentdiv">
+                <div id="columnOne"  class="contentdiv_column">
+                    <div id="softSkillsAnalysis" class="contentbox">
+                        <h3 title="Displays data provided by team memners in their personal status forms">Team status</h3>         
+                        <canvas id="softSkillsChart" style="width:100%;max-width:600px"></canvas>
+                        <script type="module">
+                            var xValues = ["Enthusiasm", "Purpose", "Challenge", "Health", "Resilience"];
+                            var yValues = [{{softSkillValues.enthusiasm}},
+                                            {{softSkillValues.purpose}},
+                                            {{softSkillValues.challenge}}, 
+                                            {{softSkillValues.health}}, 
+                                            {{softSkillValues.resilience}}];
+                            var barColors = [];
+                            for(var i = 0; i < 5; i++){
+                                var color = randomColor()
+                                barColors.push(color);
+                                console.log(color)
+                            }
+                            new Chart("softSkillsChart", {
+                            type: 'polarArea',
+                            data: {
+                                labels: xValues,
+                                datasets: [{
+                                  label: 'Personal Status Data',
+                                  data: yValues,
+                                  backgroundColor: barColors
+                                }]
+                              },
+                            options: {
+                                title: { display: false }
+                            }
+                            });
+                        </script>
+                    </div>
+                    <div id="projectRequirementsAnalysis" class="contentbox"> 
+                        <h3 title="How many developers fit each requirement">Requirements compatibility</h3>         
+                        <canvas id="projectRequirementsChart" style="width:100%;max-width:600px"></canvas>
+                        <script type="module">
+                            var xValues = {{projectReqLabels}};
+                            var yValues = {{projectReqValues}};
+                            var barColors = [];
+                            for(var i = 0; i < yValues.length; i++){
+                                var color = randomColor()
+                                barColors.push(color);
+                            }
+                            new Chart("projectRequirementsChart", {
+                                type: "bar",
+                                data: {
+                                    labels: xValues,
+                                    datasets: [{
+                                    backgroundColor: barColors,
+                                    data: yValues
+                                    }]
+                                },
+                                options: {
+                                    legend: {display: false},
+                                    title: {
+                                    display: false}
+                                }
+                            });
+                        </script>
+                    </div>
+                    <div id="monteCarloComponents" class="contentbox">
+                        {% if budgetComp != none %}
+                            <ul>
+                                {% for comp in budgetComp %}
+                                <li>{{comp.name}} has an estimated budget of {{comp.value}}. According to our analysis, {{comp.message}}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>This project doesn't have budget components</p>
+                        {% endif%}
+                        {% if timeComp != none %}
+                            <ul>
+                                {% for comp in timeComp %}
+                                <li>{{comp.name}} has an estimated deadline of {{comp.value}} days. According to our analysis, {{comp.message}}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>This project doesn't have budget components</p>
+                        {% endif%}
+                    </div>
                 </div>
-                <div>
+                <div id="columnTwo" class="contentdiv_column">
+                    <div id="commitsByDay" class="contentbox">
+                        <h3 title="Number of code commits for each day"> Commits by day </h3>         
+                        <canvas id="dateChart" style="width:100%;max-width:600px"></canvas>
+                        <script type="module">
+                            var xValues = {{commitsByDay.labels}};
+                            var yValues = {{commitsByDay.values}};
+
+                            new Chart("dateChart", {
+                                type: "line",
+                                data: {
+                                    labels: xValues,
+                                    datasets: [{
+                                    fill: false,
+                                    lineTension: 0,
+                                    backgroundColor: "rgba(0,0,255,1.0)",
+                                    borderColor: "rgba(0,0,255,0.1)",
+                                    data: yValues
+                                    }]
+                                },
+                                options: {
+                                    legend: {display: false},
+                                }
+                            });
+                        </script>
+                    </div>
+                    <div id="commitsByHour" class="contentbox">
+                        <h3 title="Number of code commits for each hour"> Commits by hour </h3>   
+                        <canvas id="hourlyChart" style="width:100%;max-width:600px"></canvas>
+                        <script type="module">
+                            var xValues = ["0", "1", "2","3","4", "5", "6","7","8", "9", "10","11",
+                                            "12", "13", "14","15","16", "17", "18","19","20", "21", "22","23"];
+                            var yValues = {{commitsByHour}};
+                            var barColors = [];
+                            for(var i = 0; i < yValues.length; i++){
+                                var color = randomColor()
+                                barColors.push(color);
+                            }
+                            new Chart("hourlyChart", {
+                            type: "bar",
+                            data: {
+                                labels: xValues,
+                                datasets: [{
+                                backgroundColor: barColors,
+                                data: yValues
+                                }]
+                            },
+                            options: {
+                                legend: {display: false},
+                                title: {
+                                display: false}
+                            }
+                            });
+                        </script>
+                    </div>
+                    <div id="developerCompatibility" class="contentbox">
+                        <h3 title="How well developers complement each other's skills"> Developer inter-compatibility </h3>
+                        <div id="compatibilityChart" style="width:100%;max-width:600px"></div>
+                        <script type="module">
+                            var list =[];
+                            var labels=[];
+                            {% for developerItem in developerData%}
+                                let obj = {};
+                                name_item = "{{developerItem.name}}"
+                                obj[name] = "{{developerItem.name}}";
+                                obj[data] = {{developerItem.values}}
+                                labels.push()
+                                list.push(obj);
+                            {% endfor %}
+                            var options = {
+                                series: list,
+                                chart: {
+                                    height: 350,
+                                    type: 'heatmap',
+                                },
+                                dataLabels: {
+                                    enabled: false
+                                },
+                                colors: ["#008FFB"],
+                                title: {
+                                    text: 'Developer compatibility graph'
+                                },
+                            };
+                            var chart = new ApexCharts(document.querySelector("#compatibilityChart"), options);
+                            chart.render();
+                        </script>
+                    </div>
                 </div>
             </div>
         </div>
+        <script>
+            function hsv_to_rgb(h, s, v) {
+                let r, g, b;
+                let h_i = parseInt(h * 6);
+                let f = h * 6 - h_i;
+                let p = v * (1 - s);
+                let q = v * (1 - f * s);
+                let t = v * (1 - (1 - f) * s);
+                if (h_i === 0) [r, g, b] = [v, t, p];
+                if (h_i === 1) [r, g, b] = [q, v, p];
+                if (h_i === 2) [r, g, b] = [p, v, t];
+                if (h_i === 3) [r, g, b] = [p, q, v];
+                if (h_i === 4) [r, g, b] = [t, p, v];
+                if (h_i === 5) [r, g, b] = [v, p, q];
+                return [parseInt(r * 256), parseInt(g * 256), parseInt(b * 256)]
+              };
+              function randomColor(){
+                let golden_ratio_conjugate = 0.618033988749895;
+                let h = Math.random();
+                h += golden_ratio_conjugate;
+                h %= 1;
+                var values = hsv_to_rgb(h, 0.5, 0.95)
+                return 'rgb(' + values.join(', ') + ')';
+              }
+        </script>
     </body>
 </html>
