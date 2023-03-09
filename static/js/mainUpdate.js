@@ -30,4 +30,27 @@ $(document).ready( function(){
         })
     })
 
+    $('#submitDevelopers').click(function(){
+        // data is already in the backend session
+        $.ajax({
+            url: '/updateDevelopers',
+            type: 'post',
+            data: { },
+            success:function(response){
+            }
+        })
+    })
+
+    $('#submitRequiements').click(function(){
+         // data is already in the backend session
+        $.ajax({
+            url: '/updateRequirements',
+            type: 'post',
+            data: { },
+            success:function(response){
+            }
+        })
+    })
+
+
 })
