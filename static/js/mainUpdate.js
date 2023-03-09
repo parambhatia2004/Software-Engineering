@@ -2,8 +2,8 @@ $(document).ready( function(){
 
     $('#changeDescription').click(function(){
 
-        let changedDesc = $('#newDescription').value()
-        console.log(changedDesc)
+        let changedDesc = $('#newDescription').val();
+        console.log(changedDesc);
        
         $.ajax({
             url: '/changeDescription',
@@ -18,7 +18,7 @@ $(document).ready( function(){
 
     $('#changeStatus').click(function(){
 
-        let selectedName = $('#statusSelect').find(":selected").text()
+        let selectedName = $('#statusSelect').find(":selected").text();
         $.ajax({
             url: '/changeStatus',
             type: 'post',
