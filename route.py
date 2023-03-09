@@ -1,11 +1,4 @@
-# Semantic Changes:
-# Add popup to signify non login
-# Add info (i) button to explain what the sections in the create project page require
-# Add info (i) button for status questionnare skill explanation
-# Change menu buttons to icons, with hover showing text eg Create Project, Update Status, Log Out etc.
-# Make skill slider equal in length, currently start at different paddings
-# Add stats to Dev home page?
-from trackGit import get_24_hour_issues_count, get_7_day_issues_count, get_hourly_commits
+from trackGit import get_open_issues_count
 from werkzeug import security
 from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -13,26 +6,21 @@ from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 import sqlite3
 import json
-import numpy as np
 from concrete import *
-from datetime import date, timedelta
-import sys
-
-# sys.tracebacklimit = 0
 
 app = Flask(__name__)
 app.secret_key = 'SecRetKeyHighLyConFiDENtIal'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///RiskTracker.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-from schema import db, User, DeveloperStrength, UserSkills, dbinit, RiskComponent, Projects, DeveloperProject
+from schema import db, User, DeveloperStrength, UserSkills, dbinit, RiskComponent
 db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 # change this to False to avoid resetting the database every time this app is restarted
-resetdb = False
+resetdb = True
 if resetdb:
     with app.app_context():
         # drop everything, create all the tables, then put some data into the tables
@@ -43,181 +31,25 @@ if resetdb:
 def as_dict(self):
     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-def softSkillRiskCount(proj_id):
-    #Get all Developers on the project
-    # Calculate the average soft skill for the project
-    # Calculate Expected soft skill based on team size
-    # Calculate percentage difference from expected
-    skillSumCount = 0
-    currentProject = ProjectsClass(proj_id)
-    teamCount = len(currentProject.team)
-    for member in currentProject.team:
-        skillRow = UserSkills.query.filter_by(user_id=member).first()
-        skillSumCount += skillRow.enthusiasm + skillRow.purpose + skillRow.challenge + skillRow.health + skillRow.resilience
-    # print("Skill Sum Count")
-    # print('-----------------')
-    # print(skillSumCount)
-    # maxSkillCount = teamCount * 5 * 5
-    avgSkill = teamCount * 5 * 3
-    return avgSkill/skillSumCount
-def teamMemberRisk(proj_id):
-    currentProject = ProjectsClass(proj_id)
-    # totalTogether = 0
-    totalSuccessful = 0
-    totalFailed = 0
-    for member in currentProject.team:
-        projects = DeveloperProject.query.filter_by(developer_id=member).all()
-        for project in projects:
-            team = DeveloperProject.query.with_entities(DeveloperProject.developer_id).filter_by(project_id=project.project_id).all()
-            team = [r[0] for r in team]
-            # print("Team", team)
-            # print("Current Project Team: ", currentProject.team)
-            count = len(set(currentProject.team) & set(team))
-            count = count - 1
-            # totalTogether += count
-            resProject = Projects.query.filter_by(project_id=project.project_id).first()
-            if resProject == "Completed":
-                totalSuccessful += count
-            if resProject == "Failed":
-                totalFailed += count
-            # print("Member: ", member)
-            # print("Count: ", count)
-    performance = 1 + ( (totalFailed) * 0.5 - totalSuccessful * 0.125)
-    if performance < 0.01:
-        performance = 0.1
-    # print("Total Together: ", performance)
-    return performance
-
-def monte_carlo(simulations, deadline, project):
-    monteCarlo = list()
-
-    for i in range(len(project)):
-        iStd = np.std(project[i])
-        iMean = np.mean(project[i])
-        runs = np.random.normal(iMean,iStd,simulations)
-        
-
-        monteCarlo.append(runs.tolist())
-    if not monteCarlo:
-        #Chance of success of an average project from the problem statement
-        return 34
-    # print("MONTE CARLO: ", monteCarlo[0])
-    estimates = list()
-    for i in range(len(monteCarlo[0])):
-        daysSum = 0
-        for j in range(len(monteCarlo)):
-            daysSum += monteCarlo[j][i]
-        estimates.append(daysSum)
-
-    # print("ESTIMATES: ", estimates)
-
-    successCount = 0
-    for estimate in estimates:
-        if estimate <= deadline:
-            successCount += 1
-
-    successPercentage = (successCount/simulations) * 100
-
-    return successPercentage
-
-def githubIssues(repo, owner):
-    yesterday = date.today() - timedelta(days=1)
-    oneWeekAgo = yesterday - timedelta(days=7)
-    print(yesterday)
-    print(oneWeekAgo)
-    twenty_four_hour_issues = get_24_hour_issues_count(repo, owner, yesterday)
-    seven_day_issues = get_7_day_issues_count(repo, owner, oneWeekAgo)
-    seven_day_issues = seven_day_issues/7
-    print("24 Hour Issues: ", twenty_four_hour_issues)
-    print("7 Day Issues: ", seven_day_issues)
-    if twenty_four_hour_issues == 0:
-        return 1
-    return (twenty_four_hour_issues/seven_day_issues)
-
-def hourlyCommits(repo, owner):
-    hourly_commits = get_hourly_commits(repo, owner)
-    potential_error_commits = 0
-    for i in range(6):
-        potential_error_commits += hourly_commits[i]
-    for i in range(19, 24):
-        potential_error_commits += hourly_commits[i]
-    print("Potential Error Commits: ", potential_error_commits)
-    print("Hourly Commits: ", hourly_commits.sum())
-    potential_error_commit_likelihood = (potential_error_commits/hourly_commits.sum())
-    print("Potential Error Commits: ", potential_error_commit_likelihood)
-    return potential_error_commit_likelihood
-
-def member_skills(proj_id):
-    currentProject = ProjectsClass(proj_id)
-    for member in currentProject.team:
-        strengths = DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=member).all()
-        print(strengths)
-def calculatePrimaryRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, worstCost):
-    # Sources of primary risk multipliers
-    # 1. Team member risk (1.XX)
-    # 2. Hourly commits (0.XX)
-    # 3. Github issues (0.XX)
-    # 4. Monte Carlo Cost (0.XX)
-    # 5. Monte Carlo Time (0.XX)
-    # 6. Member Skills
-    githubIssues("calculator","microsoft")
-    member_skills(4)
-    proj_manager_id = proj_id
-    project = Projects.query.filter_by(project_id=proj_id).first()
-    rcList = list()
-    rcRowList = list()
-
-    tcList = list()
-    tcRowList = list()
-    assignedBudget = project.budget
-    print("Assigned Budget: ", assignedBudget)
-    assignedDeadline = project.deadline
-    print("Assigned Deadline: ", assignedDeadline)
-
-    simulations = 10000
-    risk = ProjectRisk.query.filter_by(project_id = proj_id).first()
-    #Thread open
-    costComponents = RiskComponent.query.filter_by(project_risk_id = risk.project_risk_id, risk_type = "Cost").all()
-    print("Cost Components: ", costComponents)
-    for component in costComponents:
-        rcRowList.append(component.best)
-        rcRowList.append(component.worst)
-        rcRowList.append(component.average)
-        print("RC Row List: ", rcRowList)
-        rcList.append(rcRowList)
-        rcRowList = list()
-    print("RC List: ", rcList)
-    costMC = monte_carlo(simulations, assignedBudget, rcList)
-    timeComponents = RiskComponent.query.filter_by(project_risk_id = risk.project_risk_id, risk_type = "Time").all()
-
-    
-    for rComponent in timeComponents:
-        tcRowList.append(rComponent.best)
-        tcRowList.append(rComponent.worst)
-        tcRowList.append(rComponent.average)
-        tcList.append(rcRowList)
-        tcRowList.clear()
-    print("TC List: ", tcList)
-    timeMC = monte_carlo(simulations, assignedDeadline, tcList)
-
-    #finalMC gives the risk multiplier
-    finalMC = ((34/costMC) + (34/timeMC))/2
-    #Thread close
-    print("Cost MC: ", costMC)
-    print("Time MC: ", timeMC)
-
-    print("Final MC: ", finalMC)
-
-    memberRisk = teamMemberRisk(proj_id)
-    softSkillRisk = softSkillRiskCount(proj_id)
-    hourly_commits = hourlyCommits('calculator', 'microsoft')
-
-    currentRisk = Risk.query.filter_by(project_id = proj_id).first()
-    primaryRisk = currentRisk * memberRisk * hourly_commits * githubIssues('calculator', 'microsoft') * finalMC
-    return primaryRisk
-
-def overallRisk(primaryRisk):
+def softSkillRisk(proj_id):
     return 0
+def teamMemberRisk(proj_id):
+    return 0
+
+def monte_carlo(avg, best, worst):
+    return 0
+
+def calculateRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, worstCost):
+    proj_manager_id = current_user.id
+    pm = User.query.filter_by(id=proj_manager_id).first().email
+    #Thread open
+    costMC = monte_carlo(avgTime, bestTime, worstTime)
+    timeMC = monte_carlo(avgCost, bestCost, worstCost)
+    #Thread close
+    memberRisk = teamMemberRisk(proj_id)
+    currentIssuesOpen = get_open_issues_count('calculator', 'microsoft')
+    return currentIssuesOpen
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -374,7 +206,6 @@ def removeReqFromProjectList():
 
 @app.route('/loginRedirect', methods = ['POST'])
 def checkLogin():
-    calculatePrimaryRisk(4,2,3,4,5,6,7)
     email = request.form['email']
     password = request.form['password']
     actor = UserClass.authenticateUser(email,password)
@@ -697,3 +528,55 @@ def changeStatus():
         session['pastProjects'] = update
             
         return "OK"
+    
+@app.route('/updateDevelopers', methods=['POST'])
+def updateDevelopers():
+    if request.method == 'POST':
+        developerIDs = session['projectDevelopers']
+        projectID = session['currentProject']['project_id']
+
+        # with db.engine.connect() as conn:
+        #     for developer in developerIDs:
+        #         conn.execute(f"INSERT OR IGNORE INTO developer_project (developer_id, project_id) VALUES ('{developer}','{projectID})")
+        #     db.session.commit()
+        # stmt = DeveloperProject.insert(developer,projectID).prefix_with('IGNORE')
+        DeveloperProject.query.filter_by(project_id = projectID).delete()
+        for developer in developerIDs:
+            # check = DeveloperProject.query.filter_by(developer_id = developer, project_id = projectID).first()
+            # if not check:
+            db.session.add(DeveloperProject(developer, projectID))
+
+        db.session.commit()
+            
+        return "OK"
+
+@app.route('/updateRequirements', methods = ['POST'])
+def updateRequirements():
+    if request.method == 'POST':
+        requirements = session['projectRequirements']
+        projectID = session['currentProject']['project_id']
+
+        ProjectRequirement.query.filter_by(project_id = projectID).delete()
+        for item in requirements:
+            # check = ProjectRequirement.query.filter_by(project_id = projectID, requirement = item).first()
+            # if not check:
+            db.session.add(ProjectRequirement(projectID, item))
+        
+        db.session.commit()
+
+        return "OK"
+
+# @app.route('/confirmDeveloperSkills', methods = ['POST'])
+# def confirmDeveloperSkills():
+#     if request.method == 'POST':
+#         strengths = session['strengths']
+#         developerID = session['user']['id']
+
+#         DeveloperStrength.query.filter_by(developer_id = developerID).delete()
+
+#         for item in strengths:
+#             db.session.add(DeveloperStrength(developerID,item))
+        
+#         db.session.commit()
+
+#         return "OK"
