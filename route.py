@@ -152,7 +152,7 @@ def member_skills(proj_id):
     for member in currentProject.team:
         strengths = DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=member).all()
         print(strengths)
-def calculateRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, worstCost):
+def calculatePrimaryRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, worstCost):
     # Sources of primary risk multipliers
     # 1. Team member risk (1.XX)
     # 2. Hourly commits (0.XX)
@@ -211,8 +211,13 @@ def calculateRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, wors
     memberRisk = teamMemberRisk(proj_id)
     softSkillRisk = softSkillRiskCount(proj_id)
     hourly_commits = hourlyCommits('calculator', 'microsoft')
-    return currentIssuesOpen
 
+    currentRisk = Risk.query.filter_by(project_id = proj_id).first()
+    primaryRisk = currentRisk * memberRisk * hourly_commits * githubIssues('calculator', 'microsoft') * finalMC
+    return primaryRisk
+
+def overallRisk(primaryRisk):
+    return 0
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -369,7 +374,7 @@ def removeReqFromProjectList():
 
 @app.route('/loginRedirect', methods = ['POST'])
 def checkLogin():
-    calculateRisk(4,2,3,4,5,6,7)
+    calculatePrimaryRisk(4,2,3,4,5,6,7)
     email = request.form['email']
     password = request.form['password']
     actor = UserClass.authenticateUser(email,password)
