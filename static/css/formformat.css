@@ -118,9 +118,18 @@
     border-width:0px;
     border-radius:8px;
     margin-right:10px;
+    margin-top: 5px;
     padding:5px 15px;
   }
   
   form > input[type="button"]{
     margin: 5px 5px;
+  }
+
+  #submitDevelopers, #submitRequirements {
+    background-color: green;
+  }
+
+  #submitDevelopers:hover, #submitRequirements:hover {
+    background-color: rgb(195, 253, 195);
   }

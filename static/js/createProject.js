@@ -19,7 +19,7 @@ $(document).ready( function(){
             success:function(response){
                 // remove the developer from the current list
                 const node = document.createElement("li");
-                node.id = selectedName;
+                node.id = selectedId;
                 const textnode = document.createTextNode(selectedName);
                 node.appendChild(textnode);
                 currentDevList.appendChild(node);
@@ -31,7 +31,7 @@ $(document).ready( function(){
 
         let selectedId = $('#developers').find(":selected").val();
         let selectedName = $('#developers').find(":selected").text();
-        let listElem = document.getElementById(selectedName)
+        let listElem = document.getElementById(selectedId)
         
         $.ajax({
             url: '/removeDevFromProjectList',
