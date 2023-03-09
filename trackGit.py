@@ -48,18 +48,37 @@ def create_commits_df(repo, owner, api):
 # commits_by_hour = commits.groupby('commit_hour')[['sha']].count()
 # commits_by_hour = commits_by_hour.rename(columns = {'sha': 'commit_count'})
 
-def get_open_issues(repo, owner, api):
-    url = api + 'search/issues?q=repo:{}/{}+type:issue+state:open'.format(owner, repo)
+# def get_open_issues(repo, owner, api):
+#     url = api + 'search/issues?q=repo:{}/{}+type:issue+state:open'.format(owner, repo)
+#     commit_pg = gh_session.get(url = url)
+#     # Get open issues by date
+#     # https://api.github.com/search/issues?q=repo:microsoft/calculator+type:issue+opened:>2023-03-03
+#     # https://api.github.com/search/issues?q=repo:microsoft/calculator+type:issue+state:closed
+#     # print('------------------')
+#     # print(url)
+#     # print('------------------')
+#     return commit_pg.json()
+
+def get_24_hour_issues(repo, owner, date, api):
+    url = api + 'search/issues?q=repo:{}/{}+type:issue+created:={}+state:open'.format(owner, repo, date)
+    print(url)
     commit_pg = gh_session.get(url = url)
-    # https://api.github.com/search/issues?q=repo:microsoft/calculator+type:issue+state:closed
-    # print('------------------')
-    # print(url)
-    # print('------------------')
     return commit_pg.json()
 
+def get_7_day_issues(repo, owner, date, api):
+    url = api + 'search/issues?q=repo:{}/{}+type:issue+created:>={}+state:open'.format(owner, repo, date)
+    print(url)
+    commit_pg = gh_session.get(url = url)
+    return commit_pg.json()
 
-def get_open_issues_count(repo, owner, api=github_api):
-    commits_list = get_open_issues(repo, owner, api)
+def get_24_hour_issues_count(repo, owner, date, api=github_api):
+    commits_list = get_24_hour_issues(repo, owner, date, api)
+    normalised_list = json_normalize(commits_list)
+    print(normalised_list)
+    return normalised_list['total_count'][0]
+
+def get_7_day_issues_count(repo, owner, date, api=github_api):
+    commits_list = get_7_day_issues(repo, owner, date, api)
     normalised_list = json_normalize(commits_list)
     return normalised_list['total_count'][0]
 

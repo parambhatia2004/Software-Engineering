@@ -19,6 +19,7 @@ class Projects(db.Model):
     budget = db.Column(db.Integer, nullable=False)
     project_state = db.Column(db.String(20), CheckConstraint("project_state IN ('Success', 'Failure', 'Ongoing', 'Cancelled')"), nullable=False)
     description = db.Column(db.String(255))
+    #date of addition
 
     def __init__(self, project_manager_id, project_name, deadline, budget, project_state, description):
         self.project_manager_id = project_manager_id
