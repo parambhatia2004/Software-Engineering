@@ -17,11 +17,11 @@
     </head>
     <body>
         <div class="menu">
-            <a href="/managerHome"><img src="../static/images/home.png" alt="Home" height="30px"></a>
-            <a href="#" class="inactiveLink">Update project information</a>
-            <a href="/createProject">Create new project</a>
-            <a href="/softSkills">Update personal status</a>
-            <a href="/logout">Log out</a>
+            <a href="/managerHome" title="Back to Homepage"><img src="../static/images/home.png" alt="Home" height="30px"></a>
+            <a href="#" class="inactiveLink" title="Update project information">Update project information</a>
+            <a href="/createProject" title="Create a new project">Create new project</a>
+            <a href="/softSkills" title="Update your status">Update personal status</a>
+            <a href="/logout" title="Log out">Log out</a>
         </div>
         <div class="main">
             <div class="contentdiv" style="justify-content:left;align-items:center;">
@@ -76,6 +76,7 @@
                         </li>
                         {% endfor %}
                     </ul>
+                    <button type="button" id="submitDevelopers">Submit all developer team changes</button>
                 </div>
                 <div id="requirementsFormSection">
                     <p>Add a programming language to the project requirements:</p>
@@ -98,6 +99,7 @@
                         </li>
                         {% endfor %}
                     </ul>
+                    <button type="button" id="submitRequiements">Submit all requirement changes</button>
                 </div>
             </div>
             <input type="hidden" id="projectriskid" name="projectriskID" value={{project.project_risk_id}}>
@@ -110,11 +112,11 @@
                     {% for comp in budgetComponents %}
                     <div class="flex">
                         <input name="type" type="hidden" value="Cost">
-                        <input name="name" type="text" value="{{comp.name}}" readonly >
-                        <input name="absval" type="number" value="{{comp.absolute_value}}" readonly>
-                        <input name="worst" type="number" value="{{comp.worst}}" readonly>
-                        <input name="best" type="number" value="{{comp.best}}" readonly>
-                        <input name="average" type="number" value="{{comp.average}}" readonly>
+                        <input name="name" type="text" value="{{comp.name}}" placeholder="Component name" readonly >
+                        <input name="absval" type="number" value="{{comp.absolute_value}}" placeholder="Absolute value"  readonly>
+                        <input name="worst" type="number" value="{{comp.worst}}" placeholder="Worst case estimation" readonly>
+                        <input name="best" type="number" value="{{comp.best}}" placeholder="Best case estimation" readonly>
+                        <input name="average" type="number" value="{{comp.average}}" placeholder="Average estimation" readonly>
                         <a class="delete">&times;</a>
                         <hr class="customHR">
                     </div>
@@ -131,11 +133,11 @@
                     {% for comp in timeComponents %}
                     <div class="flex">
                         <input name="type" type="hidden" value="Time">
-                        <input name="name" type="text" value="{{comp.name}}" readonly >
-                        <input name="absval" type="number" value="{{comp.absolute_value}}" readonly>
-                        <input name="worst" type="number" value="{{comp.worst}}" readonly>
-                        <input name="best" type="number" value="{{comp.best}}" readonly>
-                        <input name="average" type="number" value="{{comp.average}}" readonly>
+                        <input name="name" type="text" value="{{comp.name}}" placeholder="Component name" readonly >
+                        <input name="absval" type="number" value="{{comp.absolute_value}}" placeholder="Absolute value"  readonly>
+                        <input name="worst" type="number" value="{{comp.worst}}" placeholder="Worst case estimation" readonly>
+                        <input name="best" type="number" value="{{comp.best}}" placeholder="Best case estimation" readonly>
+                        <input name="average" type="number" value="{{comp.average}}" placeholder="Average estimation" readonly>
                         <a class="delete">&times;</a>
                         <hr class="customHR">
                     </div>

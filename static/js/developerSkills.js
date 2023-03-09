@@ -41,4 +41,16 @@ $(document).ready( function(){
         })
     })
 
+    $('#confirm').click(function(){
+
+        $.ajax({
+            url: '/confirmDeveloperSkills',
+            type: 'post',
+            data: {
+            },
+            success:function(response){
+            }
+        })
+    })
+
 })
