@@ -2,6 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" >
+         <!-- Fontawesome css -->
+         <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+         <!-- Local css-->
+         <link rel="stylesheet" href="../static/css/infoButton.css">
         <link rel="stylesheet" href="../static/css/menu.css">
         <link rel="stylesheet" href="../static/css/main.css">
         <link rel="stylesheet" href="../static/css/formformat.css">
@@ -12,11 +16,11 @@
     </head>
     <body>
         <div class="menu">
-            <a href="/managerHome"><img src="../static/images/home.png" alt="Home" height="30px"></a>
-            <a href="#" class="inactiveLink">Create a project</a>
-            <a href="/createProject">Create new project</a>
-            <a href="/softSkills">Update personal status</a>
-            <a href="/logout">Log out</a>
+            <a href="/managerHome" title="The homepage"><img src="../static/images/home.png" alt="Home" height="30px"></a>
+            <a href="#" class="inactiveLink" title="Create a new project">Create a project</a>
+            <a href="/createProject" title="Create a new project">Create new project</a>
+            <a href="/softSkills" title="Update personal status">Update personal status</a>
+            <a href="/logout" title="Log out">Log out</a>
         </div>
         <div class="main">
             <h1>Create a new project</h1>
@@ -33,7 +37,15 @@
                     <label> Project description:
                         <input type="text" name="project_description" id="project_description" required>
                     </label><br>
-                    <h3>Codebase details</h3>
+                    <div class="contentdiv" style="justify-content:left;align-items:center;">
+                        <h3>Codebase details</h3>
+                        <div class="info">
+                            <i class="icon-info-sign"></i>
+                            <span class="extra-info">
+                                This section is used for GitHub integration.
+                            </span>
+                        </div>
+                    </div>  
                     <div class="inputgroup">
                         <label> Repository owner:
                             <input type="text" name="repo_owner" id="repo_owner">
@@ -45,32 +57,10 @@
                     <hr>
                     <label>Deadline (days until):
                         <input type="number" name="deadline" id="deadline" step="1" required>
-                    </label><br><br>
-                    <div class="inputgroup">
-                        <!-- <label>Worst-case time estimate:
-                            <input type="date" name="worst_time" id="worst_time">
-                        </label>
-                        <label>Best-case time estimate:
-                            <input type="date" name="best_time" id="best_time">
-                        </label>
-                        <label>Average time estimate:
-                            <input type="date" name="avg_time" id="avg_time">
-                        </label> -->
-                    </div><hr>
+                    </label><br>
                     <label>Budget:
                         <input type="number" name="budget" id="budget" required>
-                    </label><br><br>
-                    <div class="inputgroup">
-                        <!-- <label>Worst-case budget estimate:
-                            <input type="number" name="worst_budget" id="worst_budget">
-                        </label>
-                        <label>Best-case budget estimate:
-                            <input type="number" name="best_budget" id="best_budget">
-                        </label>
-                        <label>Average budget estimate:
-                            <input type="number" name="avg_budget" id="avg_budget">
-                        </label> -->
-                    </div><hr>
+                    </label><br><hr>
                 </div>
                 <div id="dynamicdata" class="inputgroup">
                     <div id="developersFormSection">

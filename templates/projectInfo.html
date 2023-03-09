@@ -38,12 +38,13 @@
             <div id="projectAnalysis" class="contentdiv">
                 <div id="columnOne"  class="contentdiv_column">
                     <div id="softSkillsAnalysis" class="contentbox">
-                        <h3 title="Displays data provided by team memners in their personal status forms">Team status</h3>         
+                        <h3 title="Displays data provided by team memners in their personal status forms">Team status</h3>
+                        {% if (softSkillValues.health is none) or (softSkillValues.health == '') or (softSkillValues.health == 0) or (softSkillsValues is not defined)%}
+                         <p>Data unavailable. Please ask the team developers to complete the personal status form</p>
+                        {% else %}        
                         <canvas id="softSkillsChart" style="width:100%;max-width:600px"></canvas>
                         <script type="module">
-                            {% if (softSkillValues.health is none) or (softSkillValues.health == '') or (softSkillValues.health == 0) or (softSkillsValues is not defined)%}
-                                {% set softSkillValues =  {'enthusiasm': 4.5, 'purpose': 3,'challenge': 4, 'health': 5, 'resilience': 3.15}%}
-                            {% endif %}
+                           
                             var xValues = ["Enthusiasm", "Purpose", "Challenge", "Health", "Resilience"];
                             var yValues = [{{softSkillValues.enthusiasm}},
                                             {{softSkillValues.purpose}},
@@ -71,9 +72,13 @@
                             }
                             });
                         </script>
+                        {% endif %}
                     </div>
                     <div id="projectRequirementsAnalysis" class="contentbox"> 
-                        <h3 title="How many developers fit each requirement">Requirements compatibility</h3>         
+                        <h3 title="How many developers fit each requirement">Requirements compatibility</h3>
+                        {% if not projectReqLabels%}
+                         <p>Data unavailable. Please add requirements to the project</p>
+                        {% else %}         
                         <canvas id="projectRequirementsChart" style="width:100%;max-width:600px"></canvas>
                         <script type="module">
                             var xValues = {{projectReqLabels}};
@@ -99,9 +104,10 @@
                                 }
                             });
                         </script>
+                        {% endif %}
                     </div>
                     <div id="monteCarloComponents" class="contentbox">
-                        {% if budgetComp != none %}
+                        {% if budgetComp %}
                             <ul>
                                 {% for comp in budgetComp %}
                                 <li>{{comp.name}} has an estimated budget of {{comp.value}}. According to our analysis, {{comp.message}}</li>
@@ -110,7 +116,7 @@
                         {% else %}
                             <p>This project doesn't have budget components</p>
                         {% endif%}
-                        {% if timeComp != none %}
+                        {% if timeComp %}
                             <ul>
                                 {% for comp in timeComp %}
                                 <li>{{comp.name}} has an estimated deadline of {{comp.value}} days. According to our analysis, {{comp.message}}</li>
@@ -123,7 +129,10 @@
                 </div>
                 <div id="columnTwo" class="contentdiv_column">
                     <div id="commitsByDay" class="contentbox">
-                        <h3 title="Number of code commits for each day"> Commits by day </h3>         
+                        <h3 title="Number of code commits for each day"> Commits by day </h3> 
+                        {% if not commitsByDay %}
+                        <p> There is no code-specific data for the project yet. </p>
+                        {% else %}          
                         <canvas id="dateChart" style="width:100%;max-width:600px"></canvas>
                         <script type="module">
                             var xValues = {{commitsByDay.labels}};
@@ -146,9 +155,13 @@
                                 }
                             });
                         </script>
+                        {%endif%}
                     </div>
                     <div id="commitsByHour" class="contentbox">
-                        <h3 title="Number of code commits for each hour"> Commits by hour </h3>   
+                        <h3 title="Number of code commits for each hour"> Commits by hour </h3>
+                        {% if not commitsByHour %}
+                        <p> There is no code-specific data for the project yet. </p>
+                        {% else %}    
                         <canvas id="hourlyChart" style="width:100%;max-width:600px"></canvas>
                         <script type="module">
                             var xValues = ["0", "1", "2","3","4", "5", "6","7","8", "9", "10","11",
@@ -175,9 +188,13 @@
                             }
                             });
                         </script>
+                        {%endif%}
                     </div>
                     <div id="developerCompatibility" class="contentbox">
-                        <h3 title="How well developers complement each other's skills"> Developer inter-compatibility </h3>
+                        <h3 title="How well developers have worked together"> Developer inter-compatibility </h3>
+                        {% if not developerData %}
+                        <p> There is no developer-specific data for the project yet. </p>
+                        {% else %}
                         <div id="compatibilityChart" style="width:100%;max-width:600px"></div>
                         <script type="module">
                             var list =[];
@@ -207,6 +224,7 @@
                             var chart = new ApexCharts(document.querySelector("#compatibilityChart"), options);
                             chart.render();
                         </script>
+                        {%endif%}
                     </div>
                 </div>
             </div>
