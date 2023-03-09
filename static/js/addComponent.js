@@ -40,7 +40,9 @@ function submitInput(){
     eBest = element.parentNode.querySelector('input[name="best"]').value;
     eAbsVal = element.parentNode.querySelector('input[name="absval"]').value;
     eAverage = element.parentNode.querySelector('input[name="average"]').value;
-    if(element.parentElement.hasChildNodes()){
+    var check1 = !((eName === "") || (eWorst === "") || (eBest === "") || (eAverage === ""))
+    var check2 = !(eName === "" ) && !((eAbsVal === "")||(eAbsVal == 0)) && ((eWorst === "")||(eWorst == 0)) && ((eBest === "")||(eBest == 0)) && ((eAverage === "")||(eAverage == 0))
+    if(element.parentElement.hasChildNodes() && (check1||check2)){
         $.ajax({
             url: '/submitCostComponent',
             type: 'post',
@@ -56,7 +58,14 @@ function submitInput(){
             },
             success: function(response){
                 console.log("success")
-                element.parentElement.childNodes[7].remove()
+                if(element.parentNode.hasChildNodes()){
+                    element.parentNode.querySelector('input[name="name"]').setAttribute('readonly', true)
+                    element.parentNode.querySelector('input[name="worst"]').setAttribute('readonly', true)
+                    element.parentNode.querySelector('input[name="best"]').setAttribute('readonly', true)
+                    element.parentNode.querySelector('input[name="average"]').setAttribute('readonly', true)
+                    element.parentNode.querySelector('input[name="absval"]').setAttribute('readonly', true)
+                    element.parentElement.childNodes[7].remove()
+                } 
             },
             error: function(response){
                 console.log("error")
@@ -76,7 +85,7 @@ function addInput(item){
     const absval = document.createElement("input");
     absval.type="number"
     absval.name="absval"
-    absval.placeholder="Absolute value"
+    absval.placeholder="Absolute value (optional)"
 
     const worst = document.createElement("input");
     worst.type="number"

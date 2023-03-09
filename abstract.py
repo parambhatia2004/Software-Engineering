@@ -89,9 +89,9 @@ class UserClass(ABC):
         return False
     
     @staticmethod
-    def createUserProjects(currentProjects):
+    def createUserProjects(projects):
         with app.app_context():
-            return Projects.query.filter(Projects.project_id.in_(currentProjects)).all()
+            return Projects.query.filter(Projects.project_id.in_(projects)).all()
     
     # decorator
     @abstractmethod
