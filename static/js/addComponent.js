@@ -40,7 +40,8 @@ function submitInput(){
     eBest = element.parentNode.querySelector('input[name="best"]').value;
     eAbsVal = element.parentNode.querySelector('input[name="absval"]').value;
     eAverage = element.parentNode.querySelector('input[name="average"]').value;
-    if(element.parentElement.hasChildNodes()){
+    var check = !((eName === "") || (eWorst === "") || (eBest === "") || (eAverage === ""))
+    if(element.parentElement.hasChildNodes()&&check){
         $.ajax({
             url: '/submitCostComponent',
             type: 'post',
@@ -76,7 +77,7 @@ function addInput(item){
     const absval = document.createElement("input");
     absval.type="number"
     absval.name="absval"
-    absval.placeholder="Absolute value"
+    absval.placeholder="Absolute value (optional)"
 
     const worst = document.createElement("input");
     worst.type="number"
