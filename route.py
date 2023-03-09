@@ -171,6 +171,7 @@ def createProjectRedirect():
 
 @app.route('/addDevToProjectList', methods = ['POST'])
 def addDevToProjectList():
+    print("current developers:", session['projectDevelopers'])
     if request.form['devId'] not in session['projectDevelopers']:
         update = session['projectDevelopers']
         update.append(request.form['devId'])
@@ -300,10 +301,28 @@ def managerHome():
     for project in userProjects:
         currentProjects.append(as_dict(project))
 
+    pastUserProjects = ProjectManager.createUserProjects(session['pastProjects'])
+
+    successProjects = []
+    failureProjects = []
+    cancelledProjects = [] 
+
+    for project in pastUserProjects:
+        projectDict = as_dict(project)
+        projectDict['project_risk_state'] = (ProjectRisk.query.filter_by(project_id = projectDict['project_id']).first()).project_risk_state
+
+        if project.project_state == "Success":
+            successProjects.append(projectDict)
+        elif project.project_state == "Failure":
+            failureProjects.append(projectDict)
+        else:
+            cancelledProjects.append(projectDict)
+
     print(session['currentProjects'])
     print(currentProjects)
 
-    return render_template('/managerHome.html',name=session['user']['first_name'],greenProjects=currentProjects)
+    return render_template('/managerHome.html',name=session['user']['first_name'],greenProjects=currentProjects,
+                           successfulProjects = successProjects, failedProjects = failureProjects, cancelledProjects = cancelledProjects)
 
 @app.route('/developerHome')
 def developerHome():
@@ -365,7 +384,12 @@ def updateProject():
     print("budgetComponents:", session['budgetComponents'])
     print("timeComponents:", session['timeComponents'])
 
-    return render_template('/updateProject.html', project = session['currentProject'], budgetComponents = session['budgetComponents'], timeComponents = session['timeComponents'])
+    allDevelopers = User.query.filter_by(role="Developer").all()
+    print(session["projectDevelopers"])
+    currentDevelopers = User.query.filter(User.id.in_(session['projectDevelopers'])).all()
+    return render_template('/updateProject.html', project = session['currentProject'], budgetComponents = session['budgetComponents'],
+                            timeComponents = session['timeComponents'], currentDevelopers = currentDevelopers, currentSkills = session['projectRequirements'],
+                            allDevelopers = allDevelopers)
 
 @app.route('/updateProjectRedirect', methods = ['POST'])
 # needs a list of dictionaries
@@ -387,6 +411,19 @@ def updateProjectRedirect():
 
         session['budgetComponents'] = budgetComponents
         session['timeComponents'] = timeComponents
+
+        projectRequirementObjects = ProjectRequirement.query.filter_by(project_id = session['currentProject']['project_id']).all()
+        requirements = []
+        for requirement in projectRequirementObjects:
+            requirements.append(requirement.requirement)
+        
+        session['projectRequirements'] = requirements
+
+        developerObjects = DeveloperProject.query.filter_by(project_id = session['currentProject']['project_id']).all()
+        developers = []
+        for developer in developerObjects:
+            developers.append(str(User.query.filter_by(id = developer.developer_id).first().id))
+        session['projectDevelopers'] = developers
     
     return redirect('/updateProject')
 
@@ -462,3 +499,32 @@ def projectInfo():
         return redirect('/managerHome')
     
     return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = [], projectReqValues = [], budgetComp = [], timeComp = [], commitsByDay = [], commitsByHour = [], developerData = [])
+
+@app.route('/changeDescription', methods = ['POST'])
+def changeDescription():
+    if request.method == 'POST':
+        thisProject = Projects.query.filter_by(project_id = session['currentProject']['project_id']).first()
+        thisProject.description = request.form['description']
+        db.session.commit()
+        return "OK"
+
+@app.route('/changeStatus', methods = ['POST'])
+def changeStatus():
+    if request.method == 'POST':
+        status = request.form['status']
+        thisProject = Projects.query.filter_by(project_id = session['currentProject']['project_id']).first()
+        thisProject.project_state = status
+        db.session.commit()
+
+        print(session['currentProjects'])
+        print(session['currentProject']['project_id'])
+  
+        update = session['currentProjects']
+        update.remove(thisProject.project_id)
+        session['currentProjects'] = update
+
+        update = session['pastProjects']
+        update.append(thisProject.project_id)
+        session['pastProjects'] = update
+            
+        return "OK"
