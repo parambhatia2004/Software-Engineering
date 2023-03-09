@@ -50,7 +50,9 @@
                 </div>
                 <div class="contentbox">
                     <p>Change the project description: </p>
-                    <input type="text" id="newDescription" value={{project.description}}>
+                    <textarea name="project_description" id="newDescription" rows="5" cols="50" maxlength="255" required>
+                        {{project.description}}
+                    </textarea>
                     <button id="changeDescription">Change the project description</button>
                 </div>
             </div>
@@ -107,6 +109,12 @@
                 <div class="wrap">
                     <h2>Add a new budget component</h2>
                     <a href="#budgetcomponents" class="add" id="addBudget">&plus;</a>
+                    <div class="info">
+                        <i class="icon-info-sign"></i>
+                        <span class="extra-info">
+                            This section allows you to add components that impact the project budget. The budget of a component can either be an absolute value or a worst-best-average estimate, but not both.
+                        </span>
+                    </div>
                 </div>
                 <div class="estimations" id="budgetEstimation">
                     {% for comp in budgetComponents %}
@@ -128,6 +136,12 @@
                 <div class="wrap">
                     <h2>Add a new time component</h2>
                     <a href="#timecomponents" id="addTime" class="add">&plus;</a>
+                    <div class="info">
+                        <i class="icon-info-sign"></i>
+                        <span class="extra-info">
+                            This section allows you to add components that impact the project deadline. The required time of a component can either be an absolute value or a worst-best-average estimate, but not both.
+                        </span>
+                    </div>
                 </div>
                 <div class="estimations" id="timeEstimation">
                     {% for comp in timeComponents %}
