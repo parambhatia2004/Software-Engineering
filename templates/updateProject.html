@@ -2,11 +2,17 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" >
+        <!-- Fontawesome css -->
+        <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <!-- Local css-->
+        <link rel="stylesheet" href="../static/css/infoButton.css">
         <link rel="stylesheet" href="../static/css/menu.css">
         <link rel="stylesheet" href="../static/css/main.css">
         <link rel="stylesheet" href="../static/css/formformat.css">
         <link rel="stylesheet" href="../static/css/updateProject.css">
         <script src="../static/js/jquery-3.6.0.min.js"></script>
+        <script type="text/javascript" src="../static/js/mainUpdate.js"></script>
+        <script type="text/javascript" src="../static/js/createProject.js"></script>
         <title>Update project information</title>
     </head>
     <body>
@@ -18,7 +24,82 @@
             <a href="/logout">Log out</a>
         </div>
         <div class="main">
-            <h1>Project name: {{project.project_name}}</h1>
+            <div class="contentdiv" style="justify-content:left;align-items:center;">
+                <h1>Project name: {{project.project_name}}</h1>
+                <div class="info">
+                    <i class="icon-info-sign"></i>
+                    <span class="extra-info">
+                        This page allows you to add and remove factors that impact the budget or deadline of a project.
+                    </span>
+                </div>
+            </div>
+
+            {% set skills =  ['Assembly', 'Bash', 'C', 'C++', 'C#' , 'CSS','F#' , 'Fortran', 'Go', 
+                'Haskell', 'HTML', 'Java', 'JavaScript', 'JSON', 'Kotlin', 'Lisp', 'MATLAB' , 'OCaml', 'Pascal', 'Perl', 'PHP',
+                'PowerShell', 'Prolog', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'SQL', 'Swift', 'TeX', 'XML'] %}
+            <div class="contentdiv">
+                <div class="contentbox"> 
+                    <p>Change the status of the project: </p>
+                    <select id="statusSelect" name="statusSet">
+                        <option value='Success'>Success</option>
+                        <option value='Failure'>Failure</option>
+                        <option value='Ongoing'>Ongoing</option>
+                        <option value='Cancelled'>Cancelled</option>
+                    </select>
+                    <button id="changeStatus">Change status of project</button>
+                </div>
+                <div class="contentbox">
+                    <p>Change the project description: </p>
+                    <input type="text" id="newDescription" value={{project.description}}>
+                    <button id="changeDescription">Change the project description</button>
+                </div>
+            </div>
+            <div class="contentdiv">
+                <div id="developersFormSection">
+                    <p>Add a developer to the project:</p>
+                    <div class="inputgroup">
+                        <select name="developers" id="developers">
+                        {% for dev in allDevelopers%}
+                            <option value="{{dev.id}}">{{dev.first_name}} {{dev.last_name}}</option>
+                        {% endfor %}
+                        </select>
+                        <button type = "button" class="add_developer">Add a developer</button>
+                        <button type = "button" class="remove_developer">Remove the selected developer</button>
+                    </div>
+                    <br> 
+                    <p> The current developers are:</p>
+                    <!-- Developers should be added here in JS -->
+                    <ul id="currentdev">
+                        {% for dev in currentDevelopers %}
+                        <li id="{{dev.id}}">
+                            {{dev.first_name}} {{dev.last_name}}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div id="requirementsFormSection">
+                    <p>Add a programming language to the project requirements:</p>
+                    <div class="inputgroup">
+                        <select name="skillset" id="skillset">
+                        {% for skill in skills%}
+                            <option value="{{skill}}">{{skill}}</option>
+                        {% endfor %}
+                        </select>
+                        <button type = "button" class="add_requirement">Add a requirement</button>
+                        <button type = "button" class="remove_requirement">Remove the selected requirement</button>
+                    </div>
+                    <br> 
+                    <p> The current project requirements are:</p>
+                    <!-- Requirements should be added here in JS -->
+                    <ul id="currentreq">
+                        {% for csk in currentSkills %}
+                        <li id="{{csk}}">
+                            {{csk}}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
             <input type="hidden" id="projectriskid" name="projectriskID" value={{project.project_risk_id}}>
             <div class="add_content" id="budgetcomponents">
                 <div class="wrap">
@@ -29,11 +110,11 @@
                     {% for comp in budgetComponents %}
                     <div class="flex">
                         <input name="type" type="hidden" value="Cost">
-                        <input name="name" type="text" value="{{comp.name}}" >
-                        <input name="absval" type="number" value="{{comp.absolute_value}}">
-                        <input name="worst" type="number" value="{{comp.worst}}" >
-                        <input name="best" type="number" value="{{comp.best}}" >
-                        <input name="average" type="number" value="{{comp.average}}" >
+                        <input name="name" type="text" value="{{comp.name}}" readonly >
+                        <input name="absval" type="number" value="{{comp.absolute_value}}" readonly>
+                        <input name="worst" type="number" value="{{comp.worst}}" readonly>
+                        <input name="best" type="number" value="{{comp.best}}" readonly>
+                        <input name="average" type="number" value="{{comp.average}}" readonly>
                         <a class="delete">&times;</a>
                         <hr class="customHR">
                     </div>
@@ -50,11 +131,11 @@
                     {% for comp in timeComponents %}
                     <div class="flex">
                         <input name="type" type="hidden" value="Time">
-                        <input name="name" type="text" value="{{comp.name}}" >
-                        <input name="absval" type="number" value="{{comp.absval}}">
-                        <input name="worst" type="number" value="{{comp.worst}}" >
-                        <input name="best" type="number" value="{{comp.best}}" >
-                        <input name="average" type="number" value="{{comp.average}}" >
+                        <input name="name" type="text" value="{{comp.name}}" readonly >
+                        <input name="absval" type="number" value="{{comp.absolute_value}}" readonly>
+                        <input name="worst" type="number" value="{{comp.worst}}" readonly>
+                        <input name="best" type="number" value="{{comp.best}}" readonly>
+                        <input name="average" type="number" value="{{comp.average}}" readonly>
                         <a class="delete">&times;</a>
                         <hr class="customHR">
                     </div>

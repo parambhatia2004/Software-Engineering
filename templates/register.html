@@ -13,23 +13,23 @@
     <body>
         <div class="main">
             <h2 style="text-align: center;"> Register </h2>
-            <form method="post" action="/registerRedirect">
+            <form method="post" id="registerForm" onsubmit="return validateForm();" action="/registerRedirect">
                 <label>Email</label>
-                <input type='email' name='email'minlength="5"><br>
+                <input type='email' name='email' minlength="5" required><br>
                 <div style="display:flex;">
                     <div style="flex-grow:1;">
                         <label>First Name</label><br>
-                        <input type='text' name='firstname' style="width:90%;">
+                        <input type='text' name='firstname' style="width:90%;" required>
                     </div>
                     <div style="flex-grow:1;">
                         <label>Last Name</label><br>
-                        <input type='text' name='lastname' style="width:90%;">
+                        <input type='text' name='lastname' style="width:90%;" required>
                     </div>
                 </div><br>
                 <label>Password</label>
-                <input type='password' name='password' minlength="8"><br>
+                <input type='password' name='password' id="password" minlength="8" required><br>
                 <label>Confirm password</label>
-                <input type='password' name='confpassword' minlength="8"><br>
+                <input type='password' name='confpassword' id="confpassword" minlength="8" required><br>
                 <div style="width:100%; display:flex; align-items:center;">
                     <label>
                         Sign up for a manager account.
@@ -52,8 +52,22 @@
                           
                     </script>
                 </div><br>
-                <input type='submit' value='Register'>
+                <input type='submit' value='Register' id="registerButton">
             </form>
+
+            <script>
+                function validateForm() {
+                    const password = document.getElementById("password").value
+                    const conf_pass = document.getElementById("confpassword").value
+                    if( password === conf_pass){
+                        return true;
+                    } else {
+                        alert("The passwords need to match.");
+                        console.log("test")
+                        return false; 
+                    }
+                }
+            </script>
             {% block content %}
             <div class="container">
                 {% for message in get_flashed_messages() %}

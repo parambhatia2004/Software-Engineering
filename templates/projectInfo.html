@@ -41,6 +41,9 @@
                         <h3 title="Displays data provided by team memners in their personal status forms">Team status</h3>         
                         <canvas id="softSkillsChart" style="width:100%;max-width:600px"></canvas>
                         <script type="module">
+                            {% if (softSkillValues.health is none) or (softSkillValues.health == '') or (softSkillValues.health == 0) or (softSkillsValues is not defined)%}
+                                {% set softSkillValues =  {'enthusiasm': 4.5, 'purpose': 3,'challenge': 4, 'health': 5, 'resilience': 3.15}%}
+                            {% endif %}
                             var xValues = ["Enthusiasm", "Purpose", "Challenge", "Health", "Resilience"];
                             var yValues = [{{softSkillValues.enthusiasm}},
                                             {{softSkillValues.purpose}},
