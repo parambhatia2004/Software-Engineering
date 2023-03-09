@@ -41,16 +41,16 @@ $(document).ready( function(){
         })
     })
 
-    $('#confirm').click(function(){
+    // $('#confirm').click(function(){
 
-        $.ajax({
-            url: '/confirmDeveloperSkills',
-            type: 'post',
-            data: {
-            },
-            success:function(response){
-            }
-        })
-    })
+    //     $.ajax({
+    //         url: '/confirmDeveloperSkills',
+    //         type: 'post',
+    //         data: {
+    //         },
+    //         success:function(response){
+    //         }
+    //     })
+    // })
 
 })
