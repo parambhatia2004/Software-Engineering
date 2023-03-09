@@ -106,6 +106,10 @@
     border-width: 0;
   }
 
+   textarea{
+    width:100%;
+   }
+
   
   #developersFormSection, #requirementsFormSection{
     flex-grow:1;

@@ -73,3 +73,9 @@
     margin: 5px !important;
   }
 
+  textarea{
+    width:100%;
+    border-radius: 8px;
+    background: #d6e5ff;
+   }
+
