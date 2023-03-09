@@ -107,10 +107,11 @@
                         {% endif %}
                     </div>
                     <div id="monteCarloComponents" class="contentbox">
+                        <h3 title="Completion prediction based on project components">Completion of project components</h3>
                         {% if budgetComp %}
                             <ul>
                                 {% for comp in budgetComp %}
-                                <li>{{comp.name}} has an estimated budget of {{comp.value}}. According to our analysis, {{comp.message}}</li>
+                                <li>{{comp.name}} has a predicted budget of {{comp.value}}. According to our analysis, {{comp.message}}</li>
                                 {% endfor %}
                             </ul>
                         {% else %}
@@ -119,7 +120,7 @@
                         {% if timeComp %}
                             <ul>
                                 {% for comp in timeComp %}
-                                <li>{{comp.name}} has an estimated deadline of {{comp.value}} days. According to our analysis, {{comp.message}}</li>
+                                <li>{{comp.name}} has a predicted deadline of {{comp.value}} days. According to our analysis, {{comp.message}}</li>
                                 {% endfor %}
                             </ul>
                         {% else %}

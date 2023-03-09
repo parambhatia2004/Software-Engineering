@@ -112,11 +112,11 @@
                     {% for comp in budgetComponents %}
                     <div class="flex">
                         <input name="type" type="hidden" value="Cost">
-                        <input name="name" type="text" value="{{comp.name}}" readonly >
-                        <input name="absval" type="number" value="{{comp.absolute_value}}" readonly>
-                        <input name="worst" type="number" value="{{comp.worst}}" readonly>
-                        <input name="best" type="number" value="{{comp.best}}" readonly>
-                        <input name="average" type="number" value="{{comp.average}}" readonly>
+                        <input name="name" type="text" value="{{comp.name}}" placeholder="Component name" readonly >
+                        <input name="absval" type="number" value="{{comp.absolute_value}}" placeholder="Absolute value"  readonly>
+                        <input name="worst" type="number" value="{{comp.worst}}" placeholder="Worst case estimation" readonly>
+                        <input name="best" type="number" value="{{comp.best}}" placeholder="Best case estimation" readonly>
+                        <input name="average" type="number" value="{{comp.average}}" placeholder="Average estimation" readonly>
                         <a class="delete">&times;</a>
                         <hr class="customHR">
                     </div>
@@ -133,11 +133,11 @@
                     {% for comp in timeComponents %}
                     <div class="flex">
                         <input name="type" type="hidden" value="Time">
-                        <input name="name" type="text" value="{{comp.name}}" readonly >
-                        <input name="absval" type="number" value="{{comp.absolute_value}}" readonly>
-                        <input name="worst" type="number" value="{{comp.worst}}" readonly>
-                        <input name="best" type="number" value="{{comp.best}}" readonly>
-                        <input name="average" type="number" value="{{comp.average}}" readonly>
+                        <input name="name" type="text" value="{{comp.name}}" placeholder="Component name" readonly >
+                        <input name="absval" type="number" value="{{comp.absolute_value}}" placeholder="Absolute value"  readonly>
+                        <input name="worst" type="number" value="{{comp.worst}}" placeholder="Worst case estimation" readonly>
+                        <input name="best" type="number" value="{{comp.best}}" placeholder="Best case estimation" readonly>
+                        <input name="average" type="number" value="{{comp.average}}" placeholder="Average estimation" readonly>
                         <a class="delete">&times;</a>
                         <hr class="customHR">
                     </div>
