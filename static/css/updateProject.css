@@ -66,9 +66,10 @@
     border-width:2px;
   }
 
-  div.add_content input[type="number"], div.add_content input[type="text"]{
+  input[type="number"], input[type="text"], select{
     width:fit-content;
     border-radius: 8px;
     background: #d6e5ff;
     margin: 5px !important;
   }
+

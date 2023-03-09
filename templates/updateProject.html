@@ -33,24 +33,28 @@
                     </span>
                 </div>
             </div>
-            <h1>Your skills</h1>
+
             {% set skills =  ['Assembly', 'Bash', 'C', 'C++', 'C#' , 'CSS','F#' , 'Fortran', 'Go', 
                 'Haskell', 'HTML', 'Java', 'JavaScript', 'JSON', 'Kotlin', 'Lisp', 'MATLAB' , 'OCaml', 'Pascal', 'Perl', 'PHP',
                 'PowerShell', 'Prolog', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'SQL', 'Swift', 'TeX', 'XML'] %}
-            
-            <div> 
-                <p>Change the status of the project: </p>
-                <select id="statusSelect" name="statusSet">
-                    <option value='Success'>Success</option>
-                    <option value='Failure'>Failure</option>
-                    <option value='Ongoing'>Ongoing</option>
-                    <option value='Cancelled'>Cancelled</option>
-                </select>
-                <button id="changeStatus">Change status of project</button>
+            <div class="contentdiv">
+                <div class="contentbox"> 
+                    <p>Change the status of the project: </p>
+                    <select id="statusSelect" name="statusSet">
+                        <option value='Success'>Success</option>
+                        <option value='Failure'>Failure</option>
+                        <option value='Ongoing'>Ongoing</option>
+                        <option value='Cancelled'>Cancelled</option>
+                    </select>
+                    <button id="changeStatus">Change status of project</button>
+                </div>
+                <div class="contentbox">
+                    <p>Change the project description: </p>
+                    <input type="text" id="newDescription" value={{project.description}}>
+                    <button id="changeDescription">Change the project description</button>
+                </div>
             </div>
-                <p>Change the project description: </p>
-                <input type="text" id="newDescription" value={{project.description}}>
-                <button id="changeDescription">Change the project description</button>
+            <div class="contentdiv">
                 <div id="developersFormSection">
                     <p>Add a developer to the project:</p>
                     <div class="inputgroup">
@@ -95,6 +99,7 @@
                         {% endfor %}
                     </ul>
                 </div>
+            </div>
             <input type="hidden" id="projectriskid" name="projectriskID" value={{project.project_risk_id}}>
             <div class="add_content" id="budgetcomponents">
                 <div class="wrap">
