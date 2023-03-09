@@ -55,79 +55,43 @@ def calculateRisk(proj_id, avgTime, bestTime, worstTime, avgCost, bestCost, wors
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+
+# RENDER_TEMPLATES =============================================================================================================
+# login page
 @app.route('/')
 def index():
     return render_template('/login.html')
 
+# register new user
 @app.route('/register')
 def reg():
     return render_template('/register.html')
 
+# developer homepage
+@app.route('/developerHome')
+def developerHome():
+    if 'user' not in session:
+        return redirect('/')
+    
+    # user = Developer(session['user']['email'])
+    userProjects = Developer.createUserProjects(session['currentProjects'])
 
+    currentProjects = []
+    for project in userProjects:
+        currentProjects.append(as_dict(project))
+
+    print(session['currentProjects'])
+    print(currentProjects)
+
+    return render_template('/developerHome.html', name=session['user']['first_name'],projects=currentProjects)
+
+# developer strengths
 @app.route('/developerSkills')
 def developerSkills():
-    # results=DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=current_user.id).all()
-    # results = [r[0] for r in results]
     return render_template('/developerSkills.html', currentSkills=session['strengths'])
 
-@app.route('/addDeveloperSkill', methods = ['POST'])
-def addDeveloperSkill():
-    
-    skillName = request.form['skillName']
-    # check if the skill already exists in the db
-    check = DeveloperStrength.query.filter((DeveloperStrength.developer_id == session['user']['id']) & (DeveloperStrength.strength == skillName)).first()
-
-    # new skill
-    if check is None:
-        db.session.add(DeveloperStrength(session['user']['id'], skillName))
-        db.session.commit()
-        update = session['strengths']
-        update.append(skillName)
-        session['strengths'] = update
-        print("add developer skills: ",session['strengths'])
-        # return render_template('/developerSkills.html', currentSkills=session['strengths'])
-        return "OK"
-    # else, the function is not "succesfull", and so the js does not add the skill either
-
-@app.route('/removeDeveloperSkill', methods = ['POST'])
-def removeDeveloperSkill():
-
-    skillName = request.form['skillName']
-    DeveloperStrength.query.filter((DeveloperStrength.developer_id == session['user']['id']) & (DeveloperStrength.strength == skillName)).delete()
-    db.session.commit()
-    update = session['strengths']
-    update.remove(skillName)
-    session['strengths'] = update
-    print("remove developer skills: ",session['strengths'])
-    # return render_template('/developerSkills.html', currentSkills=session['strengths'])
-    return "OK"
-
-@app.route('/updateSoftSkills', methods = ['POST'])
-def updateSoftSkills():
-    enthusiasm = request.form['enthusiasm']
-    purpose = request.form['purpose']
-    challenge = request.form['challenge']
-    health = request.form['health']
-    resilience = request.form['resilience']
-    print(enthusiasm)
-    print(purpose)
-    print(challenge)
-    print(health)
-    print(resilience)
-    # db.session.add(UserSkills(current_user.id, enthusiasm, purpose, challenge, health, resilience))
-    # db.session.commit()
-    UserClass.updateSoftSkills(session['user']['id'],[enthusiasm,purpose,challenge,health,resilience])
-
-    user_id = session['softSkills']['user_id']
-    user_skill_id = session['softSkills']['user_skill_id']
-
-    session['softSkills'] = {"enthusiasm": enthusiasm, "purpose":purpose,"challenge":challenge,"health":health,"resilience":resilience,"user_id":user_id,"user_skill_id":user_skill_id}
-
-    if session['user']['role'] == "Project Manager":
-        return redirect('/managerHome')
-    else:
-        return redirect('/developerHome')
-
+# user soft skills
 @app.route('/softSkills', methods = ['GET', 'POST'])
 def softSkills():
     if 'user' not in session:
@@ -137,6 +101,43 @@ def softSkills():
     print("session softskills: ",session['softSkills'])
     return render_template('/softSkills.html', isManager=isManager, defaultValues = session['softSkills'])
 
+# project manager homepage
+@app.route('/managerHome')
+def managerHome():
+    if 'user' not in session:
+        return redirect('/')
+
+    # user = ProjectManager(session['user']['email'])
+    userProjects = ProjectManager.createUserProjects(session['currentProjects'])
+
+    currentProjects = []
+    for project in userProjects:
+        currentProjects.append(as_dict(project))
+
+    pastUserProjects = ProjectManager.createUserProjects(session['pastProjects'])
+
+    successProjects = []
+    failureProjects = []
+    cancelledProjects = [] 
+
+    for project in pastUserProjects:
+        projectDict = as_dict(project)
+        projectDict['project_risk_state'] = (ProjectRisk.query.filter_by(project_id = projectDict['project_id']).first()).project_risk_state
+
+        if project.project_state == "Success":
+            successProjects.append(projectDict)
+        elif project.project_state == "Failure":
+            failureProjects.append(projectDict)
+        else:
+            cancelledProjects.append(projectDict)
+
+    print(session['currentProjects'])
+    print(currentProjects)
+
+    return render_template('/managerHome.html',name=session['user']['first_name'],greenProjects=currentProjects,
+                           successfulProjects = successProjects, failedProjects = failureProjects, cancelledProjects = cancelledProjects)
+
+# create a project
 @app.route('/createProject', methods = ['GET', 'POST'])
 def proj():
     if 'user' not in session:
@@ -148,64 +149,36 @@ def proj():
     allDevelopers = User.query.filter_by(role="Developer").all()
     return render_template('/createProject.html', allDevelopers=allDevelopers)
 
-@app.route('/createProjectRedirect', methods = ['POST'])
-def createProjectRedirect():
-    if request.method == 'POST':
-        projectName = request.form['project_name']
-        projectDescription = request.form['project_description']
+# see project info
+@app.route('/projectInfo')
+def projectInfo():
+    if 'currentProject' not in session:
+        return redirect('/managerHome')
+    
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = [], projectReqValues = [], budgetComp = [], timeComp = [], commitsByDay = [], commitsByHour = [], developerData = [])
 
-        repo_owner = session['user']['id']
-        repo_name = request.form['repo_name']
+# update a project via project info
+@app.route('/updateProject')
+def updateProject():
+    if ('budgetComponents' or 'timeComponents' or 'currentProject') not in session:
+        return redirect('/managerHome')
+    
+    print("budgetComponents:", session['budgetComponents'])
+    print("timeComponents:", session['timeComponents'])
 
-        deadline = request.form['deadline']
-        budget = request.form['budget']
+    allDevelopers = User.query.filter_by(role="Developer").all()
+    print(session["projectDevelopers"])
+    currentDevelopers = User.query.filter(User.id.in_(session['projectDevelopers'])).all()
+    return render_template('/updateProject.html', project = session['currentProject'], budgetComponents = session['budgetComponents'],
+                            timeComponents = session['timeComponents'], currentDevelopers = currentDevelopers, currentSkills = session['projectRequirements'],
+                            allDevelopers = allDevelopers)
 
-        # def insertProject(project_manager_id, project_name, deadline, budget, project_state, description, repo_name, developers, requirements):
-        thisProjectID = ProjectsClass.insertProject(session['user']['id'], projectName, deadline, budget, "Ongoing", projectDescription,repo_name, session['projectDevelopers'], session['projectRequirements'])
-        # thisProject = Projects.query.order_by(Projects.project_id.desc()).first()
-        update = session['currentProjects']
-        update.append(thisProjectID)
-        session['currentProjects'] = update
+# //RENDER_TEMPLATES =============================================================================================================
 
-    return redirect('/managerHome')
-
-@app.route('/addDevToProjectList', methods = ['POST'])
-def addDevToProjectList():
-    print("current developers:", session['projectDevelopers'])
-    if request.form['devId'] not in session['projectDevelopers']:
-        update = session['projectDevelopers']
-        update.append(request.form['devId'])
-        session['projectDevelopers'] = update
-        print(session['projectDevelopers'])
-        return "OK"
-
-@app.route('/removeDevFromProjectList', methods = ['POST'])
-def removeDevFromProjectList():
-    update = session['projectDevelopers']
-    update.remove(request.form['devId'])
-    session['projectDevelopers'] = update
-    print(session['projectDevelopers'])
-    return "OK"
-
-@app.route('/addReqToProjectList', methods = ['POST'])
-def addReqToProjectList():
-    if request.form['reqName'] not in session['projectRequirements']:
-        update = session['projectRequirements']
-        update.append(request.form['reqName'])
-        session['projectRequirements'] = update
-        print(session['projectRequirements'])
-        return "OK"
-
-@app.route('/removeReqFromProjectList', methods = ['POST'])
-def removeReqFromProjectList():
-    update = session['projectRequirements']
-    update.remove(request.form['reqName'])
-    session['projectRequirements'] = update
-    session['projectRequirements']
-    return "OK"
-
+# REDIRECTS ======================================================================================================================
+# login handler
 @app.route('/loginRedirect', methods = ['POST'])
-def checkLogin():
+def loginRedirect():
     email = request.form['email']
     password = request.form['password']
     actor = UserClass.authenticateUser(email,password)
@@ -233,6 +206,7 @@ def checkLogin():
         flash("Wrong Email or Password")
         return redirect('/')
 
+# register handler
 @app.route('/registerRedirect', methods = ['POST'])
 def newUser():
     firstname = request.form['firstname']
@@ -288,109 +262,77 @@ def newUser():
         #     currentProjectGreen.append(ProjectsClass(project.project_id))
 
         return redirect('/developerHome')
-    
-@app.route('/managerHome')
-def managerHome():
-    if 'user' not in session:
-        return redirect('/')
 
-    # user = ProjectManager(session['user']['email'])
-    userProjects = ProjectManager.createUserProjects(session['currentProjects'])
-
-    currentProjects = []
-    for project in userProjects:
-        currentProjects.append(as_dict(project))
-
-    pastUserProjects = ProjectManager.createUserProjects(session['pastProjects'])
-
-    successProjects = []
-    failureProjects = []
-    cancelledProjects = [] 
-
-    for project in pastUserProjects:
-        projectDict = as_dict(project)
-        projectDict['project_risk_state'] = (ProjectRisk.query.filter_by(project_id = projectDict['project_id']).first()).project_risk_state
-
-        if project.project_state == "Success":
-            successProjects.append(projectDict)
-        elif project.project_state == "Failure":
-            failureProjects.append(projectDict)
-        else:
-            cancelledProjects.append(projectDict)
-
-    print(session['currentProjects'])
-    print(currentProjects)
-
-    return render_template('/managerHome.html',name=session['user']['first_name'],greenProjects=currentProjects,
-                           successfulProjects = successProjects, failedProjects = failureProjects, cancelledProjects = cancelledProjects)
-
-@app.route('/developerHome')
-def developerHome():
-    if 'user' not in session:
-        return redirect('/')
-    
-    # user = Developer(session['user']['email'])
-    userProjects = Developer.createUserProjects(session['currentProjects'])
-
-    currentProjects = []
-    for project in userProjects:
-        currentProjects.append(as_dict(project))
-
-    print(session['currentProjects'])
-    print(currentProjects)
-
-    return render_template('/developerHome.html', name=session['user']['first_name'],projects=currentProjects)
-
+# logout handler
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/')
 
+# update soft skills
+@app.route('/updateSoftSkills', methods = ['POST'])
+def updateSoftSkills():
+    enthusiasm = request.form['enthusiasm']
+    purpose = request.form['purpose']
+    challenge = request.form['challenge']
+    health = request.form['health']
+    resilience = request.form['resilience']
+    print(enthusiasm)
+    print(purpose)
+    print(challenge)
+    print(health)
+    print(resilience)
+    # db.session.add(UserSkills(current_user.id, enthusiasm, purpose, challenge, health, resilience))
+    # db.session.commit()
+    UserClass.updateSoftSkills(session['user']['id'],[enthusiasm,purpose,challenge,health,resilience])
 
+    user_id = session['softSkills']['user_id']
+    user_skill_id = session['softSkills']['user_skill_id']
 
-@app.route('/updateProject')
-def updateProject():
-    # if request.method == 'POST':
-    #     projectID = request.form['project_id']
-    #     thisProject = Projects.query.filter_by(project_id = projectID).first()
+    session['softSkills'] = {"enthusiasm": enthusiasm, "purpose":purpose,"challenge":challenge,"health":health,"resilience":resilience,"user_id":user_id,"user_skill_id":user_skill_id}
 
-    #     # needs a list of dictionaries
-    #     thisProjectRiskID = (ProjectRisk.query.filter_by(project_id = projectID).first()).project_risk_id
-
-    #     session['currentProject'] = {"project_id" : projectID, "project_name" : thisProject.project_name, "project_risk_id" : thisProjectRiskID}
-
-    #     costComponentObjects = RiskComponent.query.filter_by(project_risk_id = thisProjectRiskID, risk_type = "Cost").all()
-    #     budgetComponents = []
-
-    #     for component in costComponentObjects:
-    #         budgetComponents.append(as_dict(component))
-
-    #     timeComponentObjects = RiskComponent.query.filter_by(project_risk_id = thisProjectRiskID, risk_type = "Time").all()
-    #     timeComponents = []
-
-    #     for component in timeComponentObjects:
-    #         timeComponents.append(as_dict(component))
-
-    #     session['budgetComponents'] = budgetComponents
-    #     session['timeComponents'] = timeComponents
-
-    # if not (session['currentProject'] and session['budgetComponents'] and session['timeComponents']):
-    #     session['currentProject'] = {"projectID" : 0, "project_name" : "No Project"}
-    #     session['budgetComponents'] = []
-    #     session['timeComponents'] = []
-    if ('budgetComponents' or 'timeComponents' or 'currentProject') not in session:
+    if session['user']['role'] == "Project Manager":
         return redirect('/managerHome')
-    
-    print("budgetComponents:", session['budgetComponents'])
-    print("timeComponents:", session['timeComponents'])
+    else:
+        return redirect('/developerHome')
 
-    allDevelopers = User.query.filter_by(role="Developer").all()
-    print(session["projectDevelopers"])
-    currentDevelopers = User.query.filter(User.id.in_(session['projectDevelopers'])).all()
-    return render_template('/updateProject.html', project = session['currentProject'], budgetComponents = session['budgetComponents'],
-                            timeComponents = session['timeComponents'], currentDevelopers = currentDevelopers, currentSkills = session['projectRequirements'],
-                            allDevelopers = allDevelopers)
+# manager create project button
+@app.route('/createProjectRedirect', methods = ['POST'])
+def createProjectRedirect():
+    if request.method == 'POST':
+        projectName = request.form['project_name']
+        projectDescription = request.form['project_description']
 
+        repo_owner = session['user']['id']
+        repo_name = request.form['repo_name']
+
+        deadline = request.form['deadline']
+        budget = request.form['budget']
+
+        # def insertProject(project_manager_id, project_name, deadline, budget, project_state, description, repo_name, developers, requirements):
+        thisProjectID = ProjectsClass.insertProject(session['user']['id'], projectName, deadline, budget, "Ongoing", projectDescription,repo_name, session['projectDevelopers'], session['projectRequirements'])
+        # thisProject = Projects.query.order_by(Projects.project_id.desc()).first()
+        update = session['currentProjects']
+        update.append(thisProjectID)
+        session['currentProjects'] = update
+
+    return redirect('/managerHome')
+
+# manager see project info
+@app.route('/projectInfoRedirect', methods = ['POST'])
+def projectInfoRedirect():
+
+    if request.method == 'POST':
+        projectID = request.form['project_id']
+        thisProject = Projects.query.filter_by(project_id = projectID).first()
+
+        # needs a list of dictionaries
+        thisProjectRiskID = (ProjectRisk.query.filter_by(project_id = projectID).first()).project_risk_id
+
+        session['currentProject'] = {"project_id" : projectID, "project_name" : thisProject.project_name, "project_risk_id" : thisProjectRiskID}
+    return redirect('/projectInfo')
+
+# update project via project info
 @app.route('/updateProjectRedirect', methods = ['POST'])
 # needs a list of dictionaries
 def updateProjectRedirect():
@@ -426,7 +368,82 @@ def updateProjectRedirect():
         session['projectDevelopers'] = developers
     
     return redirect('/updateProject')
+# //REDIRECTS ======================================================================================================================
 
+# AJAX HANDLERS ====================================================================================================================
+@app.route('/addDeveloperSkill', methods = ['POST'])
+def addDeveloperSkill():
+    
+    skillName = request.form['skillName']
+    # check if the skill already exists in the db
+    check = DeveloperStrength.query.filter((DeveloperStrength.developer_id == session['user']['id']) & (DeveloperStrength.strength == skillName)).first()
+
+    # new skill
+    if check is None:
+        db.session.add(DeveloperStrength(session['user']['id'], skillName))
+        db.session.commit()
+        update = session['strengths']
+        update.append(skillName)
+        session['strengths'] = update
+        print("add developer skills: ",session['strengths'])
+        return "OK"
+    # else, the function is not "succesfull", and so the js does not add the skill either
+
+@app.route('/removeDeveloperSkill', methods = ['POST'])
+def removeDeveloperSkill():
+
+    skillName = request.form['skillName']
+    DeveloperStrength.query.filter((DeveloperStrength.developer_id == session['user']['id']) & (DeveloperStrength.strength == skillName)).delete()
+    db.session.commit()
+    update = session['strengths']
+    update.remove(skillName)
+    session['strengths'] = update
+    print("remove developer skills: ",session['strengths'])
+    return "OK"
+
+
+
+# update project page =============================
+# add developer to session (not commited to database)
+@app.route('/addDevToProjectList', methods = ['POST'])
+def addDevToProjectList():
+    print("current developers:", session['projectDevelopers'])
+    if request.form['devId'] not in session['projectDevelopers']:
+        update = session['projectDevelopers']
+        update.append(request.form['devId'])
+        session['projectDevelopers'] = update
+        print(session['projectDevelopers'])
+        return "OK"
+
+# remove developer from session (not commited to database)
+@app.route('/removeDevFromProjectList', methods = ['POST'])
+def removeDevFromProjectList():
+    update = session['projectDevelopers']
+    update.remove(request.form['devId'])
+    session['projectDevelopers'] = update
+    print(session['projectDevelopers'])
+    return "OK"
+
+# add requirement to session (not commited to database)
+@app.route('/addReqToProjectList', methods = ['POST'])
+def addReqToProjectList():
+    if request.form['reqName'] not in session['projectRequirements']:
+        update = session['projectRequirements']
+        update.append(request.form['reqName'])
+        session['projectRequirements'] = update
+        print(session['projectRequirements'])
+        return "OK"
+
+# remove requirement from session (not commited to database)
+@app.route('/removeReqFromProjectList', methods = ['POST'])
+def removeReqFromProjectList():
+    update = session['projectRequirements']
+    update.remove(request.form['reqName'])
+    session['projectRequirements'] = update
+    session['projectRequirements']
+    return "OK"
+
+# add time or cost component to project
 @app.route('/submitCostComponent', methods=['POST'])
 def submitCostComponent():
     if request.method == 'POST':
@@ -435,14 +452,7 @@ def submitCostComponent():
         thisComponent = RiskComponent.query.filter_by(name = componentName, project_risk_id = session['currentProject']['project_risk_id']).first()
 
         if thisComponent:
-            # flash("Name for component already taken")
             raise ValueError("Name already in database")
-            # thisComponent.name = componentName
-            # thisComponent.best = request.form['best']
-            # thisComponent.worst = request.form['worst']
-            # thisComponent.average = request.form['average']
-            # thisComponent.absolute_value = request.form['absval']
-            # thisComponent.risk_type = request.form['type']
 
         else:
             db.session.add(RiskComponent(session['currentProject']['project_risk_id'], componentName, request.form['best'], request.form['worst'], request.form['average'], request.form['absval'], request.form['type']))
@@ -458,10 +468,9 @@ def submitCostComponent():
                 update.append(as_dict(RiskComponent.query.filter_by(name = componentName).first()))
                 session['budgetComponents'] = update
         
-
         return "OK"
 
-
+# remove a time or cost component from project
 @app.route('/removeCostComponent', methods=['POST'])
 def removeCostComponent():
     if request.method == 'POST':
@@ -480,26 +489,8 @@ def removeCostComponent():
         return "OK"
     
 
-@app.route('/projectInfoRedirect', methods = ['POST'])
-def projectInfoRedirect():
 
-    if request.method == 'POST':
-        projectID = request.form['project_id']
-        thisProject = Projects.query.filter_by(project_id = projectID).first()
-
-        # needs a list of dictionaries
-        thisProjectRiskID = (ProjectRisk.query.filter_by(project_id = projectID).first()).project_risk_id
-
-        session['currentProject'] = {"project_id" : projectID, "project_name" : thisProject.project_name, "project_risk_id" : thisProjectRiskID}
-    return redirect('/projectInfo')
-
-@app.route('/projectInfo')
-def projectInfo():
-    if 'currentProject' not in session:
-        return redirect('/managerHome')
-    
-    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = [], projectReqValues = [], budgetComp = [], timeComp = [], commitsByDay = [], commitsByHour = [], developerData = [])
-
+# change and commit description change
 @app.route('/changeDescription', methods = ['POST'])
 def changeDescription():
     if request.method == 'POST':
@@ -508,6 +499,7 @@ def changeDescription():
         db.session.commit()
         return "OK"
 
+# change and commit status change (this will move the project to pastProject)
 @app.route('/changeStatus', methods = ['POST'])
 def changeStatus():
     if request.method == 'POST':
@@ -528,7 +520,8 @@ def changeStatus():
         session['pastProjects'] = update
             
         return "OK"
-    
+
+# commit changes to developers
 @app.route('/updateDevelopers', methods=['POST'])
 def updateDevelopers():
     if request.method == 'POST':
@@ -550,6 +543,7 @@ def updateDevelopers():
             
         return "OK"
 
+# commite changes to requirements
 @app.route('/updateRequirements', methods = ['POST'])
 def updateRequirements():
     if request.method == 'POST':
@@ -565,6 +559,9 @@ def updateRequirements():
         db.session.commit()
 
         return "OK"
+# //update project page =============================
+
+# //AJAX HANDLERS ==================================================================================================================
 
 # @app.route('/confirmDeveloperSkills', methods = ['POST'])
 # def confirmDeveloperSkills():
