@@ -172,7 +172,7 @@
                             {% endif %}
                                 <div class="container">
                                     <h4>{{proj.project_name}}</h4>
-                                    <p>Project risk evaluation: {{proj.risk}}<p>
+                                    <p>Project risk evaluation: {{proj.project_risk_state}}<p>
                                     <p>Project description: {{proj.description}}</p>
                                 </div>
                             </div>
@@ -196,7 +196,7 @@
 
                 {% if failedProjects %}
                 <div id="failedCarousel" class="contentbox carousel slide" data-interval="false">
-                    <h3> Cancelled projects </h3>
+                    <h3> Failed projects </h3>
                     <div class="carousel-inner">
                         {% for proj in failedProjects %}
                             {%  if proj == failedProjects[0]%}
@@ -206,7 +206,7 @@
                             {% endif %}
                                 <div class="container">
                                     <h4>{{proj.project_name}}</h4>
-                                    <p>Project risk evaluation: {{proj.risk}}<p>
+                                    <p>Project risk evaluation: {{proj.project_risk_state}}<p>
                                     <p>Project description: {{proj.description}}</p>
                                 </div>
                             </div>
