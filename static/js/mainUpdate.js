@@ -41,7 +41,7 @@ $(document).ready( function(){
         })
     })
 
-    $('#submitRequiements').click(function(){
+    $('#submitRequirements').click(function(){
          // data is already in the backend session
         $.ajax({
             url: '/updateRequirements',
