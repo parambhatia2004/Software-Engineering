@@ -1,4 +1,4 @@
-from trackGit import get_open_issues_count
+# from trackGit import get_open_issues_count
 from werkzeug import security
 from flask import Flask, flash, render_template, request, redirect, url_for, session, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
