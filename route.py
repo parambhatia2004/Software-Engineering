@@ -216,7 +216,10 @@ def calculateRisk(proj_id):
     timeMC = monte_carlo(simulations, assignedDeadline, tcList)
 
     #finalMC gives the risk multiplier
-    finalMC = ((34/costMC) + (34/timeMC))/2
+    if costMC == 0 or timeMC == 0:
+        finalMC = 1
+    else:
+        finalMC = ((34/costMC) + (34/timeMC))/2
     #Thread close
     print("Cost MC: ", costMC)
     print("Time MC: ", timeMC)
