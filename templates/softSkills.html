@@ -2,6 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" >
+        <!-- Fontawesome css -->
+        <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <!-- Local css-->
+        <link rel="stylesheet" href="../static/css/infoButton.css">
         <link rel="stylesheet" href="../static/css/menu.css">
         <link rel="stylesheet" href="../static/css/main.css">
         <link rel="stylesheet" href="../static/css/formformat.css">
@@ -33,53 +37,53 @@
                 {% endif %}
                 <div class="inputright">
                     <p style="width:15%">Enthusiasm</p>
+                    <input class="range" type='range' name='enthusiasm' id='enthusiasm' min='1' max='5' step='1' value='{{defaultValues.enthusiasm}}'>
                     <div class="info">
                         <i class="icon-info-sign"></i>
                         <span class="extra-info">
                             How excited you feel about the projects you're involved in.
                         </span>
                     </div>
-                    <input class="range" type='range' name='enthusiasm' id='enthusiasm' min='1' max='5' step='1' value='{{defaultValues.enthusiasm}}'>
                 </div> <br>
                 <div class="inputright">
                     <p style="width:15%">Purpose</p>
+                    <input class="range" type='range' name='purpose' id='purpose' min='1' max='5' step='1' value='{{defaultValues.purpose}}'>
                     <div class="info">
                         <i class="icon-info-sign"></i>
                         <span class="extra-info">
                             How meaningful you find the work you're doing for your current projects.
                         </span>
                     </div>
-                    <input class="range" type='range' name='purpose' id='purpose' min='1' max='5' step='1' value='{{defaultValues.purpose}}'>
                 </div> <br>
                 <div class="inputright">
                     <p style="width:15%">Challenge</p>
+                    <input class="range" type='range' name='challenge' id='challenge' min='1' max='5' step='1' value='{{defaultValues.challenge}}'>
                     <div class="info">
                         <i class="icon-info-sign"></i>
                         <span class="extra-info">
                             How challenged you feel by the projects you're involved in.
                         </span>
                     </div>
-                    <input class="range" type='range' name='challenge' id='challenge' min='1' max='5' step='1' value='{{defaultValues.challenge}}'>
                 </div> <br>
                 <div class="inputright">
                     <p style="width:15%">Health</p>
+                    <input class="range" type='range' name='health' id='health' min='1' max='5' step='1' value='{{defaultValues.health}}'>
                     <div class="info">
                         <i class="icon-info-sign"></i>
                         <span class="extra-info">
                             A general measure of your current physical and mental health.
                         </span>
                     </div>
-                    <input class="range" type='range' name='health' id='health' min='1' max='5' step='1' value='{{defaultValues.health}}'>
                 </div> <br>
                 <div class="inputright">
                     <p style="width:15%">Resilience</p>
+                    <input class="range" type='range' name='resilience' id='resilience' min='1' max='5' step='1' value='{{defaultValues.resilience}}'>
                     <div class="info">
                         <i class="icon-info-sign"></i>
                         <span class="extra-info">
                             How easily you believe your current team(s) and project(s) can recover from setbacks.
                         </span>
                     </div>
-                    <input class="range" type='range' name='resilience' id='resilience' min='1' max='5' step='1' value='{{defaultValues.resilience}}'>
                 </div> <br>
               
                 <input type='submit' value='Update information'>
