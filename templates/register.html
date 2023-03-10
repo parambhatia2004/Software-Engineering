@@ -52,7 +52,15 @@
                           
                     </script>
                 </div><br>
-                <input type='submit' value='Register' id="registerButton">
+                <div style="display:flex; align-items:center;">
+                    <input type='submit' value='Register' id="registerButton" style="margin:0px 10px;flex-grow:1">
+                    <input type='button' id="loginBtn" type='button' value='Login' style="margin:0px 10px;flex-grow:1"></button>
+                    <script type="text/javascript">
+                        document.getElementById("loginBtn").onclick = function () {
+                            location.href = "/";
+                        };
+                    </script>
+                </div>
             </form>
 
             <script>

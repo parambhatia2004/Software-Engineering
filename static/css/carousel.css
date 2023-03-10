@@ -40,3 +40,7 @@
     padding: 0px 5px;
     max-width: fit-content;
 }
+
+.carousel{
+    max-width: 33%;
+}
