@@ -53,6 +53,7 @@ class ProjectRisk(db.Model):
     monte_carlo_time = db.Column(db.Integer)
     monte_carlo_cost = db.Column(db.Integer)
     project_risk_state = db.Column(db.String(20), CheckConstraint("project_risk_state IN ('Green', 'Amber', 'Red')"))
+    # project_risk_value = db.Column(db.Float)
 
     def __init__(self, project_id, monte_carlo_time, monte_carlo_cost, project_risk_state):
         self.project_id = project_id
