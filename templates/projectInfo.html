@@ -137,23 +137,26 @@
                         <script type="module">
                             var xValues = {{commitsByDay.labels}};
                             var yValues = {{commitsByDay.values}};
-
+                            var barColors = [];
+                            for(var i = 0; i < yValues.length; i++){
+                                var color = randomColor()
+                                barColors.push(color);
+                            }
                             new Chart("dateChart", {
-                                type: "line",
+                                type: "bar",
                                 data: {
                                     labels: xValues,
                                     datasets: [{
-                                    fill: false,
-                                    lineTension: 0,
-                                    backgroundColor: "rgba(0,0,255,1.0)",
-                                    borderColor: "rgba(0,0,255,0.1)",
+                                    backgroundColor: barColors,
                                     data: yValues
                                     }]
                                 },
                                 options: {
                                     legend: {display: false},
+                                    title: {
+                                    display: false}
                                 }
-                            });
+                                });
                         </script>
                         {%endif%}
                     </div>
