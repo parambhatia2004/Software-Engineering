@@ -58,6 +58,8 @@ def softSkillRisk(proj_id):
     # print(skillSumCount)
     # maxSkillCount = teamCount * 5 * 5
     avgSkill = teamCount * 5 * 3
+    if(skillSumCount == 0):
+        return 1
     return avgSkill/skillSumCount
 
 def teamMemberRisk(proj_id):
@@ -139,6 +141,7 @@ def githubIssues(repo, owner):
 
 def hourlyCommits(repo, owner):
     hourly_commits = get_hourly_commits(repo, owner)
+    print("Hourly Commits: ", hourly_commits)
     potential_error_commits = 0
     # https://www.bu.edu/ballab/pubs/Riley_2017.pdf
     for i in range(6):
@@ -147,6 +150,8 @@ def hourlyCommits(repo, owner):
         potential_error_commits += hourly_commits[i]
     print("Potential Error Commits: ", potential_error_commits)
     print("Hourly Commits: ", hourly_commits.sum())
+    if hourly_commits.sum() == 0:
+        return 1
     potential_error_commit_likelihood = (potential_error_commits/hourly_commits.sum())
     print("Potential Error Commits: ", potential_error_commit_likelihood)
     # https://redbooth.com/blog/your-most-productive-time
@@ -338,7 +343,7 @@ def proj():
 def projectInfo():
     if 'currentProject' not in session:
         return redirect('/managerHome')
-    
+    currentProject = session['currentProject']
     return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = [], projectReqValues = [], budgetComp = [], timeComp = [], commitsByDay = [], commitsByHour = [], developerData = [])
 
 # update a project via project info
@@ -363,7 +368,6 @@ def updateProject():
 # login handler
 @app.route('/loginRedirect', methods = ['POST'])
 def loginRedirect():
-    calculateRisk(4)
     email = request.form['email']
     password = request.form['password']
     actor = UserClass.authenticateUser(email,password)
@@ -385,7 +389,9 @@ def loginRedirect():
         session['softSkills'] = as_dict(user.softSkills)
         session['currentProjects'] = user.currentProjects
         session['pastProjects'] = user.pastProjects
-
+        for project in session['currentProjects']:
+            print(project)
+            calculateRisk(project)
         return redirect('/managerHome')
     else:
         flash("Wrong Email or Password")
