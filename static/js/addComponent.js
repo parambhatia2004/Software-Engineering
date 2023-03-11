@@ -43,7 +43,7 @@ function submitInput(){
     var check1 = !((eName === "") || (eWorst === "" || eWorst < 0) || (eBest === "" || eBest < 0) || (eAverage === "" || eAverage < 0))
     var check11 = (eWorst <= eAverage ) && (eAverage <= eBest)
     var check2 = !(eName === "" ) && !((eAbsVal === "")||(eAbsVal < 0)) && ((eWorst === "")||(eWorst == 0)) && ((eBest === "")||(eBest == 0)) && ((eAverage === "")||(eAverage == 0))
-    if(element.parentElement.hasChildNodes() && (((check1&&check11)||check2)&&check3)){
+    if(element.parentElement.hasChildNodes() && ((check1&&check11)||check2)){
         $.ajax({
             url: '/submitCostComponent',
             type: 'post',
