@@ -50,56 +50,31 @@ class ProjectRisk(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id', ondelete='CASCADE'), unique=True, nullable=False)
 
     # Fields
-    monte_carlo_time = db.Column(db.Integer)
-    monte_carlo_cost = db.Column(db.Integer)
+    # monte_carlo_time = db.Column(db.Integer)
+    # monte_carlo_cost = db.Column(db.Integer)
+    monte_carlo_risk = db.Column(db.Integer)
     project_risk_state = db.Column(db.String(20), CheckConstraint("project_risk_state IN ('Green', 'Amber', 'Red')"))
-    # project_risk_value = db.Column(db.Float)
+    project_risk_value = db.Column(db.Float)
 
-    def __init__(self, project_id, monte_carlo_time, monte_carlo_cost, project_risk_state):
+    member_risk = db.Column(db.Float)
+    member_technical_skill_risk = db.Column(db.Float)
+    soft_skill_count = db.Column(db.Float)
+    git_risk = db.Column(db.Float)
+    hourly_commits = db.Column(db.Float)
+
+    def __init__(self, project_id, monte_carlo_risk, project_risk_state,project_risk_value, member_risk, member_technical_skill_risk, soft_skill_count, git_risk, hourly_commits):
         self.project_id = project_id
-        self.monte_carlo_time = monte_carlo_time
-        self.monte_carlo_cost = monte_carlo_cost
+        self.monte_carlo_risk = monte_carlo_risk
+        # self.monte_carlo_time = monte_carlo_time
+        # self.monte_carlo_cost = monte_carlo_cost
         self.project_risk_state = project_risk_state
+        self.project_risk_value = project_risk_value
 
-# class TimeComponent(db.Model):
-#     __tablename__ = 'time_component'
-
-#     # Primary and Foreign keys
-#     time_component_id = db.Column(db.Integer, primary_key=True)
-#     project_risk_id = db.Column(db.Integer, db.ForeignKey('project_risk.project_risk_id', ondelete='CASCADE'), nullable=False)
-
-#     # Fields
-#     best = db.Column(db.Integer, nullable=False)
-#     worst = db.Column(db.Integer, nullable=False)
-#     average = db.Column(db.Integer, nullable=False)
-#     absolute_value = db.Column(db.Integer, nullable=False)
-
-#     def __init__(self, project_risk_id, best, worst, average, absolute_value):
-#         self.project_risk_id = project_risk_id
-#         self.best = best
-#         self.worst = worst
-#         self.average = average
-#         self.absolute_value = absolute_value
-
-# class CostComponent(db.Model):
-#     __tablename__ = 'cost_component'
-
-#     # Primary and Foreign keys
-#     cost_component_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     project_risk_id = db.Column(db.Integer, db.ForeignKey('project_risk.project_risk_id', ondelete='CASCADE'), nullable=False)
-
-#     # Fields
-#     best = db.Column(db.Integer, nullable=False)
-#     worst = db.Column(db.Integer, nullable=False)
-#     average = db.Column(db.Integer, nullable=False)
-#     absolute_value = db.Column(db.Integer, nullable=False)
-
-    # def __init__(self, project_risk_id, best, worst, average, absolute_value):
-    #     self.project_risk_id = project_risk_id
-    #     self.best = best
-    #     self.worst = worst
-    #     self.average = average
-    #     self.absolute_value = absolute_value
+        self.member_risk = member_risk
+        self.member_technical_skill_risk = member_technical_skill_risk
+        self.soft_skill_count = soft_skill_count
+        self.git_risk = git_risk
+        self.hourly_commits = hourly_commits
 
 class ProjectGitHub(db.Model):
     __tablename__ = 'project_git_hub'
@@ -260,12 +235,12 @@ def dbinit():
     db.session.add(DeveloperProject(1,2))
     db.session.add(DeveloperProject(1,3))
 
-    db.session.add(ProjectRisk(1,None,None,None))
-    db.session.add(ProjectRisk(2,None,None,"Red"))
-    db.session.add(ProjectRisk(3,None,None,None))
-    db.session.add(ProjectRisk(4,None,None,"Amber"))
-    db.session.add(ProjectRisk(5,None,None,"Green"))
-    db.session.add(ProjectRisk(6,None,None,"Amber"))
+    db.session.add(ProjectRisk(1,None,None,None,None,None,None,None,None))
+    db.session.add(ProjectRisk(2,None,"Red",None,None,None,None,None,None))
+    db.session.add(ProjectRisk(3,None,None,None,None,None,None,None,None))
+    db.session.add(ProjectRisk(4,None,"Amber",None,None,None,None,None,None))
+    db.session.add(ProjectRisk(5,None,"Green",None,None,None,None,None,None))
+    db.session.add(ProjectRisk(6,None,"Amber",None,None,None,None,None,None))
 
     db.session.add(RiskComponent(1,"Front End", 10,90,50,None,"Time"))
     db.session.add(RiskComponent(1,"Back End", 600,7000,550,None,"Time"))

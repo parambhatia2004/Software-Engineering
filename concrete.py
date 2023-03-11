@@ -107,7 +107,7 @@ class ProjectsClass():
             db.session.commit()
 
             thisProject = Projects.query.order_by(Projects.project_id.desc()).first()
-            db.session.add(ProjectRisk(thisProject.project_id,None,None,None))
+            db.session.add(ProjectRisk(thisProject.project_id,None,None,None,None,None,None,None,None))
             db.session.add(ProjectGitHub(thisProject.project_id,repo_name,None,None,None))
 
             for id in developers:
