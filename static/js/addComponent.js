@@ -40,10 +40,10 @@ function submitInput(){
     eBest = element.parentNode.querySelector('input[name="best"]').value;
     eAbsVal = element.parentNode.querySelector('input[name="absval"]').value;
     eAverage = element.parentNode.querySelector('input[name="average"]').value;
-    var check1 = !((eName === "") || (eWorst === "") || (eBest === "") || (eAverage === ""))
+    var check1 = !((eName === "") || (eWorst === "" || eWorst < 0) || (eBest === "" || eBest < 0) || (eAverage === "" || eAverage < 0))
     var check11 = (eWorst <= eAverage ) && (eAverage <= eBest)
-    var check2 = !(eName === "" ) && !((eAbsVal === "")||(eAbsVal == 0)) && ((eWorst === "")||(eWorst == 0)) && ((eBest === "")||(eBest == 0)) && ((eAverage === "")||(eAverage == 0))
-    if(element.parentElement.hasChildNodes() && ((check1&&check11)||check2)){
+    var check2 = !(eName === "" ) && !((eAbsVal === "")||(eAbsVal < 0)) && ((eWorst === "")||(eWorst == 0)) && ((eBest === "")||(eBest == 0)) && ((eAverage === "")||(eAverage == 0))
+    if(element.parentElement.hasChildNodes() && (((check1&&check11)||check2)&&check3)){
         $.ajax({
             url: '/submitCostComponent',
             type: 'post',
