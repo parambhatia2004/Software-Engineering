@@ -41,8 +41,9 @@ function submitInput(){
     eAbsVal = element.parentNode.querySelector('input[name="absval"]').value;
     eAverage = element.parentNode.querySelector('input[name="average"]').value;
     var check1 = !((eName === "") || (eWorst === "") || (eBest === "") || (eAverage === ""))
+    var check11 = (eWorst <= eAverage ) && (eAverage <= eBest)
     var check2 = !(eName === "" ) && !((eAbsVal === "")||(eAbsVal == 0)) && ((eWorst === "")||(eWorst == 0)) && ((eBest === "")||(eBest == 0)) && ((eAverage === "")||(eAverage == 0))
-    if(element.parentElement.hasChildNodes() && (check1||check2)){
+    if(element.parentElement.hasChildNodes() && ((check1&&check11)||check2)){
         $.ajax({
             url: '/submitCostComponent',
             type: 'post',
@@ -72,6 +73,8 @@ function submitInput(){
                 element.parentElement.remove();
             }
         }) 
+    } else {
+        alert("please input valid data into the component before submitting")
     }
     
 }
