@@ -2,8 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Patua+One&display=swap');
   
  .section {
-      background-color: #b1ceff;
-      color: #021537;
+      margin:0px;
+      background-color:#134cae;
+      color: white;
       cursor: pointer;
       padding: 10px 20px;
       width: 100%;
@@ -17,18 +18,21 @@
   }
   
   .active, .section:hover {
-    background-color: #b1ceff;
-    padding: 10px 20px;
+    margin:0px;
+    background-color:#134cae;
+    color: white;
+    padding:10px 20px;
     width: 100%;
+    box-shadow: none;
     border: none;
     outline: none;
-    color: #021537;
     text-decoration: none;
     border-radius: 0px;
   }
   
   .panel {
-    padding: 0 20px;
+    margin: 0px;
+    padding: 1px 20px;
     background-color: white;
     display: none;
     border-style: solid;

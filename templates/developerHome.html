@@ -21,16 +21,17 @@
         </div>
         <div class="main">
             <h1>Welcome, {{name}}</h1>
-            <div class="contentdiv">
+            <div >
             {% for project in projects %}
+            <div style="margin:10px">
                 <button class="section">{{project.project_name}}</button>
                 <div class="panel">
-                    <p>Deadline: {{project.deadline}}</p><br>
                     <p>Overview: {{project.description}}</p>
                 </div>
+            </div>
             {% endfor %}
             </div>
-            {% if projects is not defined or projects is none %}
+            {% if projects is not defined or projects is none or (not projects) %}
             <h3 style="color:#777;">You haven't been assigned to any projects yet!</h3>
             {% endif %}
         </div>
