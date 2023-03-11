@@ -31,7 +31,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # change this to False to avoid resetting the database every time this app is restarted
-resetdb = False
+resetdb = True
 if resetdb:
     with app.app_context():
         # drop everything, create all the tables, then put some data into the tables
