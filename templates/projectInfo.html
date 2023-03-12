@@ -87,9 +87,9 @@
                                 var color = randomColor()
                                 barColors.push(color);
                             }
-                            {% for item in prejectReqLabels %}
-                                var item = "{{item}}"
-                               xValues.push(item);
+                            {% for item in projectReqLabels %}
+                                var newitem = "{{item}}"
+                                xValues.push(newitem);
                             {% endfor %}
                             new Chart("projectRequirementsChart", {
                                 type: "bar",
@@ -102,8 +102,17 @@
                                 },
                                 options: {
                                     legend: {display: false},
+                                    scales: {
+                                        yAxes: [{
+                                            display: true,
+                                            ticks: {
+                                                beginAtZero: true   // minimum value will be 0.
+                                            }
+                                        }]
+                                    },
                                     title: {
-                                    display: false}
+                                        display: false
+                                    }
                                 }
                             });
                         </script>
