@@ -417,9 +417,6 @@ def managerHome():
         else:
             topRedRisks.append(res)
 
-    green = dict(zip(greenProjects, topGreenRisks))
-    amber = dict(zip(amberProjects, topAmberRisks))
-    red = zip(redProjects, topRedRisks)
     pastUserProjects = ProjectManager.createUserProjects(session['pastProjects'])
 
     successProjects = []
@@ -440,7 +437,8 @@ def managerHome():
     print(session['currentProjects'])
     print(currentProjects)
 
-    return render_template('/managerHome.html',name=session['user']['first_name'], successfulProjects = successProjects, failedProjects = failureProjects, cancelledProjects = cancelledProjects, green=green, amber=amber, red=red)
+    return render_template('/managerHome.html',name=session['user']['first_name'],greenProjects=greenProjects, amberProjects=amberProjects, redProjects=redProjects,
+                           successfulProjects = successProjects, failedProjects = failureProjects, cancelledProjects = cancelledProjects)
 
 # create a project
 @app.route('/createProject', methods = ['GET', 'POST'])
@@ -463,7 +461,24 @@ def projectInfo():
     currentProject = session['currentProject']['project_id']
     proj_id = currentProject
     print("currentProject: ", currentProject)
-
+    risk_object = ProjectRisk.query.filter_by(project_id = proj_id).first()
+    risks = [risk_object.monte_carlo_risk, risk_object.member_risk, risk_object.member_technical_skill_risk, risk_object.soft_skill_count, risk_object.git_risk, risk_object.hourly_commits]
+    max_risk = max(risk_object.monte_carlo_risk, risk_object.member_risk, risk_object.member_technical_skill_risk, risk_object.soft_skill_count, risk_object.git_risk, risk_object.hourly_commits)
+    print("Max Risk: ", risks.index(max(risks)))
+    ind = risks.index(max(risks))
+    res = 'The max risk is: ' + str(risks[ind]) + ' caused by: '
+    if ind == 0:
+        res += 'Monte Carlo Simulation'
+    elif ind == 1:
+        res += 'Member Risk in Past Projects'
+    elif ind == 2:
+        res += 'Member Technical Knowledge'
+    elif ind == 3:
+        res += 'Soft Skill Questionnaire'
+    elif ind == 4:
+        res += 'Open Issues in Github'
+    else:
+        res += 'Hourly Commits on GitHub'
     currentProject = ProjectsClass(proj_id)
     reqs = ProjectRequirement.query.with_entities(ProjectRequirement.requirement).filter_by(project_id=proj_id).all()
     reqs = [r[0] for r in reqs]
@@ -525,7 +540,7 @@ def projectInfo():
         entry_average[3] = entry_average[3]/health_entries
     if resilience_entries != 0:
         entry_average[4] = entry_average[4]/resilience_entries
-    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues, entry_average = entry_average)
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues, entry_average = entry_average, res=res)
 
 # update a project via project info
 @app.route('/updateProject')
