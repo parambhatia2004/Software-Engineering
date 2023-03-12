@@ -30,6 +30,7 @@
         </div>
         <div class="main">
             <h1>Project details: {{project.project_name}}</h1>
+            <p>{{res}}</p>
             <form method="post" action="/updateProjectRedirect">
                 <input type="hidden" name="project_id" value="project.project_id">
                 <input type="submit" value="Update project">
