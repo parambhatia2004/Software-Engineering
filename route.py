@@ -417,8 +417,8 @@ def managerHome():
         else:
             topRedRisks.append(res)
 
-    green = zip(greenProjects, topGreenRisks)
-    amber = zip(amberProjects, topAmberRisks)
+    green = dict(zip(greenProjects, topGreenRisks))
+    amber = dict(zip(amberProjects, topAmberRisks))
     red = zip(redProjects, topRedRisks)
     pastUserProjects = ProjectManager.createUserProjects(session['pastProjects'])
 
@@ -440,7 +440,7 @@ def managerHome():
     print(session['currentProjects'])
     print(currentProjects)
 
-    return render_template('/managerHome.html',name=session['user']['first_name'], successfulProjects = successProjects, failedProjects = failureProjects, cancelledProjects = cancelledProjects)
+    return render_template('/managerHome.html',name=session['user']['first_name'], successfulProjects = successProjects, failedProjects = failureProjects, cancelledProjects = cancelledProjects, green=green, amber=amber, red=red)
 
 # create a project
 @app.route('/createProject', methods = ['GET', 'POST'])
