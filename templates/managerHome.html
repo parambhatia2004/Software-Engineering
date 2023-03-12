@@ -87,11 +87,6 @@
                             <div class="container">
                                 <h4>{{amber_proj.project_name}}</h4>
                                 <p>{{amber_proj.description}}</p>
-                                <ul> The top risk areas are: 
-                                {% for risk in amber_proj.toprisks %}
-                                    <li>{{risk}}</li>
-                                {% endfor %}
-                                </ul>
                                 <form method="POST" action="/projectInfoRedirect">
                                     <input type="hidden"  name="project_id" value="{{amber_proj.project_id}}" id="project_id">
                                     <input type="submit" value="See more information">
@@ -129,11 +124,6 @@
                             <div class="container">
                                 <h4>{{red_proj.project_name}}</h4>
                                 <p>{{red_proj.description}}</p>
-                                <ul> The top risk areas are: 
-                                {% for risk in red_proj.toprisks %}
-                                    <li>{{risk}}</li>
-                                {% endfor %}
-                                </ul>
                                 <form method="POST" action="/projectInfoRedirect">
                                     <input type="hidden"  name="project_id" value="{{red_proj.project_id}}" id="project_id">
                                     <input type="submit" value="See more information">
