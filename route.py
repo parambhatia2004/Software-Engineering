@@ -540,7 +540,7 @@ def projectInfo():
         entry_average[3] = entry_average[3]/health_entries
     if resilience_entries != 0:
         entry_average[4] = entry_average[4]/resilience_entries
-    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues, entry_average = entry_average, res=res)
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = entry_average, projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues, entry_average = entry_average, res=res)
 
 # update a project via project info
 @app.route('/updateProject')
