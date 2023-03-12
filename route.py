@@ -31,7 +31,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # change this to False to avoid resetting the database every time this app is restarted
-resetdb = True
+resetdb = False
 if resetdb:
     with app.app_context():
         # drop everything, create all the tables, then put some data into the tables
@@ -52,7 +52,34 @@ def softSkillRisk(proj_id):
     teamCount = len(currentProject.team)
     for member in currentProject.team:
         skillRow = UserSkills.query.filter_by(user_id=member).first()
-        skillSumCount += skillRow.enthusiasm + skillRow.purpose + skillRow.challenge + skillRow.health + skillRow.resilience
+        print("Skill Row")
+        print('-----------------')
+        print(skillRow)
+        if skillRow.enthusiasm == None:
+            skillSumCount += 3
+        else:
+            skillSumCount += skillRow.enthusiasm
+        
+        if skillRow.purpose == None:
+            skillSumCount += 3
+        else:
+            skillSumCount += skillRow.purpose
+
+        if skillRow.challenge == None:
+            skillSumCount += 3
+        else:
+            skillSumCount += skillRow.challenge
+
+        if skillRow.health == None:
+            skillSumCount += 3
+        else:
+            skillSumCount += skillRow.health
+        
+        if skillRow.resilience == None:
+            skillSumCount += 3
+        else:
+            skillSumCount += skillRow.resilience
+    
     # print("Skill Sum Count")
     # print('-----------------')
     # print(skillSumCount)
@@ -176,7 +203,7 @@ def calculateRisk(proj_id):
     # 5. Monte Carlo Time (0.XX)
     # 6. Member Skills
     gitRisk = githubIssues("calculator","microsoft")
-    member_skills(4)
+    technical_risk = member_skills(proj_id)
     proj_manager_id = proj_id
     project = Projects.query.filter_by(project_id=proj_id).first()
     rcList = list()
@@ -240,6 +267,21 @@ def calculateRisk(proj_id):
     risky_business = 1 * memberRisk * hourly_commits * gitRisk * finalMC * softSkillRiskMultiplier
     print()
     print("Risky Business: ", risky_business)
+    currentRisk.project_risk_value = risky_business
+
+    currentRisk.member_risk = memberRisk
+    currentRisk.member_technical_skill_risk = technical_risk
+    currentRisk.soft_skill_count = softSkillRiskMultiplier
+    currentRisk.monte_carlo_risk = finalMC
+    currentRisk.git_risk = gitRisk
+    currentRisk.hourly_commits = hourly_commits
+    if risky_business <= 0.75:
+        currentRisk.project_risk_state = "Green"
+    elif risky_business <= 1.25:
+        currentRisk.project_risk_state = "Amber"
+    else:
+        currentRisk.project_risk_state = "Red"
+    db.session.commit()
     return risky_business
 
 
@@ -346,7 +388,15 @@ def proj():
 def projectInfo():
     if 'currentProject' not in session:
         return redirect('/managerHome')
-    currentProject = session['currentProject']
+    currentProject = session['currentProject']['project_id']
+    print("currentProject: ", currentProject)
+    #Get code owner
+    #Get code project
+    #Get project requirements
+    #Get project developers who satisfy requirements
+    #Get new monte carlo risk with 1.2* budget
+    #Get new monte carlo risk with 0.8* budget
+    #Get commits by hour
     return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = [], projectReqValues = [], budgetComp = [], timeComp = [], commitsByDay = [], commitsByHour = [], developerData = [])
 
 # update a project via project info
