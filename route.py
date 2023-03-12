@@ -209,7 +209,7 @@ def member_skills(proj_id):
     print("Average Cumulative Skill: ", averageCumulativeSkill)
     if averageCumulativeSkill == 0 or totalCumulativeSkill == 0:
         return 1
-    return totalCumulativeSkill/averageCumulativeSkill
+    return averageCumulativeSkill/totalCumulativeSkill
 
 
 
@@ -297,7 +297,7 @@ def calculateRisk(proj_id, test):
     print("Hourly Commits: ", hourly_commits)
     print("Final MC: ", finalMC)
     print("Git Risk: ", gitRisk)
-    risky_business = 1 * memberRisk * hourly_commits * gitRisk * finalMC * softSkillRiskMultiplier
+    risky_business = 1 * memberRisk * technical_risk * hourly_commits * gitRisk * finalMC * softSkillRiskMultiplier
     print()
     print("Risky Business: ", risky_business)
     currentRisk.project_risk_value = risky_business
