@@ -448,7 +448,10 @@ def projectInfo():
     newMC = calculateRisk(proj_id, 1)
     gitData = ProjectGitHub.query.filter_by(project_id = proj_id).first()
     hourly_commits_here = get_hourly_commits(gitData.repo_name, gitData.repo_owner_name)
-    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourly_commits_here)
+    hourlyValues = [];
+    for hc in hourly_commits_here:
+        hourlyValues.append(hc)
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues)
 
 # update a project via project info
 @app.route('/updateProject')
