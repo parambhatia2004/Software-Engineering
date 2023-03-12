@@ -93,7 +93,7 @@
                                 {% endfor %}
                                 </ul>
                                 <form method="POST" action="/projectInfoRedirect">
-                                    <input type="hidden"  name="{{amber_proj.project_id}}" id="{{amber_proj.project_id}}">
+                                    <input type="hidden"  name="project_id" value="{{amber_proj.project_id}}" id="project_id">
                                     <input type="submit" value="See more information">
                                 </form>
                             </div>
@@ -135,7 +135,7 @@
                                 {% endfor %}
                                 </ul>
                                 <form method="POST" action="/projectInfoRedirect">
-                                    <input type="hidden"  name="{{red_proj.project_id}}" id="{{red_proj.project_id}}">
+                                    <input type="hidden"  name="project_id" value="{{red_proj.project_id}}" id="project_id">
                                     <input type="submit" value="See more information">
                                 </form>
                             </div>

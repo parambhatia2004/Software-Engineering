@@ -245,7 +245,7 @@ def calculateRisk(proj_id, test):
     print("Assigned Budget: ", assignedBudget)
     print("Assigned Deadline: ", assignedDeadline)
 
-    simulations = 10000
+    simulations = 2000
     risk = ProjectRisk.query.filter_by(project_id = proj_id).first()
     #Thread open
     costComponents = RiskComponent.query.filter_by(project_risk_id = risk.project_risk_id, risk_type = "Cost").all()
@@ -378,8 +378,44 @@ def managerHome():
     userProjects = ProjectManager.createUserProjects(session['currentProjects'])
 
     currentProjects = []
+    greenProjects = []
+    amberProjects = []
+    redProjects = []
+    topGreenRisks = []
+    topAmberRisks = []
+    topRedRisks = []
     for project in userProjects:
         currentProjects.append(as_dict(project))
+        risk_object = ProjectRisk.query.filter_by(project_id = project.project_id).first()
+        if risk_object.project_risk_state == "Green":
+            greenProjects.append(as_dict(project))
+        elif risk_object.project_risk_state == "Amber":
+            amberProjects.append(as_dict(project))
+        else:
+            redProjects.append(as_dict(project))
+        risks = [risk_object.monte_carlo_risk, risk_object.member_risk, risk_object.member_technical_skill_risk, risk_object.soft_skill_count, risk_object.git_risk, risk_object.hourly_commits]
+        max_risk = max(risk_object.monte_carlo_risk, risk_object.member_risk, risk_object.member_technical_skill_risk, risk_object.soft_skill_count, risk_object.git_risk, risk_object.hourly_commits)
+        print("Max Risk: ", risks.index(max(risks)))
+        ind = risks.index(max(risks))
+        res = 'The max risk is: ' + str(risks[ind]) + 'caused by: '
+        if ind == 0:
+            res += 'Monte Carlo Simulation'
+        elif ind == 1:
+            res += 'Member Risk in Past Projects'
+        elif ind == 2:
+            res += 'Member Technical Knowledge'
+        elif ind == 3:
+            res += 'Soft Skill Questionnaire'
+        elif ind == 4:
+            res += 'Open Issues in Github'
+        else:
+            res += 'Hourly Commits on GitHub'
+        if risk_object.project_risk_state == "Green":
+            topGreenRisks.append(res)
+        elif risk_object.project_risk_state == "Amber":
+            topAmberRisks.append(res)
+        else:
+            topRedRisks.append(res)
 
     pastUserProjects = ProjectManager.createUserProjects(session['pastProjects'])
 
@@ -401,8 +437,8 @@ def managerHome():
     print(session['currentProjects'])
     print(currentProjects)
 
-    return render_template('/managerHome.html',name=session['user']['first_name'],greenProjects=currentProjects,
-                           successfulProjects = successProjects, failedProjects = failureProjects, cancelledProjects = cancelledProjects)
+    return render_template('/managerHome.html',name=session['user']['first_name'],greenProjects=greenProjects, amberProjects=amberProjects, redProjects=redProjects,
+                           successfulProjects = successProjects, failedProjects = failureProjects, cancelledProjects = cancelledProjects, topGreenRisks = topGreenRisks, topAmberRisks = topAmberRisks, topRedRisks = topRedRisks)
 
 # create a project
 @app.route('/createProject', methods = ['GET', 'POST'])
@@ -451,7 +487,43 @@ def projectInfo():
     hourlyValues = [];
     for hc in hourly_commits_here:
         hourlyValues.append(hc)
-    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues)
+    
+    teamCount = len(currentProject.team)
+    enthusiasm_entries = 0
+    purpose_entries = 0
+    challenge_entries = 0
+    health_entries = 0
+    resilience_entries = 0
+    entry_average = [0,0,0,0,0]
+    for member in currentProject.team:
+        skillRow = UserSkills.query.filter_by(user_id=member).first()
+        if skillRow is not None:
+            if skillRow.enthusiasm is not None:
+                entry_average[0] += skillRow.enthusiasm
+                enthusiasm_entries += 1
+            if skillRow.purpose is not None:
+                entry_average[1] += skillRow.purpose
+                purpose_entries += 1
+            if skillRow.challenge is not None:
+                entry_average[2] += skillRow.challenge
+                challenge_entries += 1
+            if skillRow.health is not None:
+                entry_average[3] += skillRow.health
+                health_entries += 1
+            if skillRow.resilience is not None:
+                entry_average[4] += skillRow.resilience
+                resilience_entries += 1
+    if enthusiasm_entries != 0:
+        entry_average[0] = entry_average[0]/enthusiasm_entries
+    if purpose_entries != 0:
+        entry_average[1] = entry_average[1]/purpose_entries
+    if challenge_entries != 0:
+        entry_average[2] = entry_average[2]/challenge_entries
+    if health_entries != 0:
+        entry_average[3] = entry_average[3]/health_entries
+    if resilience_entries != 0:
+        entry_average[4] = entry_average[4]/resilience_entries
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues, entry_average = entry_average)
 
 # update a project via project info
 @app.route('/updateProject')
@@ -685,7 +757,7 @@ def addDeveloperSkill():
         session['strengths'] = update
         print("add developer skills: ",session['strengths'])
         return "OK"
-    # else, the function is not "succesfull", and so the js does not add the skill either
+    # else, the function is not "successful", and so the js does not add the skill either
 
 @app.route('/removeDeveloperSkill', methods = ['POST'])
 def removeDeveloperSkill():
