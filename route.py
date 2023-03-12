@@ -24,7 +24,7 @@ app.secret_key = 'SecRetKeyHighLyConFiDENtIal'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///RiskTracker.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-from schema import db, User, DeveloperStrength, UserSkills, dbinit, RiskComponent, Projects, DeveloperProject, ProjectRisk
+from schema import db, User, DeveloperStrength, UserSkills, dbinit, RiskComponent, Projects, DeveloperProject, ProjectRisk, ProjectGitHub, ProjectRequirement
 db.init_app(app)
 
 login_manager = LoginManager()
@@ -189,12 +189,31 @@ def hourlyCommits(repo, owner):
 
 def member_skills(proj_id):
     currentProject = ProjectsClass(proj_id)
+    reqs = ProjectRequirement.query.with_entities(ProjectRequirement.requirement).filter_by(project_id=proj_id).all()
+    reqs = [r[0] for r in reqs]
+    currentProject = ProjectsClass(proj_id)
+    teamCount = len(currentProject.team)
+    averageCumulativeSkill = teamCount * len(reqs) * 3
+    averageCumulativeSkill = averageCumulativeSkill/4
+    totalCumulativeSkill = 0
     for member in currentProject.team:
         strengths = DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=member).all()
+        strengths = [r[0] for r in strengths]
+        print("Strengths:")
         print(strengths)
+        for s in strengths:
+            if s in reqs:
+                totalCumulativeSkill += 1
+    
+    print("Total Cumulative Skill: ", totalCumulativeSkill)
+    print("Average Cumulative Skill: ", averageCumulativeSkill)
+    if averageCumulativeSkill == 0 or totalCumulativeSkill == 0:
+        return 1
+    return totalCumulativeSkill/averageCumulativeSkill
 
 
-def calculateRisk(proj_id):
+
+def calculateRisk(proj_id, test):
     # Sources of primary risk multipliers
     # 1. Team member risk (1.XX)
     # 2. Hourly commits (0.XX)
@@ -202,7 +221,12 @@ def calculateRisk(proj_id):
     # 4. Monte Carlo Cost (0.XX)
     # 5. Monte Carlo Time (0.XX)
     # 6. Member Skills
-    gitRisk = githubIssues("calculator","microsoft")
+    firstGit = ProjectGitHub.query.filter_by(project_id=proj_id).first()
+    # firstGit.repo_owner_name = 'google'
+    # firstGit.repo_name = 'googletest'
+    gitRisk = githubIssues(firstGit.repo_name, firstGit.repo_owner_name)
+    print("repo name: ", firstGit.repo_name)
+    print("repo owner: ", firstGit.repo_owner_name)
     technical_risk = member_skills(proj_id)
     proj_manager_id = proj_id
     project = Projects.query.filter_by(project_id=proj_id).first()
@@ -211,9 +235,14 @@ def calculateRisk(proj_id):
 
     tcList = list()
     tcRowList = list()
-    assignedBudget = project.budget
+    if(test == 0):
+        assignedDeadline = project.deadline
+        assignedBudget = project.budget
+    else:
+        assignedDeadline = project.deadline *1.2
+        assignedBudget = project.budget *1.2
+
     print("Assigned Budget: ", assignedBudget)
-    assignedDeadline = project.deadline
     print("Assigned Deadline: ", assignedDeadline)
 
     simulations = 10000
@@ -244,8 +273,12 @@ def calculateRisk(proj_id):
 
     #finalMC gives the risk multiplier
     if costMC == 0 or timeMC == 0:
+        if test == 1:
+            return 1
         finalMC = 1
     else:
+        if test == 1:
+            return ((34/costMC) + (34/timeMC))/2
         finalMC = ((34/costMC) + (34/timeMC))/2
     #Thread close
     print("Cost MC: ", costMC)
@@ -386,18 +419,34 @@ def proj():
 # see project info
 @app.route('/projectInfo')
 def projectInfo():
+    recValues = []
     if 'currentProject' not in session:
         return redirect('/managerHome')
     currentProject = session['currentProject']['project_id']
+    proj_id = currentProject
     print("currentProject: ", currentProject)
+
+    currentProject = ProjectsClass(proj_id)
+    reqs = ProjectRequirement.query.with_entities(ProjectRequirement.requirement).filter_by(project_id=proj_id).all()
+    reqs = [r[0] for r in reqs]
+    currentProject = ProjectsClass(proj_id)
+    for r in reqs:
+        rCount = 0
+        for m in currentProject.team:
+            strengths = DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=m).all()
+            strengths = [r[0] for r in strengths]
+            if r in strengths:
+                rCount += 1
+        recValues.append(rCount)
     #Get code owner
     #Get code project
-    #Get project requirements
-    #Get project developers who satisfy requirements
-    #Get new monte carlo risk with 1.2* budget
-    #Get new monte carlo risk with 0.8* budget
+    ##Get project requirements
+    ##Get project developers who satisfy requirements
+    ##Get new monte carlo risk with 1.2* budget
     #Get commits by hour
-    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = [], projectReqValues = [], budgetComp = [], timeComp = [], commitsByDay = [], commitsByHour = [], developerData = [])
+    project = ProjectRisk.query.filter_by(project_id = proj_id).first()
+    newMC = calculateRisk(proj_id, 1)
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, budgetComp = project.monte_carlo_risk, timeComp = newMC, commitsByDay = [], commitsByHour = [], developerData = [])
 
 # update a project via project info
 @app.route('/updateProject')
@@ -444,7 +493,7 @@ def loginRedirect():
         session['pastProjects'] = user.pastProjects
         for project in session['currentProjects']:
             print(project)
-            calculateRisk(project)
+            calculateRisk(project, 0)
         return redirect('/managerHome')
     else:
         flash("Wrong Email or Password")
@@ -547,14 +596,14 @@ def createProjectRedirect():
         projectName = request.form['project_name']
         projectDescription = request.form['project_description']
 
-        repo_owner = session['user']['id']
+        repo_owner = request.form['repo_owner']
         repo_name = request.form['repo_name']
 
         deadline = request.form['deadline']
         budget = request.form['budget']
 
         # def insertProject(project_manager_id, project_name, deadline, budget, project_state, description, repo_name, developers, requirements):
-        thisProjectID = ProjectsClass.insertProject(session['user']['id'], projectName, deadline, budget, "Ongoing", projectDescription,repo_name, session['projectDevelopers'], session['projectRequirements'])
+        thisProjectID = ProjectsClass.insertProject(session['user']['id'], projectName, deadline, budget, "Ongoing", projectDescription, repo_owner, repo_name, session['projectDevelopers'], session['projectRequirements'])
         # thisProject = Projects.query.order_by(Projects.project_id.desc()).first()
         update = session['currentProjects']
         update.append(thisProjectID)
