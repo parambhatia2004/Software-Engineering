@@ -685,6 +685,7 @@ def createProjectRedirect():
         update = session['currentProjects']
         update.append(thisProjectID)
         session['currentProjects'] = update
+        calculateRisk(thisProjectID, 0)
 
     return redirect('/managerHome')
 
