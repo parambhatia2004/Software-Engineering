@@ -446,7 +446,7 @@ def projectInfo():
     #Get commits by hour
     project = ProjectRisk.query.filter_by(project_id = proj_id).first()
     newMC = calculateRisk(proj_id, 1)
-    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, budgetComp = project.monte_carlo_risk, timeComp = newMC, commitsByDay = [], commitsByHour = [], developerData = [])
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = [], projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = [])
 
 # update a project via project info
 @app.route('/updateProject')
