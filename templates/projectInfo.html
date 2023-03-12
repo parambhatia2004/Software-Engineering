@@ -80,13 +80,17 @@
                         {% else %}         
                         <canvas id="projectRequirementsChart" style="width:100%;max-width:600px"></canvas>
                         <script type="module">
-                            var xValues = {{projectReqLabels}};
+                            var xValues = [];
                             var yValues = {{projectReqValues}};
                             var barColors = [];
                             for(var i = 0; i < yValues.length; i++){
                                 var color = randomColor()
                                 barColors.push(color);
                             }
+                            {% for item in prejectReqLabels %}
+                                var item = "{{item}}"
+                               xValues.push(item);
+                            {% endfor %}
                             new Chart("projectRequirementsChart", {
                                 type: "bar",
                                 data: {
@@ -105,60 +109,16 @@
                         </script>
                         {% endif %}
                     </div>
-                    <div id="monteCarloComponents" class="contentbox">
-                        <h3 title="Completion prediction based on project components">Completion of project components</h3>
-                        {% if budgetComp %}
-                            <ul>
-                                {% for comp in budgetComp %}
-                                <li>{{comp.name}} has a predicted budget of {{comp.value}}. According to our analysis, {{comp.message}}</li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p>This project doesn't have budget components</p>
-                        {% endif%}
-                        {% if timeComp %}
-                            <ul>
-                                {% for comp in timeComp %}
-                                <li>{{comp.name}} has a predicted deadline of {{comp.value}} days. According to our analysis, {{comp.message}}</li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p>This project doesn't have budget components</p>
-                        {% endif%}
-                    </div>
                 </div>
                 <div id="columnTwo" class="contentdiv_column">
-                    <div id="commitsByDay" class="contentbox">
-                        <h3 title="Number of code commits for each day"> Commits by day </h3> 
-                        {% if not commitsByDay %}
-                        <p> There is no code-specific data for the project yet. </p>
-                        {% else %}          
-                        <canvas id="dateChart" style="width:100%;max-width:600px"></canvas>
-                        <script type="module">
-                            var xValues = {{commitsByDay.labels}};
-                            var yValues = {{commitsByDay.values}};
-                            var barColors = [];
-                            for(var i = 0; i < yValues.length; i++){
-                                var color = randomColor()
-                                barColors.push(color);
-                            }
-                            new Chart("dateChart", {
-                                type: "bar",
-                                data: {
-                                    labels: xValues,
-                                    datasets: [{
-                                    backgroundColor: barColors,
-                                    data: yValues
-                                    }]
-                                },
-                                options: {
-                                    legend: {display: false},
-                                    title: {
-                                    display: false}
-                                }
-                                });
-                        </script>
-                        {%endif%}
+                    <div id="monteCarloComponents" class="contentbox">
+                        <h3 title="Completion prediction based on project components">Completion of project components</h3>
+                        {% if initialRisk %}
+                        <p> The initial risk factor computed based on your time and budget components is {{initialRisk}}. </p>
+                        <p> If the deadline and budget for the project are extended by 20%, the new risk factor would be {{newRisk}} </p>
+                        {% else %}
+                        <p> Looks like you haven't added any project cost or time components!<p>
+                        {% endif %}
                     </div>
                     <div id="commitsByHour" class="contentbox">
                         <h3 title="Number of code commits for each hour"> Commits by hour </h3>
@@ -190,42 +150,6 @@
                                 display: false}
                             }
                             });
-                        </script>
-                        {%endif%}
-                    </div>
-                    <div id="developerCompatibility" class="contentbox">
-                        <h3 title="How well developers have worked together"> Developer inter-compatibility </h3>
-                        {% if not developerData %}
-                        <p> There is no developer-specific data for the project yet. </p>
-                        {% else %}
-                        <div id="compatibilityChart" style="width:100%;max-width:600px"></div>
-                        <script type="module">
-                            var list =[];
-                            var labels=[];
-                            {% for developerItem in developerData%}
-                                let obj = {};
-                                name_item = "{{developerItem.name}}"
-                                obj[name] = "{{developerItem.name}}";
-                                obj[data] = {{developerItem.values}}
-                                labels.push()
-                                list.push(obj);
-                            {% endfor %}
-                            var options = {
-                                series: list,
-                                chart: {
-                                    height: 350,
-                                    type: 'heatmap',
-                                },
-                                dataLabels: {
-                                    enabled: false
-                                },
-                                colors: ["#008FFB"],
-                                title: {
-                                    text: 'Developer compatibility graph'
-                                },
-                            };
-                            var chart = new ApexCharts(document.querySelector("#compatibilityChart"), options);
-                            chart.render();
                         </script>
                         {%endif%}
                     </div>
