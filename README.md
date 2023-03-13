@@ -1,4 +1,4 @@
-# CS261 Software Engineering
+# CS261 Software Engineering - RiskTracker - Group 4
 Please ensure pip is available on your system
 
 To run this application on a Windows Device:
