@@ -38,19 +38,15 @@
             <div id="projectAnalysis" class="contentdiv">
                 <div id="columnOne"  class="contentdiv_column">
                     <div id="softSkillsAnalysis" class="contentbox">
-                        <h3 title="Displays data provided by team memners in their personal status forms">Team status</h3>
-                        {% if (softSkillValues.health is none) or (softSkillValues.health == '') or (softSkillValues.health == 0) or (softSkillsValues is not defined)%}
+                        <h3 title="Displays data provided by team members in their personal status forms">Team status</h3>
+                        {% if softSkillValues[0] == 0 %}
                          <p>Data unavailable. Please ask the team developers to complete the personal status form</p>
                         {% else %}        
-                        <canvas id="softSkillsChart" style="width:100%;max-width:600px"></canvas>
+                        <canvas id="softSkillsChart" style="width:100%;min-width:300px;"></canvas>
                         <script type="module">
                            
                             var xValues = ["Enthusiasm", "Purpose", "Challenge", "Health", "Resilience"];
-                            var yValues = [{{softSkillValues.enthusiasm}},
-                                            {{softSkillValues.purpose}},
-                                            {{softSkillValues.challenge}}, 
-                                            {{softSkillValues.health}}, 
-                                            {{softSkillValues.resilience}}];
+                            var yValues = {{softSkillValues}};
                             var barColors = [];
                             for(var i = 0; i < 5; i++){
                                 var color = randomColor()
@@ -68,7 +64,10 @@
                                 }]
                               },
                             options: {
-                                title: { display: false }
+                                title: { display: false },
+                                animation: {
+                                    duration: 0
+                                }
                             }
                             });
                         </script>
@@ -79,7 +78,7 @@
                         {% if not projectReqLabels%}
                          <p>Data unavailable. Please add requirements to the project</p>
                         {% else %}         
-                        <canvas id="projectRequirementsChart" style="width:100%;max-width:600px"></canvas>
+                        <canvas id="projectRequirementsChart" style="width:100%;min-width:300px"></canvas>
                         <script type="module">
                             var xValues = [];
                             var yValues = {{projectReqValues}};
