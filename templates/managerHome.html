@@ -87,6 +87,7 @@
                             <div class="container">
                                 <h4>{{amber_proj.project_name}}</h4>
                                 <p>{{amber_proj.description}}</p>
+                                <p>Looks like this project is medium-risk!<p>
                                 <form method="POST" action="/projectInfoRedirect">
                                     <input type="hidden"  name="project_id" value="{{amber_proj.project_id}}" id="project_id">
                                     <input type="submit" value="See more information">
@@ -124,6 +125,7 @@
                             <div class="container">
                                 <h4>{{red_proj.project_name}}</h4>
                                 <p>{{red_proj.description}}</p>
+                                <p>Looks like this project is high-risk!<p></p>
                                 <form method="POST" action="/projectInfoRedirect">
                                     <input type="hidden"  name="project_id" value="{{red_proj.project_id}}" id="project_id">
                                     <input type="submit" value="See more information">
@@ -145,6 +147,7 @@
                 <div class="contentbox">
                     <h3 style="color:Maroon;"> Red projects </h3>
                     <p> Looks like you don't have any "red" projects...</p>
+                    <p>Well Done!</p>
                 </div>
                 {% endif %}
             </div>
@@ -181,6 +184,7 @@
                 <div class="contentbox">
                     <h3> Successful projects </h3>
                     <p> Looks like you don't have any past successful projects yet.</p>
+                    <p> Don't worry, you will get there!</p>
                 </div>
                 {% endif %}
 
@@ -215,6 +219,7 @@
                 <div class="contentbox">
                     <h3> Failed projects </h3>
                     <p> Looks like you don't have any past failed projects yet.</p>
+                    <p>Congratulations!</p>
                 </div>
                 {% endif %}
 
@@ -249,6 +254,7 @@
                 <div class="contentbox">
                     <h3> Cancelled projects </h3>
                     <p> Looks like you don't have any past cancelled projects.</p>
+                    <p>Nice One!</p>
                 </div>
                 {% endif %}
             </div>

@@ -52,9 +52,9 @@ def softSkillRisk(proj_id):
     teamCount = len(currentProject.team)
     for member in currentProject.team:
         skillRow = UserSkills.query.filter_by(user_id=member).first()
-        print("Skill Row")
-        print('-----------------')
-        print(skillRow)
+        # print("Skill Row")
+        # print('-----------------')
+        # print(skillRow)
         if skillRow.enthusiasm == None:
             skillSumCount += 3
         else:
@@ -152,13 +152,13 @@ def monte_carlo(simulations, deadline, project):
 def githubIssues(repo, owner):
     yesterday = date.today() - timedelta(days=1)
     oneWeekAgo = yesterday - timedelta(days=7)
-    print(yesterday)
-    print(oneWeekAgo)
+    # print(yesterday)
+    # print(oneWeekAgo)
     twenty_four_hour_issues = get_24_hour_issues_count(repo, owner, yesterday)
     seven_day_issues = get_7_day_issues_count(repo, owner, oneWeekAgo)
     seven_day_issues = seven_day_issues/7
-    print("24 Hour Issues: ", twenty_four_hour_issues)
-    print("7 Day Issues: ", seven_day_issues)
+    # print("24 Hour Issues: ", twenty_four_hour_issues)
+    # print("7 Day Issues: ", seven_day_issues)
     if twenty_four_hour_issues == 0 and seven_day_issues <= 1:
         return 1
     elif twenty_four_hour_issues == 0 and seven_day_issues > 1:
@@ -168,19 +168,19 @@ def githubIssues(repo, owner):
 
 def hourlyCommits(repo, owner):
     hourly_commits = get_hourly_commits(repo, owner)
-    print("Hourly Commits: ", hourly_commits)
+    # print("Hourly Commits: ", hourly_commits)
     potential_error_commits = 0
     # https://www.bu.edu/ballab/pubs/Riley_2017.pdf
     for i in range(6):
         potential_error_commits += hourly_commits[i]
     for i in range(23, 24):
         potential_error_commits += hourly_commits[i]
-    print("Potential Error Commits: ", potential_error_commits)
-    print("Hourly Commits: ", hourly_commits.sum())
+    # print("Potential Error Commits: ", potential_error_commits)
+    # print("Hourly Commits: ", hourly_commits.sum())
     if hourly_commits.sum() == 0:
         return 1
     potential_error_commit_likelihood = (potential_error_commits/hourly_commits.sum())
-    print("Potential Error Commits: ", potential_error_commit_likelihood)
+    # print("Potential Error Commits: ", potential_error_commit_likelihood)
     # https://redbooth.com/blog/your-most-productive-time
     if potential_error_commit_likelihood <= 0.07:
         return 1
@@ -199,14 +199,14 @@ def member_skills(proj_id):
     for member in currentProject.team:
         strengths = DeveloperStrength.query.with_entities(DeveloperStrength.strength).filter_by(developer_id=member).all()
         strengths = [r[0] for r in strengths]
-        print("Strengths:")
-        print(strengths)
+        # print("Strengths:")
+        # print(strengths)
         for s in strengths:
             if s in reqs:
                 totalCumulativeSkill += 1
     
-    print("Total Cumulative Skill: ", totalCumulativeSkill)
-    print("Average Cumulative Skill: ", averageCumulativeSkill)
+    # print("Total Cumulative Skill: ", totalCumulativeSkill)
+    # print("Average Cumulative Skill: ", averageCumulativeSkill)
     if averageCumulativeSkill == 0 or totalCumulativeSkill == 0:
         return 1
     return averageCumulativeSkill/totalCumulativeSkill
@@ -215,18 +215,18 @@ def member_skills(proj_id):
 
 def calculateRisk(proj_id, test):
     # Sources of primary risk multipliers
-    # 1. Team member risk (1.XX)
-    # 2. Hourly commits (0.XX)
-    # 3. Github issues (0.XX)
-    # 4. Monte Carlo Cost (0.XX)
-    # 5. Monte Carlo Time (0.XX)
+    # 1. Team member risk
+    # 2. Hourly commits
+    # 3. Github issues
+    # 4. Monte Carlo Cost
+    # 5. Monte Carlo Time
     # 6. Member Skills
     firstGit = ProjectGitHub.query.filter_by(project_id=proj_id).first()
     # firstGit.repo_owner_name = 'google'
     # firstGit.repo_name = 'googletest'
     gitRisk = githubIssues(firstGit.repo_name, firstGit.repo_owner_name)
-    print("repo name: ", firstGit.repo_name)
-    print("repo owner: ", firstGit.repo_owner_name)
+    # print("repo name: ", firstGit.repo_name)
+    # print("repo owner: ", firstGit.repo_owner_name)
     technical_risk = member_skills(proj_id)
     proj_manager_id = proj_id
     project = Projects.query.filter_by(project_id=proj_id).first()
@@ -242,22 +242,22 @@ def calculateRisk(proj_id, test):
         assignedDeadline = project.deadline *1.2
         assignedBudget = project.budget *1.2
 
-    print("Assigned Budget: ", assignedBudget)
-    print("Assigned Deadline: ", assignedDeadline)
+    # print("Assigned Budget: ", assignedBudget)
+    # print("Assigned Deadline: ", assignedDeadline)
 
     simulations = 2000
     risk = ProjectRisk.query.filter_by(project_id = proj_id).first()
     #Thread open
     costComponents = RiskComponent.query.filter_by(project_risk_id = risk.project_risk_id, risk_type = "Cost").all()
-    print("Cost Components: ", costComponents)
+    # print("Cost Components: ", costComponents)
     for component in costComponents:
         rcRowList.append(component.best)
         rcRowList.append(component.worst)
         rcRowList.append(component.average)
-        print("RC Row List: ", rcRowList)
+        # print("RC Row List: ", rcRowList)
         rcList.append(rcRowList)
         rcRowList = list()
-    print("RC List: ", rcList)
+    # print("RC List: ", rcList)
     costMC = monte_carlo(simulations, assignedBudget, rcList)
     timeComponents = RiskComponent.query.filter_by(project_risk_id = risk.project_risk_id, risk_type = "Time").all()
 
@@ -268,7 +268,7 @@ def calculateRisk(proj_id, test):
         tcRowList.append(rComponent.average)
         tcList.append(rcRowList)
         tcRowList.clear()
-    print("TC List: ", tcList)
+    # print("TC List: ", tcList)
     timeMC = monte_carlo(simulations, assignedDeadline, tcList)
 
     #finalMC gives the risk multiplier
@@ -289,10 +289,10 @@ def calculateRisk(proj_id, test):
             return ((34/costMC) + (34/timeMC))/2
         finalMC = ((34/costMC) + (34/timeMC))/2
     #Thread close
-    print("Cost MC: ", costMC)
-    print("Time MC: ", timeMC)
+    # print("Cost MC: ", costMC)
+    # print("Time MC: ", timeMC)
 
-    print("Final MC: ", finalMC)
+    # print("Final MC: ", finalMC)
 
     memberRisk = teamMemberRisk(proj_id)
     softSkillRiskMultiplier = softSkillRisk(proj_id)
@@ -300,14 +300,14 @@ def calculateRisk(proj_id, test):
     currentRisk = ProjectRisk.query.filter_by(project_id = proj_id).first()
     #currentRisk.project_risk_value
     #Developer Skills
-    print("Member Risk: ", memberRisk)
-    print("Soft Skill Risk Multiplier: ", softSkillRiskMultiplier)
-    print("Hourly Commits: ", hourly_commits)
-    print("Final MC: ", finalMC)
-    print("Git Risk: ", gitRisk)
-    risky_business = 1 * memberRisk * technical_risk * hourly_commits * gitRisk * finalMC * softSkillRiskMultiplier
-    print()
-    print("Risky Business: ", risky_business)
+    # print("Member Risk: ", memberRisk)
+    # print("Soft Skill Risk Multiplier: ", softSkillRiskMultiplier)
+    # print("Hourly Commits: ", hourly_commits)
+    # print("Final MC: ", finalMC)
+    # print("Git Risk: ", gitRisk)
+    risky_business = currentRisk.project_risk_value * memberRisk * technical_risk * hourly_commits * gitRisk * finalMC * softSkillRiskMultiplier
+    # print()
+    # print("Risky Business: ", risky_business)
     currentRisk.project_risk_value = risky_business
 
     currentRisk.member_risk = memberRisk
@@ -474,7 +474,8 @@ def projectInfo():
     max_risk = max(risk_object.monte_carlo_risk, risk_object.member_risk, risk_object.member_technical_skill_risk, risk_object.soft_skill_count, risk_object.git_risk, risk_object.hourly_commits)
     print("Max Risk: ", risks.index(max(risks)))
     ind = risks.index(max(risks))
-    res = 'The max risk is: ' + str(risks[ind]) + ' caused by: '
+    riskCause = round(risks[ind],2)
+    res = 'The highest risk in this project is caused by the: '
     suggestions = 'Suggestions: \n'
     if ind == 0:
         res += 'Monte Carlo Simulation'
@@ -492,8 +493,9 @@ def projectInfo():
         res += 'Open Issues in Github'
         suggestions += 'Fix the open issues in Github.'
     else:
-        res += 'Hourly Commits on GitHub'
+        res += 'Time of commits on GitHub'
         suggestions += 'Advise team members to commit during times of day when they are likely to pay the most attention.'
+    res += ' with a risk multiplier of ' + str(riskCause) + '.'
     currentProject = ProjectsClass(proj_id)
     reqs = ProjectRequirement.query.with_entities(ProjectRequirement.requirement).filter_by(project_id=proj_id).all()
     reqs = [r[0] for r in reqs]
@@ -514,6 +516,7 @@ def projectInfo():
     #Get commits by hour
     project = ProjectRisk.query.filter_by(project_id = proj_id).first()
     newMC = calculateRisk(proj_id, 1)
+    newMC = round(newMC, 2)
     gitData = ProjectGitHub.query.filter_by(project_id = proj_id).first()
     hourly_commits_here = get_hourly_commits(gitData.repo_name, gitData.repo_owner_name)
     hourlyValues = [];
@@ -555,8 +558,8 @@ def projectInfo():
         entry_average[3] = entry_average[3]/health_entries
     if resilience_entries != 0:
         entry_average[4] = entry_average[4]/resilience_entries
-    print("entry_average: ", entry_average)
-    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = entry_average, projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues, entry_average = entry_average, res=res, suggestions=suggestions)
+    # print("entry_average: ", entry_average)
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = entry_average, projectReqLabels = reqs, projectReqValues = recValues, initialRisk = round(project.monte_carlo_risk, 2), newRisk = newMC, commitsByHour = hourlyValues, entry_average = entry_average, res=res, suggestions=suggestions)
 
 # update a project via project info
 @app.route('/updateProject')
