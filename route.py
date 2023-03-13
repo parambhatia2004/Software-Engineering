@@ -272,18 +272,10 @@ def calculateRisk(proj_id, test):
     timeMC = monte_carlo(simulations, assignedDeadline, tcList)
 
     #finalMC gives the risk multiplier
-    if costMC == 0 and timeMC == 0:
+    if costMC == 0 or timeMC == 0:
         if test == 1:
             return 1
         finalMC = 1
-    elif costMC == 0:
-        if test == 1:
-            return 1
-        finalMC = 34/timeMC
-    elif timeMC == 0:
-        if test == 1:
-            return 1
-        finalMC = 34/costMC
     else:
         if test == 1:
             return ((34/costMC) + (34/timeMC))/2
@@ -475,25 +467,18 @@ def projectInfo():
     print("Max Risk: ", risks.index(max(risks)))
     ind = risks.index(max(risks))
     res = 'The max risk is: ' + str(risks[ind]) + ' caused by: '
-    suggestions = 'Suggestions: \n'
     if ind == 0:
         res += 'Monte Carlo Simulation'
-        suggestions += 'Increase budget and/or time frame.'
     elif ind == 1:
         res += 'Member Risk in Past Projects'
-        suggestions += 'Ensure team members have good communication skills and are able to work well with others.'
     elif ind == 2:
         res += 'Member Technical Knowledge'
-        suggestions += 'Ensure team members have the required technical knowledge, and they are trained in the languauges of the project.'
     elif ind == 3:
         res += 'Soft Skill Questionnaire'
-        suggestions += 'Ensure the developers prioritise mental health and feel intellectually-stimulated by the project.'
     elif ind == 4:
         res += 'Open Issues in Github'
-        suggestions += 'Fix the open issues in Github.'
     else:
         res += 'Hourly Commits on GitHub'
-        suggestions += 'Advise team members to commit during times of day when they are likely to pay the most attention.'
     currentProject = ProjectsClass(proj_id)
     reqs = ProjectRequirement.query.with_entities(ProjectRequirement.requirement).filter_by(project_id=proj_id).all()
     reqs = [r[0] for r in reqs]
@@ -555,8 +540,7 @@ def projectInfo():
         entry_average[3] = entry_average[3]/health_entries
     if resilience_entries != 0:
         entry_average[4] = entry_average[4]/resilience_entries
-    print("entry_average: ", entry_average)
-    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = entry_average, projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues, entry_average = entry_average, res=res, suggestions=suggestions)
+    return render_template('/projectInfo.html',project = session['currentProject'], softSkillValues = entry_average, projectReqLabels = reqs, projectReqValues = recValues, initialRisk = project.monte_carlo_risk, newRisk = newMC, commitsByHour = hourlyValues, entry_average = entry_average, res=res)
 
 # update a project via project info
 @app.route('/updateProject')
