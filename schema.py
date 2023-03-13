@@ -214,36 +214,36 @@ class DeveloperStrength(db.Model):
         self.strength = strength
 
 def dbinit():
-    db.session.add(User('Developer','Matt', 'Jk', 'Matt@gmail', generate_password_hash("asdfasdf")))
-    db.session.add(User('Project Manager', 'Oscar', 'Jk', 'Oscar@gmail', generate_password_hash("asdfasdf")))
-    db.session.add(User('Developer','Ella', 'Jk', 'Ella@gmail', generate_password_hash("asdfasdf")))
+#     db.session.add(User('Developer','Matt', 'Jk', 'Matt@gmail', generate_password_hash("asdfasdf")))
+#     db.session.add(User('Project Manager', 'Oscar', 'Jk', 'Oscar@gmail', generate_password_hash("asdfasdf")))
+#     db.session.add(User('Developer','Ella', 'Jk', 'Ella@gmail', generate_password_hash("asdfasdf")))
 
-    db.session.add(UserSkills('1','1','2','3','4','5'))
-    db.session.add(UserSkills('2','1','2','3','4','5'))
-    db.session.add(UserSkills('3','1','2','3','4','5'))
+#     db.session.add(UserSkills('1','1','2','3','4','5'))
+#     db.session.add(UserSkills('2','1','2','3','4','5'))
+#     db.session.add(UserSkills('3','1','2','3','4','5'))
 
-    db.session.add(Projects(2,'Test Project', 100, 200, 'Ongoing', 'This is a test project'))
-    db.session.add(Projects(2,"Failed project",1,30,'Failure','This project failed'))
-    db.session.add(Projects(2,"Another Project",300,7000,'Ongoing','This is a project'))
-    db.session.add(Projects(2,"Failure 2",1,30,'Failure','This project also failed'))
-    db.session.add(Projects(2,"Successful project",1,30,'Success','This project succeeded!'))
-    db.session.add(Projects(2,"Cancelled project",1,30,'Cancelled','This project was cancelled'))
+#     db.session.add(Projects(2,'Test Project', 100, 200, 'Ongoing', 'This is a test project'))
+#     db.session.add(Projects(2,"Failed project",1,30,'Failure','This project failed'))
+#     db.session.add(Projects(2,"Another Project",300,7000,'Ongoing','This is a project'))
+#     db.session.add(Projects(2,"Failure 2",1,30,'Failure','This project also failed'))
+#     db.session.add(Projects(2,"Successful project",1,30,'Success','This project succeeded!'))
+#     db.session.add(Projects(2,"Cancelled project",1,30,'Cancelled','This project was cancelled'))
 
 
-    db.session.add(DeveloperProject(1,1))
-    db.session.add(DeveloperProject(1,2))
-    db.session.add(DeveloperProject(1,3))
+#     db.session.add(DeveloperProject(1,1))
+#     db.session.add(DeveloperProject(1,2))
+#     db.session.add(DeveloperProject(1,3))
 
-    db.session.add(ProjectRisk(1,None,None,None,None,None,None,None,None))
-    db.session.add(ProjectRisk(2,None,"Red",None,None,None,None,None,None))
-    db.session.add(ProjectRisk(3,None,None,None,None,None,None,None,None))
-    db.session.add(ProjectRisk(4,None,"Amber",None,None,None,None,None,None))
-    db.session.add(ProjectRisk(5,None,"Green",None,None,None,None,None,None))
-    db.session.add(ProjectRisk(6,None,"Amber",None,None,None,None,None,None))
+#     db.session.add(ProjectRisk(1,None,None,None,None,None,None,None,None))
+#     db.session.add(ProjectRisk(2,None,"Red",None,None,None,None,None,None))
+#     db.session.add(ProjectRisk(3,None,None,None,None,None,None,None,None))
+#     db.session.add(ProjectRisk(4,None,"Amber",None,None,None,None,None,None))
+#     db.session.add(ProjectRisk(5,None,"Green",None,None,None,None,None,None))
+#     db.session.add(ProjectRisk(6,None,"Amber",None,None,None,None,None,None))
 
-    db.session.add(RiskComponent(1,"Front End", 10,90,50,None,"Time"))
-    db.session.add(RiskComponent(1,"Back End", 600,7000,550,None,"Time"))
-    db.session.add(RiskComponent(1,"New Computer", 30,100,40,None,"Cost"))
+#     db.session.add(RiskComponent(1,"Front End", 10,90,50,None,"Time"))
+#     db.session.add(RiskComponent(1,"Back End", 600,7000,550,None,"Time"))
+#     db.session.add(RiskComponent(1,"New Computer", 30,100,40,None,"Cost"))
 
 
     db.session.commit()
